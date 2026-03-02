@@ -2,33 +2,35 @@ import type {
   User,
   AnalysisResult,
   PricingPlan,
+  PricingFAQ,
   Release,
   Partner,
   MetricsData,
   BillingInfo,
+  SettingsProfile,
 } from "@/lib/types";
 
-// ─── Config ────────────────────────────────────────────────────────────────
-// TODO_BACKEND_HOOKUP: Replace with real environment variables
 export const serviceConfig = {
   useMockData: true,
   apiBaseUrl: "/api",
 } as const;
 
 const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
+export { delay };
 
-// ─── Mock Data ──────────────────────────────────────────────────────────────
-
-const mockUser: User = {
+// ─── Users ──────────────────────────────────────────────────────────────────
+export const mockUser: User = {
   id: "usr_1",
   email: "alex@example.com",
   name: "Alex Chen",
   avatarUrl: undefined,
   plan: "pro",
   createdAt: "2025-11-01T00:00:00Z",
+  emailConfirmed: true,
 };
 
-const mockResults: AnalysisResult[] = [
+// ─── Analysis Results ───────────────────────────────────────────────────────
+export const mockResults: AnalysisResult[] = [
   {
     id: "res_1",
     userId: "usr_1",
@@ -36,13 +38,16 @@ const mockResults: AnalysisResult[] = [
     thumbnailUrl: "",
     status: "complete",
     createdAt: "2026-02-28T10:00:00Z",
+    duration: 14,
     scores: { overall: 78, stance: 82, balance: 74, edging: 80, rotation: 71 },
     feedback: [
-      { id: "f1", category: "stance", severity: "warning", title: "Slightly narrow stance", description: "Widen your stance to hip-width for better stability at higher speeds." },
-      { id: "f2", category: "balance", severity: "critical", title: "Weight too far back", description: "Shift weight forward over the center of your boots, especially during turn initiation." },
-      { id: "f3", category: "edging", severity: "info", title: "Good edge engagement", description: "Solid edge angles on carving turns. Maintain this pressure through the turn finish." },
+      { id: "f1", category: "stance", severity: "warning", title: "Slightly narrow stance", description: "Widen your stance to hip-width for better stability at higher speeds.", timestamp: 3.2 },
+      { id: "f2", category: "balance", severity: "critical", title: "Weight too far back", description: "Shift weight forward over the center of your boots, especially during turn initiation.", timestamp: 5.8 },
+      { id: "f3", category: "edging", severity: "info", title: "Good edge engagement", description: "Solid edge angles on carving turns. Maintain this pressure through the turn finish.", timestamp: 8.1 },
+      { id: "f4", category: "rotation", severity: "warning", title: "Upper body rotation", description: "Keep your shoulders facing downhill. Your upper body is rotating with the turn.", timestamp: 11.0 },
     ],
     embedToken: "tok_abc123",
+    edgeSimilarity: [0.65, 0.72, 0.78, 0.81, 0.85, 0.88, 0.82, 0.79, 0.84, 0.90, 0.87, 0.83, 0.80, 0.76],
   },
   {
     id: "res_2",
@@ -51,12 +56,52 @@ const mockResults: AnalysisResult[] = [
     thumbnailUrl: "",
     status: "processing",
     createdAt: "2026-03-01T14:30:00Z",
+    duration: 22,
+    progress: 42,
     scores: { overall: 0, stance: 0, balance: 0, edging: 0, rotation: 0 },
     feedback: [],
   },
+  {
+    id: "res_3",
+    userId: "usr_1",
+    videoUrl: "",
+    thumbnailUrl: "",
+    status: "error",
+    createdAt: "2026-02-25T09:15:00Z",
+    duration: 8,
+    failedReason: "Video quality too low for reliable analysis. Please upload a higher resolution clip.",
+    scores: { overall: 0, stance: 0, balance: 0, edging: 0, rotation: 0 },
+    feedback: [],
+  },
+  {
+    id: "res_4",
+    userId: "usr_1",
+    videoUrl: "",
+    thumbnailUrl: "",
+    status: "pending",
+    createdAt: "2026-03-02T08:00:00Z",
+    scores: { overall: 0, stance: 0, balance: 0, edging: 0, rotation: 0 },
+    feedback: [],
+  },
+  {
+    id: "res_5",
+    userId: "usr_1",
+    videoUrl: "",
+    thumbnailUrl: "",
+    status: "complete",
+    createdAt: "2026-02-20T16:45:00Z",
+    duration: 18,
+    scores: { overall: 85, stance: 88, balance: 82, edging: 86, rotation: 80 },
+    feedback: [
+      { id: "f5", category: "balance", severity: "info", title: "Excellent balance", description: "Great centered position throughout most turns." },
+    ],
+    embedToken: "tok_def456",
+    edgeSimilarity: [0.70, 0.75, 0.82, 0.88, 0.91, 0.93, 0.90, 0.87, 0.89, 0.92, 0.94, 0.91, 0.88, 0.85, 0.82, 0.80, 0.78, 0.75],
+  },
 ];
 
-const mockPricingPlans: PricingPlan[] = [
+// ─── Pricing ────────────────────────────────────────────────────────────────
+export const mockPricingPlans: PricingPlan[] = [
   {
     id: "free",
     name: "Free",
@@ -84,13 +129,20 @@ const mockPricingPlans: PricingPlan[] = [
   },
 ];
 
-const mockReleases: Release[] = [
+export const mockPricingFAQs: PricingFAQ[] = [
+  { id: "faq1", question: "Can I cancel anytime?", answer: "Yes, you can cancel your subscription at any time. You'll retain access until the end of your billing period." },
+  { id: "faq2", question: "What video formats are supported?", answer: "We support MP4, MOV, and WebM files up to 100MB. For best results, film in landscape orientation at 720p or higher." },
+  { id: "faq3", question: "How long does analysis take?", answer: "Most analyses complete within 1–2 minutes. Pro and Team plans get priority processing." },
+  { id: "faq4", question: "Is there a free trial?", answer: "Pro plans include a 7-day free trial. No credit card required to start." },
+  { id: "faq5", question: "Can I share my results?", answer: "Yes! Team plan users can create embeddable result widgets. All plans can share results via link." },
+];
+
+// ─── Releases ───────────────────────────────────────────────────────────────
+export const mockReleases: Release[] = [
   {
-    id: "rel_1",
-    version: "2.4.0",
-    date: "2026-02-25",
-    title: "Improved Edge Detection",
+    id: "rel_1", version: "2.4.0", date: "2026-02-25", title: "Improved Edge Detection",
     description: "Major improvements to ski edge angle detection accuracy.",
+    tags: ["ai", "analysis"],
     changes: [
       { type: "feature", text: "New edge angle measurement algorithm" },
       { type: "improvement", text: "30% faster video processing" },
@@ -98,26 +150,53 @@ const mockReleases: Release[] = [
     ],
   },
   {
-    id: "rel_2",
-    version: "2.3.0",
-    date: "2026-02-10",
-    title: "Team Features",
+    id: "rel_2", version: "2.3.0", date: "2026-02-10", title: "Team Features",
     description: "Collaboration tools for coaches and teams.",
+    tags: ["teams", "collaboration"],
     changes: [
       { type: "feature", text: "Team workspaces with shared analyses" },
       { type: "feature", text: "Coach annotation tools" },
       { type: "improvement", text: "Updated results sharing UI" },
     ],
   },
+  {
+    id: "rel_3", version: "2.2.0", date: "2026-01-20", title: "Embed Widget",
+    description: "Embeddable results for partner integrations.",
+    tags: ["partners", "embed"],
+    changes: [
+      { type: "feature", text: "Embeddable result widget for websites" },
+      { type: "feature", text: "Partner API keys" },
+      { type: "fix", text: "Fixed video playback on Safari" },
+    ],
+  },
+  {
+    id: "rel_4", version: "2.1.0", date: "2026-01-05", title: "Progress Tracking",
+    description: "Track your improvement over time.",
+    tags: ["analysis"],
+    changes: [
+      { type: "feature", text: "Score history graph" },
+      { type: "improvement", text: "Redesigned dashboard layout" },
+    ],
+  },
 ];
 
-const mockPartners: Partner[] = [
-  { id: "p1", name: "Alpine Academy", logoUrl: "", description: "Professional ski instruction across the Alps.", url: "#" },
-  { id: "p2", name: "SkiTech Labs", logoUrl: "", description: "R&D partner for motion capture technology.", url: "#" },
-  { id: "p3", name: "Mountain Sports Co.", logoUrl: "", description: "Premium ski equipment and apparel.", url: "#" },
+// ─── Partners ───────────────────────────────────────────────────────────────
+export const mockPartners: Partner[] = [
+  {
+    id: "p1", name: "Alpine Academy", logoUrl: "", description: "Professional ski instruction across the Alps.", url: "https://alpineacademy.example.com",
+    slug: "alpine-academy", domain: "alpineacademy.example.com",
+    integrationSnippets: {
+      html: `<iframe src="https://poser.app/embed/results/TOKEN" width="400" height="600" frameborder="0"></iframe>`,
+      react: `import { PoserEmbed } from '@poser/react';\n\nexport default function Results() {\n  return <PoserEmbed token="TOKEN" />;\n}`,
+      next: `import { PoserEmbed } from '@poser/react';\n\nexport default function ResultsPage() {\n  return (\n    <main>\n      <PoserEmbed token="TOKEN" />\n    </main>\n  );\n}`,
+    },
+  },
+  { id: "p2", name: "SkiTech Labs", logoUrl: "", description: "R&D partner for motion capture technology.", url: "https://skitechlabs.example.com", slug: "skitech-labs", domain: "skitechlabs.example.com" },
+  { id: "p3", name: "Mountain Sports Co.", logoUrl: "", description: "Premium ski equipment and apparel.", url: "https://mountainsports.example.com", slug: "mountain-sports", domain: "mountainsports.example.com" },
 ];
 
-const mockMetrics: MetricsData = {
+// ─── Metrics ────────────────────────────────────────────────────────────────
+export const mockMetrics: MetricsData = {
   totalUsers: 12847,
   totalAnalyses: 48293,
   avgScore: 72.4,
@@ -126,14 +205,30 @@ const mockMetrics: MetricsData = {
   analysesPerDay: [180, 210, 195, 240, 280, 260, 275],
 };
 
-const mockBilling: BillingInfo = {
+// ─── Billing ────────────────────────────────────────────────────────────────
+export const mockBilling: BillingInfo = {
   plan: mockPricingPlans[1],
   nextBillingDate: "2026-04-01",
   paymentMethod: { type: "visa", last4: "4242" },
   invoices: [
     { id: "inv_1", date: "2026-03-01", amount: 19, status: "paid" },
     { id: "inv_2", date: "2026-02-01", amount: 19, status: "paid" },
+    { id: "inv_3", date: "2026-01-01", amount: 19, status: "paid" },
   ],
+  usageCredits: 12,
+  usageLimit: 50,
+  cancelAtPeriodEnd: false,
+  currency: "usd",
 };
 
-export { mockUser, mockResults, mockPricingPlans, mockReleases, mockPartners, mockMetrics, mockBilling };
+// ─── Settings ───────────────────────────────────────────────────────────────
+export const mockProfile: SettingsProfile = {
+  name: "Alex Chen",
+  email: "alex@example.com",
+  avatarUrl: undefined,
+  emailConfirmed: true,
+  notifications: {
+    analysisComplete: true,
+    weeklyTips: false,
+  },
+};

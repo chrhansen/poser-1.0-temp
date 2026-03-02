@@ -6,21 +6,41 @@ import { Section } from "@/components/shared/Section";
 import { Button } from "@/components/ui/button";
 import { PageLoader } from "@/components/shared/PageLoader";
 import { pricingService } from "@/services/pricing.service";
-import type { PricingPlan } from "@/lib/types";
+import type { PricingPlan, PricingFAQ } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/hooks/useAuth";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 export default function PricingPage() {
   const [plans, setPlans] = useState<PricingPlan[]>([]);
+  const [faqs, setFaqs] = useState<PricingFAQ[]>([]);
   const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
 
   useEffect(() => {
-    pricingService.getPlans().then((p) => { setPlans(p); setLoading(false); });
+    Promise.all([pricingService.getPlans(), pricingService.getFAQs()]).then(([p, f]) => {
+      setPlans(p);
+      setFaqs(f);
+      setLoading(false);
+    });
   }, []);
 
   if (loading) return <Layout><PageLoader /></Layout>;
 
+  const getCtaHref = (plan: PricingPlan) => {
+    if (plan.id === "free") return user ? "/dashboard" : "/#upload";
+    if (plan.id === "team") return "/about"; // contact sales
+    return user ? "/billing" : "/#upload";
+  };
+
   return (
     <Layout>
+      {/* Plan comparison */}
       <Section>
         <div className="text-center">
           <h1 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">Simple, transparent pricing</h1>
@@ -35,6 +55,11 @@ export default function PricingPage() {
                 plan.highlighted ? "border-foreground shadow-lg" : "border-border"
               )}
             >
+              {plan.highlighted && (
+                <span className="mb-3 inline-block self-start rounded-full bg-foreground px-3 py-0.5 text-xs font-medium text-primary-foreground">
+                  Most popular
+                </span>
+              )}
               <h3 className="text-lg font-semibold text-foreground">{plan.name}</h3>
               <div className="mt-2">
                 <span className="text-3xl font-bold text-foreground">${plan.price}</span>
@@ -48,9 +73,9 @@ export default function PricingPage() {
                   </li>
                 ))}
               </ul>
-              {/* TODO_STRIPE_HOOKUP */}
+              {/* TODO_STRIPE_HOOKUP: Wire CTA to Stripe Checkout */}
               <Button variant={plan.highlighted ? "default" : "outline"} className="mt-6" asChild>
-                <Link to="/billing">
+                <Link to={getCtaHref(plan)}>
                   {plan.ctaLabel}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
@@ -59,6 +84,29 @@ export default function PricingPage() {
           ))}
         </div>
       </Section>
+
+      {/* FAQ */}
+      {faqs.length > 0 && (
+        <Section className="bg-surface-sunken">
+          <div className="mx-auto max-w-2xl">
+            <h2 className="text-center text-2xl font-bold tracking-tight text-foreground">
+              Frequently asked questions
+            </h2>
+            <Accordion type="single" collapsible className="mt-8">
+              {faqs.map((faq) => (
+                <AccordionItem key={faq.id} value={faq.id}>
+                  <AccordionTrigger className="text-left text-sm font-medium text-foreground">
+                    {faq.question}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-sm text-muted-foreground">
+                    {faq.answer}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </div>
+        </Section>
+      )}
     </Layout>
   );
 }
