@@ -7,6 +7,7 @@ export interface User {
   avatarUrl?: string;
   plan: "free" | "pro" | "team";
   createdAt: string;
+  emailConfirmed?: boolean;
 }
 
 export interface AnalysisResult {
@@ -14,8 +15,12 @@ export interface AnalysisResult {
   userId: string;
   videoUrl: string;
   thumbnailUrl: string;
-  status: "processing" | "complete" | "error";
+  status: "pending" | "processing" | "complete" | "error";
   createdAt: string;
+  duration?: number; // seconds
+  progress?: number; // 0-100 for processing
+  failedReason?: string;
+  modelUrl?: string; // optional 3D model
   scores: {
     overall: number;
     stance: number;
@@ -25,6 +30,7 @@ export interface AnalysisResult {
   };
   feedback: FeedbackItem[];
   embedToken?: string;
+  edgeSimilarity?: number[]; // frame-level edge similarity data
 }
 
 export interface FeedbackItem {
@@ -46,6 +52,12 @@ export interface PricingPlan {
   ctaLabel: string;
 }
 
+export interface PricingFAQ {
+  id: string;
+  question: string;
+  answer: string;
+}
+
 export interface Release {
   id: string;
   version: string;
@@ -53,6 +65,7 @@ export interface Release {
   title: string;
   description: string;
   changes: { type: "feature" | "fix" | "improvement"; text: string }[];
+  tags?: string[];
 }
 
 export interface Partner {
@@ -61,6 +74,13 @@ export interface Partner {
   logoUrl: string;
   description: string;
   url: string;
+  slug?: string;
+  domain?: string;
+  integrationSnippets?: {
+    html: string;
+    react: string;
+    next: string;
+  };
 }
 
 export interface MetricsData {
@@ -85,4 +105,19 @@ export interface BillingInfo {
     amount: number;
     status: "paid" | "pending" | "failed";
   }[];
+  usageCredits: number;
+  usageLimit: number;
+  cancelAtPeriodEnd?: boolean;
+  currency: "usd" | "eur" | "gbp";
+}
+
+export interface SettingsProfile {
+  name: string;
+  email: string;
+  avatarUrl?: string;
+  emailConfirmed: boolean;
+  notifications: {
+    analysisComplete: boolean;
+    weeklyTips: boolean;
+  };
 }

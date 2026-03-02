@@ -1,7 +1,5 @@
 import type { AnalysisResult } from "@/lib/types";
-import { mockResults } from "./mock-data";
-
-const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
+import { mockResults, delay } from "./mock-data";
 
 const ALLOWED_TYPES = ["video/mp4", "video/quicktime", "video/webm"];
 const MAX_SIZE_MB = 100;
@@ -40,7 +38,7 @@ export const analysisService = {
 
   getResult: async (id: string): Promise<AnalysisResult | null> => {
     await delay(400);
-    return mockResults.find((r) => r.id === id) ?? mockResults[0] ?? null;
+    return mockResults.find((r) => r.id === id) ?? null;
   },
 
   getResults: async (): Promise<AnalysisResult[]> => {
@@ -51,5 +49,27 @@ export const analysisService = {
   getEmbedResult: async (_token: string): Promise<AnalysisResult | null> => {
     await delay(400);
     return mockResults[0] ?? null;
+  },
+
+  deleteResult: async (_id: string): Promise<void> => {
+    // TODO_BACKEND_HOOKUP: Delete analysis from database
+    await delay(300);
+  },
+
+  rerunAnalysis: async (_id: string): Promise<{ id: string }> => {
+    // TODO_BACKEND_HOOKUP: Re-trigger analysis pipeline
+    await delay(500);
+    return { id: _id };
+  },
+
+  pollResult: async (id: string): Promise<AnalysisResult | null> => {
+    // TODO_BACKEND_HOOKUP: Poll for analysis status updates
+    await delay(1500);
+    // In mock mode, simulate progress advancement
+    const result = mockResults.find((r) => r.id === id);
+    if (result && result.status === "processing") {
+      return { ...result, progress: Math.min((result.progress ?? 0) + 15, 95) };
+    }
+    return result ?? null;
   },
 };

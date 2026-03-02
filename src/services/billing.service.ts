@@ -1,7 +1,5 @@
 import type { BillingInfo } from "@/lib/types";
-import { mockBilling } from "./mock-data";
-
-const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
+import { mockBilling, delay } from "./mock-data";
 
 // TODO_STRIPE_HOOKUP: Replace with real Stripe billing API
 export const billingService = {
@@ -11,14 +9,24 @@ export const billingService = {
   },
 
   createCheckoutSession: async (_planId: string): Promise<{ url: string }> => {
-    // TODO_STRIPE_HOOKUP
+    // TODO_STRIPE_HOOKUP: Create Stripe Checkout session
     await delay(500);
     return { url: "#" };
   },
 
   createPortalSession: async (): Promise<{ url: string }> => {
-    // TODO_STRIPE_HOOKUP
+    // TODO_STRIPE_HOOKUP: Create Stripe Customer Portal session
     await delay(500);
     return { url: "#" };
+  },
+
+  cancelSubscription: async (): Promise<void> => {
+    // TODO_STRIPE_HOOKUP: Cancel subscription at period end
+    await delay(500);
+  },
+
+  resumeSubscription: async (): Promise<void> => {
+    // TODO_STRIPE_HOOKUP: Resume cancelled subscription
+    await delay(500);
   },
 };
