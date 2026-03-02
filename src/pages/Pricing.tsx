@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { Check, ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { Section } from "@/components/shared/Section";
 import { Button } from "@/components/ui/button";
 import { PageLoader } from "@/components/shared/PageLoader";
-import { pricingService } from "@/lib/services";
+import { pricingService } from "@/services/pricing.service";
 import type { PricingPlan } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -32,9 +32,7 @@ export default function PricingPage() {
               key={plan.id}
               className={cn(
                 "flex flex-col rounded-xl border p-6",
-                plan.highlighted
-                  ? "border-foreground shadow-lg"
-                  : "border-border"
+                plan.highlighted ? "border-foreground shadow-lg" : "border-border"
               )}
             >
               <h3 className="text-lg font-semibold text-foreground">{plan.name}</h3>
@@ -51,11 +49,7 @@ export default function PricingPage() {
                 ))}
               </ul>
               {/* TODO_STRIPE_HOOKUP */}
-              <Button
-                variant={plan.highlighted ? "default" : "outline"}
-                className="mt-6"
-                asChild
-              >
+              <Button variant={plan.highlighted ? "default" : "outline"} className="mt-6" asChild>
                 <Link to="/billing">
                   {plan.ctaLabel}
                   <ArrowRight className="ml-2 h-4 w-4" />

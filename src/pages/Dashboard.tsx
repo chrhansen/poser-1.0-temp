@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { Layout } from "@/components/layout/Layout";
+import { AppLayout } from "@/components/layout/Layout";
 import { Section } from "@/components/shared/Section";
 import { PageLoader } from "@/components/shared/PageLoader";
-import { analysisService } from "@/lib/services";
+import { analysisService } from "@/services/analysis.service";
 import { Link } from "react-router-dom";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { Button } from "@/components/ui/button";
@@ -17,10 +17,10 @@ export default function DashboardPage() {
     analysisService.getResults().then((r) => { setResults(r); setLoading(false); });
   }, []);
 
-  if (loading) return <Layout><PageLoader /></Layout>;
+  if (loading) return <AppLayout><PageLoader /></AppLayout>;
 
   return (
-    <Layout>
+    <AppLayout>
       <Section>
         <div className="mx-auto max-w-2xl">
           <div className="flex items-center justify-between">
@@ -56,6 +56,6 @@ export default function DashboardPage() {
           )}
         </div>
       </Section>
-    </Layout>
+    </AppLayout>
   );
 }

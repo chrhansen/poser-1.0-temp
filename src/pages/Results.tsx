@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Layout } from "@/components/layout/Layout";
+import { AppLayout } from "@/components/layout/Layout";
 import { Section } from "@/components/shared/Section";
 import { PageLoader } from "@/components/shared/PageLoader";
 import { PageError } from "@/components/shared/PageError";
-import { analysisService } from "@/lib/services";
+import { analysisService } from "@/services/analysis.service";
 import type { AnalysisResult } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
@@ -15,7 +15,7 @@ function ScoreRing({ label, score }: { label: string; score: number }) {
       <div className="flex h-16 w-16 items-center justify-center rounded-full border-2 border-border text-xl font-bold text-foreground">
         {score}
       </div>
-      <span className="text-xs text-muted-foreground capitalize">{label}</span>
+      <span className="text-xs capitalize text-muted-foreground">{label}</span>
     </div>
   );
 }
@@ -34,25 +34,25 @@ export default function ResultsPage() {
     });
   }, [id]);
 
-  if (loading) return <Layout><PageLoader /></Layout>;
-  if (error || !result) return <Layout><PageError message="Result not found." /></Layout>;
+  if (loading) return <AppLayout><PageLoader /></AppLayout>;
+  if (error || !result) return <AppLayout><PageError message="Result not found." /></AppLayout>;
 
   if (result.status === "processing") {
     return (
-      <Layout>
+      <AppLayout>
         <Section>
           <div className="flex flex-col items-center justify-center gap-4 text-center">
             <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
             <h1 className="text-2xl font-bold text-foreground">Analyzing your clip…</h1>
-            <p className="text-muted-foreground">This usually takes 1-2 minutes.</p>
+            <p className="text-muted-foreground">This usually takes 1–2 minutes.</p>
           </div>
         </Section>
-      </Layout>
+      </AppLayout>
     );
   }
 
   return (
-    <Layout>
+    <AppLayout>
       <Section>
         <div className="mx-auto max-w-2xl">
           <h1 className="text-3xl font-bold tracking-tight text-foreground">Your Results</h1>
@@ -60,7 +60,6 @@ export default function ResultsPage() {
             Analyzed on {new Date(result.createdAt).toLocaleDateString()}
           </p>
 
-          {/* Scores */}
           <div className="mt-8 flex flex-wrap justify-center gap-6 rounded-xl border border-border bg-surface-sunken p-6">
             <ScoreRing label="Overall" score={result.scores.overall} />
             <ScoreRing label="Stance" score={result.scores.stance} />
@@ -69,7 +68,6 @@ export default function ResultsPage() {
             <ScoreRing label="Rotation" score={result.scores.rotation} />
           </div>
 
-          {/* Feedback */}
           <div className="mt-8 space-y-4">
             <h2 className="text-lg font-semibold text-foreground">Feedback</h2>
             {result.feedback.map((item) => (
@@ -97,6 +95,6 @@ export default function ResultsPage() {
           </div>
         </div>
       </Section>
-    </Layout>
+    </AppLayout>
   );
 }

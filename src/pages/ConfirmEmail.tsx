@@ -5,7 +5,7 @@ import { Layout } from "@/components/layout/Layout";
 import { Section } from "@/components/shared/Section";
 import { PageLoader } from "@/components/shared/PageLoader";
 import { Button } from "@/components/ui/button";
-import { authService } from "@/lib/services";
+import { authService } from "@/services/auth.service";
 
 export default function ConfirmEmailPage() {
   const [params] = useSearchParams();

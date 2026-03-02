@@ -6,7 +6,16 @@ import type {
   Partner,
   MetricsData,
   BillingInfo,
-} from "./types";
+} from "@/lib/types";
+
+// ─── Config ────────────────────────────────────────────────────────────────
+// TODO_BACKEND_HOOKUP: Replace with real environment variables
+export const serviceConfig = {
+  useMockData: true,
+  apiBaseUrl: "/api",
+} as const;
+
+const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 // ─── Mock Data ──────────────────────────────────────────────────────────────
 
@@ -14,6 +23,7 @@ const mockUser: User = {
   id: "usr_1",
   email: "alex@example.com",
   name: "Alex Chen",
+  avatarUrl: undefined,
   plan: "pro",
   createdAt: "2025-11-01T00:00:00Z",
 };
@@ -126,91 +136,4 @@ const mockBilling: BillingInfo = {
   ],
 };
 
-// ─── Service Layer (stubs) ──────────────────────────────────────────────────
-
-// TODO_BACKEND_HOOKUP: Replace mock implementations with real API calls
-
-const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
-
-export const authService = {
-  getCurrentUser: async (): Promise<User | null> => {
-    await delay(300);
-    return mockUser;
-  },
-  signIn: async (_email: string, _password: string): Promise<User> => {
-    // TODO_BACKEND_HOOKUP
-    await delay(500);
-    return mockUser;
-  },
-  signOut: async (): Promise<void> => {
-    // TODO_BACKEND_HOOKUP
-    await delay(200);
-  },
-  confirmEmail: async (_token: string): Promise<boolean> => {
-    // TODO_BACKEND_HOOKUP
-    await delay(500);
-    return true;
-  },
-};
-
-export const analysisService = {
-  getResult: async (id: string): Promise<AnalysisResult | null> => {
-    await delay(400);
-    return mockResults.find((r) => r.id === id) ?? mockResults[0];
-  },
-  getResults: async (): Promise<AnalysisResult[]> => {
-    await delay(400);
-    return mockResults;
-  },
-  getEmbedResult: async (_token: string): Promise<AnalysisResult | null> => {
-    await delay(400);
-    return mockResults[0];
-  },
-  uploadClip: async (_file: File): Promise<{ id: string }> => {
-    // TODO_BACKEND_HOOKUP
-    await delay(1000);
-    return { id: "res_new" };
-  },
-};
-
-export const pricingService = {
-  getPlans: async (): Promise<PricingPlan[]> => {
-    await delay(300);
-    return mockPricingPlans;
-  },
-};
-
-export const releasesService = {
-  getReleases: async (): Promise<Release[]> => {
-    await delay(300);
-    return mockReleases;
-  },
-};
-
-export const partnersService = {
-  getPartners: async (): Promise<Partner[]> => {
-    await delay(300);
-    return mockPartners;
-  },
-};
-
-export const metricsService = {
-  getMetrics: async (): Promise<MetricsData> => {
-    // TODO_BACKEND_HOOKUP
-    await delay(500);
-    return mockMetrics;
-  },
-};
-
-export const billingService = {
-  getBillingInfo: async (): Promise<BillingInfo> => {
-    // TODO_STRIPE_HOOKUP
-    await delay(400);
-    return mockBilling;
-  },
-  createCheckoutSession: async (_planId: string): Promise<{ url: string }> => {
-    // TODO_STRIPE_HOOKUP
-    await delay(500);
-    return { url: "#" };
-  },
-};
+export { mockUser, mockResults, mockPricingPlans, mockReleases, mockPartners, mockMetrics, mockBilling };

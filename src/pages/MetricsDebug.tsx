@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { Layout } from "@/components/layout/Layout";
+import { AppLayout } from "@/components/layout/Layout";
 import { Section } from "@/components/shared/Section";
 import { PageLoader } from "@/components/shared/PageLoader";
-import { metricsService } from "@/lib/services";
+import { metricsService } from "@/services/metrics.service";
 import type { MetricsData } from "@/lib/types";
 
 // TODO_BACKEND_HOOKUP: Restrict access to internal/admin users only
@@ -14,7 +14,7 @@ export default function MetricsDebugPage() {
     metricsService.getMetrics().then((m) => { setMetrics(m); setLoading(false); });
   }, []);
 
-  if (loading) return <Layout><PageLoader /></Layout>;
+  if (loading) return <AppLayout><PageLoader /></AppLayout>;
   if (!metrics) return null;
 
   const stats = [
@@ -25,7 +25,7 @@ export default function MetricsDebugPage() {
   ];
 
   return (
-    <Layout>
+    <AppLayout>
       <Section>
         <div className="mx-auto max-w-2xl">
           <h1 className="text-3xl font-bold tracking-tight text-foreground">
@@ -53,6 +53,6 @@ export default function MetricsDebugPage() {
           </div>
         </div>
       </Section>
-    </Layout>
+    </AppLayout>
   );
 }
