@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Layout } from "@/components/layout/Layout";
 import { Section } from "@/components/shared/Section";
 import { PageLoader } from "@/components/shared/PageLoader";
-import { partnersService } from "@/lib/services";
+import { partnersService } from "@/services/partners.service";
 import type { Partner } from "@/lib/types";
 
 export default function PartnersPage() {

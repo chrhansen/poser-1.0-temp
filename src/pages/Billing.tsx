@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { Layout } from "@/components/layout/Layout";
+import { AppLayout } from "@/components/layout/Layout";
 import { Section } from "@/components/shared/Section";
 import { PageLoader } from "@/components/shared/PageLoader";
-import { billingService } from "@/lib/services";
+import { billingService } from "@/services/billing.service";
+import { Button } from "@/components/ui/button";
 import type { BillingInfo } from "@/lib/types";
 
 // TODO_STRIPE_HOOKUP: Replace with real Stripe integration
@@ -14,11 +15,11 @@ export default function BillingPage() {
     billingService.getBillingInfo().then((b) => { setBilling(b); setLoading(false); });
   }, []);
 
-  if (loading) return <Layout><PageLoader /></Layout>;
-  if (!billing) return <Layout><Section><p className="text-muted-foreground">Unable to load billing info.</p></Section></Layout>;
+  if (loading) return <AppLayout><PageLoader /></AppLayout>;
+  if (!billing) return <AppLayout><Section><p className="text-muted-foreground">Unable to load billing info.</p></Section></AppLayout>;
 
   return (
-    <Layout>
+    <AppLayout>
       <Section>
         <div className="mx-auto max-w-lg">
           <h1 className="text-3xl font-bold tracking-tight text-foreground">Billing</h1>
@@ -31,11 +32,15 @@ export default function BillingPage() {
               <p className="mt-1 text-sm text-muted-foreground">
                 Next billing: {billing.nextBillingDate}
               </p>
+              {/* TODO_STRIPE_HOOKUP */}
+              <Button variant="outline" size="sm" className="mt-4">
+                Manage subscription
+              </Button>
             </div>
             {billing.paymentMethod && (
               <div className="rounded-xl border border-border p-6">
                 <h2 className="text-sm font-semibold text-foreground">Payment method</h2>
-                <p className="mt-1 text-sm text-muted-foreground capitalize">
+                <p className="mt-1 text-sm capitalize text-muted-foreground">
                   {billing.paymentMethod.type} ending in {billing.paymentMethod.last4}
                 </p>
               </div>
@@ -55,6 +60,6 @@ export default function BillingPage() {
           </div>
         </div>
       </Section>
-    </Layout>
+    </AppLayout>
   );
 }

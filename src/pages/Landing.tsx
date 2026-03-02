@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Layout } from "@/components/layout/Layout";
 import { Section } from "@/components/shared/Section";
+import { UploadBlock } from "@/components/upload/UploadBlock";
 import heroImage from "@/assets/hero-ski.jpg";
 
 const fadeUp = {
@@ -34,6 +35,10 @@ const steps = [
 ];
 
 export default function LandingPage() {
+  const scrollToUpload = () => {
+    document.getElementById("upload")?.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
     <Layout>
       {/* Hero */}
@@ -63,11 +68,9 @@ export default function LandingPage() {
               custom={2}
               className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center"
             >
-              <Button size="lg" asChild>
-                <Link to="/#upload">
-                  Upload your clip
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
+              <Button size="lg" onClick={scrollToUpload}>
+                Upload your clip
+                <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
               <Button variant="outline" size="lg" asChild>
                 <Link to="/about">Learn more</Link>
@@ -89,13 +92,29 @@ export default function LandingPage() {
               alt="Skier carving a turn on a mountain slope"
               className="w-full object-cover"
               style={{ maxHeight: "480px" }}
+              loading="eager"
             />
           </div>
         </motion.div>
       </section>
 
-      {/* How it works */}
+      {/* Upload Section */}
       <Section>
+        <div className="mx-auto max-w-xl">
+          <div className="mb-8 text-center">
+            <h2 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">
+              Try it now
+            </h2>
+            <p className="mt-2 text-muted-foreground">
+              Upload a clip and get your analysis in minutes.
+            </p>
+          </div>
+          <UploadBlock />
+        </div>
+      </Section>
+
+      {/* How it works */}
+      <Section className="bg-surface-sunken">
         <div className="text-center">
           <h2 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">
             How it works
@@ -125,7 +144,7 @@ export default function LandingPage() {
       </Section>
 
       {/* CTA */}
-      <Section className="bg-surface-sunken">
+      <Section>
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}

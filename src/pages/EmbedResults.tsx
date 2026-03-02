@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { PageLoader } from "@/components/shared/PageLoader";
 import { PageError } from "@/components/shared/PageError";
-import { analysisService } from "@/lib/services";
+import { analysisService } from "@/services/analysis.service";
 import type { AnalysisResult } from "@/lib/types";
 
 export default function EmbedResultsPage() {

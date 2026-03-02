@@ -2,7 +2,9 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider } from "@/hooks/useAuth";
+import { ProtectedRoute } from "@/components/guards/ProtectedRoute";
 
 import Landing from "./pages/Landing";
 import About from "./pages/About";
@@ -22,33 +24,45 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-// TODO_BACKEND_HOOKUP: Add auth guards for protected routes (/settings, /billing, /dashboard, /internal/*)
-
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Landing />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/pricing" element={<Pricing />} />
-          <Route path="/results/:id" element={<Results />} />
-          <Route path="/settings" element={<Settings />} />
-          <Route path="/confirm-email" element={<ConfirmEmail />} />
-          <Route path="/embed/results/:token" element={<EmbedResults />} />
-          <Route path="/releases" element={<Releases />} />
-          <Route path="/partners" element={<Partners />} />
-          <Route path="/billing" element={<Billing />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/internal/metrics-debug" element={<MetricsDebug />} />
-          <Route path="/privacy" element={<Privacy />} />
-          <Route path="/terms" element={<Terms />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
+    <AuthProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            {/* Public routes */}
+            <Route path="/" element={<Landing />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/pricing" element={<Pricing />} />
+            <Route path="/releases" element={<Releases />} />
+            <Route path="/partners" element={<Partners />} />
+            <Route path="/confirm-email" element={<ConfirmEmail />} />
+            <Route path="/privacy" element={<Privacy />} />
+            <Route path="/terms" element={<Terms />} />
+
+            {/* Public embed (no auth, no shell) */}
+            <Route path="/embed/results/:token" element={<EmbedResults />} />
+
+            {/* Protected routes — require sign-in */}
+            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+            <Route path="/results/:id" element={<ProtectedRoute><Results /></ProtectedRoute>} />
+            <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+            <Route path="/billing" element={<ProtectedRoute><Billing /></ProtectedRoute>} />
+
+            {/* Internal routes — require internal/admin role */}
+            <Route path="/internal/metrics-debug" element={<ProtectedRoute requireInternal><MetricsDebug /></ProtectedRoute>} />
+
+            {/* Explicit 404 page */}
+            <Route path="/404" element={<NotFound />} />
+
+            {/* Catch-all: navigate to /404 without silent redirect */}
+            <Route path="*" element={<Navigate to="/404" replace />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </AuthProvider>
   </QueryClientProvider>
 );
 

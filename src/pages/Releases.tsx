@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Layout } from "@/components/layout/Layout";
 import { Section } from "@/components/shared/Section";
 import { PageLoader } from "@/components/shared/PageLoader";
-import { releasesService } from "@/lib/services";
+import { releasesService } from "@/services/releases.service";
 import type { Release } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -26,7 +26,7 @@ export default function ReleasesPage() {
             {releases.map((rel) => (
               <div key={rel.id} className="border-l-2 border-border pl-6">
                 <div className="flex items-baseline gap-3">
-                  <span className="text-sm font-mono text-muted-foreground">v{rel.version}</span>
+                  <span className="font-mono text-sm text-muted-foreground">v{rel.version}</span>
                   <span className="text-xs text-muted-foreground">{rel.date}</span>
                 </div>
                 <h2 className="mt-1 text-lg font-semibold text-foreground">{rel.title}</h2>
@@ -35,7 +35,7 @@ export default function ReleasesPage() {
                   {rel.changes.map((c, i) => (
                     <li key={i} className="flex items-start gap-2 text-sm">
                       <span className={cn(
-                        "mt-1 inline-block h-1.5 w-1.5 rounded-full shrink-0",
+                        "mt-1 inline-block h-1.5 w-1.5 shrink-0 rounded-full",
                         c.type === "feature" && "bg-accent",
                         c.type === "fix" && "bg-destructive",
                         c.type === "improvement" && "bg-muted-foreground"
