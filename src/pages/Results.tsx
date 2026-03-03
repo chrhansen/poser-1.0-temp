@@ -19,7 +19,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import {
   Loader2, Maximize2, Minimize2, Download, RefreshCw, Trash2, Plus,
   AlertTriangle, Clock, CheckCircle, XCircle, HelpCircle,
-  Cuboid, BarChart3, GitCompareArrows, RotateCw, Crosshair, Timer,
+  Cuboid, GitCompareArrows, RotateCw, Crosshair, Timer,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -39,7 +39,7 @@ function MetricChart({ children, height = 160 }: { children: React.ReactNode; he
 }
 
 // ─── Metric definitions ─────────────────────────────────────────────────────
-type MetricKey = "model" | "edge" | "shin" | "angulation" | "counter" | "angVsInc" | "com" | "turnSegments" | "cadence";
+type MetricKey = "model" | "edge" | "angulation" | "counter" | "com" | "cadence";
 
 interface MetricDef {
   key: MetricKey;
@@ -51,12 +51,9 @@ interface MetricDef {
 const METRICS: MetricDef[] = [
   { key: "model", label: "3D Body Model", sub: "Animated 3D pose reconstruction", icon: Cuboid },
   { key: "edge", label: "Edge Similarity", sub: "Edge quality per turn & aggregate", icon: GitCompareArrows },
-  { key: "shin", label: "Shin Parallel", sub: "Left/right shin parallelism", icon: BarChart3 },
   { key: "angulation", label: "Angulation", sub: "Upper vs lower body separation", icon: Crosshair },
   { key: "counter", label: "Counter-Rotation", sub: "Torso–pelvis yaw separation", icon: RotateCw },
-  { key: "angVsInc", label: "Ang. vs Inclination", sub: "Lower vs upper body lean", icon: GitCompareArrows },
   { key: "com", label: "Center of Mass", sub: "3D world-space COM tracking", icon: Crosshair },
-  { key: "turnSegments", label: "Turn Segments", sub: "Discrete left/right turns", icon: Timer },
   { key: "cadence", label: "Turn Cadence", sub: "Tempo & rhythm metrics", icon: Timer },
 ];
 
@@ -184,30 +181,8 @@ function RecentSidebar({ results, currentId }: { results: AnalysisResult[]; curr
 
 // ─── Metrics drill-down panels ──────────────────────────────────────────────
 
-function ShinParallelPanel({ m }: { m: AnalysisMetrics }) {
-  const avgScore = Math.round(m.shinParallel.reduce((a, b) => a + b.parallelismScore, 0) / m.shinParallel.length);
-  const step = Math.max(1, Math.floor(m.shinParallel.length / 80));
-  const chartData = m.shinParallel.filter((_, i) => i % step === 0).map((f) => ({
-    frame: f.frame, score: f.parallelismScore, angle: Math.round(f.shinAngle * 10) / 10,
-  }));
-  return (
-    <div>
-      <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Shin Parallel</p>
-      <p className="text-2xl font-bold text-foreground">{avgScore}<span className="text-sm font-normal text-muted-foreground">/100</span></p>
-      <p className="text-xs text-muted-foreground">Average parallelism score across all frames</p>
-      <MetricChart height={200}>
-        <AreaChart data={chartData}>
-          <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-          <XAxis dataKey="frame" tick={{ fontSize: 9 }} />
-          <YAxis domain={[0, 100]} tick={{ fontSize: 9 }} />
-          <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8, border: "1px solid hsl(var(--border))" }}
-            formatter={(val: number, name: string) => [name === "score" ? `${val}/100` : `${val}°`, name === "score" ? "Parallelism" : "Shin Angle"]} />
-          <Area type="monotone" dataKey="score" stroke="hsl(var(--accent))" fill="hsl(var(--accent))" fillOpacity={0.1} strokeWidth={2} />
-        </AreaChart>
-      </MetricChart>
-    </div>
-  );
-}
+
+
 
 function COMPanel({ m }: { m: AnalysisMetrics }) {
   const step = Math.max(1, Math.floor(m.com.length / 80));
@@ -299,61 +274,8 @@ function CounterPanel({ m }: { m: AnalysisMetrics }) {
   );
 }
 
-function AngVsIncPanel({ m }: { m: AnalysisMetrics }) {
-  const step = Math.max(1, Math.floor(m.angulationVsInclination.length / 80));
-  const chartData = m.angulationVsInclination.filter((_, i) => i % step === 0).map((f) => ({
-    frame: f.frame, lower: f.lowerBodyLean, upper: f.upperBodyLean,
-  }));
-  return (
-    <div>
-      <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Angulation vs Inclination</p>
-      <p className="text-lg font-bold text-foreground">Lower vs Upper Body Lean</p>
-      <MetricChart height={200}>
-        <LineChart data={chartData}>
-          <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-          <XAxis dataKey="frame" tick={{ fontSize: 9 }} />
-          <YAxis tick={{ fontSize: 9 }} />
-          <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8, border: "1px solid hsl(var(--border))" }}
-            formatter={(val: number, name: string) => [`${val}°`, name === "lower" ? "Lower Body" : "Upper Body"]} />
-          <Line type="monotone" dataKey="lower" stroke="hsl(var(--accent))" strokeWidth={1.5} dot={false} name="lower" />
-          <Line type="monotone" dataKey="upper" stroke="hsl(var(--foreground))" strokeWidth={1.5} dot={false} strokeDasharray="4 4" name="upper" />
-        </LineChart>
-      </MetricChart>
-    </div>
-  );
-}
 
-function TurnSegmentsPanel({ m }: { m: AnalysisMetrics }) {
-  const chartData = m.turnSegments.map((t) => ({
-    turn: t.id.replace("turn_", "T"), duration: t.durationMs, dir: t.direction,
-  }));
-  return (
-    <div>
-      <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Turn Segments</p>
-      <p className="text-lg font-bold text-foreground">{m.turnSegments.length} Turns Detected</p>
-      <div className="mt-3 flex flex-wrap gap-2">
-        {m.turnSegments.map((t) => (
-          <span key={t.id} className={cn(
-            "rounded-full px-2 py-0.5 text-[10px] font-medium",
-            t.direction === "left" ? "bg-accent/10 text-accent" : "bg-secondary text-foreground"
-          )}>
-            {t.direction === "left" ? "L" : "R"} · {t.durationMs}ms
-          </span>
-        ))}
-      </div>
-      <MetricChart height={160}>
-        <BarChart data={chartData}>
-          <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-          <XAxis dataKey="turn" tick={{ fontSize: 9 }} />
-          <YAxis tick={{ fontSize: 9 }} />
-          <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8, border: "1px solid hsl(var(--border))" }}
-            formatter={(val: number) => [`${val}ms`, "Duration"]} />
-          <Bar dataKey="duration" fill="hsl(var(--accent))" radius={[3, 3, 0, 0]} />
-        </BarChart>
-      </MetricChart>
-    </div>
-  );
-}
+
 
 function EdgeSimilarityPanel({ m }: { m: AnalysisMetrics }) {
   const e = m.edgeSimilarity;
@@ -446,12 +368,9 @@ function MetricContent({ metricKey, m, result, videoTime, videoPlaying, onSeek }
   switch (metricKey) {
     case "model": return <ModelPanel result={result} videoTime={videoTime} videoPlaying={videoPlaying} onSeek={onSeek} />;
     case "edge": return <EdgeSimilarityPanel m={m} />;
-    case "shin": return <ShinParallelPanel m={m} />;
     case "angulation": return <AngulationPanel m={m} />;
     case "counter": return <CounterPanel m={m} />;
-    case "angVsInc": return <AngVsIncPanel m={m} />;
     case "com": return <COMPanel m={m} />;
-    case "turnSegments": return <TurnSegmentsPanel m={m} />;
     case "cadence": return <TurnCadencePanel m={m} />;
   }
 }
@@ -464,7 +383,7 @@ export default function ResultsPage() {
   const [allResults, setAllResults] = useState<AnalysisResult[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [selectedMetric, setSelectedMetric] = useState<MetricKey>("edge");
+  const [selectedMetric, setSelectedMetric] = useState<MetricKey>("model");
   const [theater, setTheater] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [supportOpen, setSupportOpen] = useState(false);
