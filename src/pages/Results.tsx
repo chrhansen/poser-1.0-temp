@@ -13,11 +13,13 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import {
-  Collapsible, CollapsibleContent, CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from "@/components/ui/select";
+import { useIsMobile } from "@/hooks/use-mobile";
 import {
   Loader2, Maximize2, Minimize2, Download, RefreshCw, Trash2, Plus,
-  AlertTriangle, Clock, CheckCircle, XCircle, HelpCircle, ChevronDown,
+  AlertTriangle, Clock, CheckCircle, XCircle, HelpCircle,
+  Cuboid, BarChart3, GitCompareArrows, RotateCw, Crosshair, Timer,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -36,32 +38,87 @@ function MetricChart({ children, height = 160 }: { children: React.ReactNode; he
   );
 }
 
-// ─── Metric Section (collapsible) ───────────────────────────────────────────
-function MetricSection({
-  title,
-  summary,
-  children,
-  defaultOpen = false,
-}: {
-  title: string;
-  summary: string;
-  children: React.ReactNode;
-  defaultOpen?: boolean;
-}) {
-  const [open, setOpen] = useState(defaultOpen);
+// ─── Metric definitions ─────────────────────────────────────────────────────
+type MetricKey = "model" | "edge" | "shin" | "angulation" | "counter" | "angVsInc" | "com" | "turnSegments" | "cadence";
+
+interface MetricDef {
+  key: MetricKey;
+  label: string;
+  sub: string;
+  icon: React.ElementType;
+}
+
+const METRICS: MetricDef[] = [
+  { key: "model", label: "3D Body Model", sub: "Animated 3D pose reconstruction", icon: Cuboid },
+  { key: "edge", label: "Edge Similarity", sub: "Edge quality per turn & aggregate", icon: GitCompareArrows },
+  { key: "shin", label: "Shin Parallel", sub: "Left/right shin parallelism", icon: BarChart3 },
+  { key: "angulation", label: "Angulation", sub: "Upper vs lower body separation", icon: Crosshair },
+  { key: "counter", label: "Counter-Rotation", sub: "Torso–pelvis yaw separation", icon: RotateCw },
+  { key: "angVsInc", label: "Ang. vs Inclination", sub: "Lower vs upper body lean", icon: GitCompareArrows },
+  { key: "com", label: "Center of Mass", sub: "3D world-space COM tracking", icon: Crosshair },
+  { key: "turnSegments", label: "Turn Segments", sub: "Discrete left/right turns", icon: Timer },
+  { key: "cadence", label: "Turn Cadence", sub: "Tempo & rhythm metrics", icon: Timer },
+];
+
+// ─── Metric sidebar nav (desktop) ───────────────────────────────────────────
+function MetricNav({ selected, onSelect }: { selected: MetricKey; onSelect: (k: MetricKey) => void }) {
   return (
-    <Collapsible open={open} onOpenChange={setOpen}>
-      <CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg border border-border px-4 py-3 text-left transition-colors hover:bg-secondary/50">
-        <div>
-          <p className="text-sm font-semibold text-foreground">{title}</p>
-          <p className="text-xs text-muted-foreground">{summary}</p>
-        </div>
-        <ChevronDown className={cn("h-4 w-4 shrink-0 text-muted-foreground transition-transform", open && "rotate-180")} />
-      </CollapsibleTrigger>
-      <CollapsibleContent className="mt-2 rounded-lg border border-border p-4">
-        {children}
-      </CollapsibleContent>
-    </Collapsible>
+    <nav className="hidden w-56 shrink-0 space-y-0.5 lg:block">
+      <p className="mb-3 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Metrics</p>
+      {METRICS.map((m) => {
+        const Icon = m.icon;
+        const active = m.key === selected;
+        return (
+          <button
+            key={m.key}
+            onClick={() => onSelect(m.key)}
+            className={cn(
+              "flex w-full items-start gap-2.5 rounded-lg px-3 py-2.5 text-left transition-colors",
+              active
+                ? "border-l-2 border-accent bg-secondary"
+                : "border-l-2 border-transparent hover:bg-secondary/50"
+            )}
+          >
+            <Icon className={cn("mt-0.5 h-4 w-4 shrink-0", active ? "text-accent" : "text-muted-foreground")} />
+            <div>
+              <p className={cn("text-sm font-medium", active ? "text-foreground" : "text-muted-foreground")}>{m.label}</p>
+              <p className="text-[11px] text-muted-foreground">{m.sub}</p>
+            </div>
+          </button>
+        );
+      })}
+    </nav>
+  );
+}
+
+// ─── Metric dropdown (mobile) ───────────────────────────────────────────────
+function MetricDropdown({ selected, onSelect }: { selected: MetricKey; onSelect: (k: MetricKey) => void }) {
+  const current = METRICS.find((m) => m.key === selected)!;
+  const Icon = current.icon;
+  return (
+    <div className="lg:hidden">
+      <Select value={selected} onValueChange={(v) => onSelect(v as MetricKey)}>
+        <SelectTrigger className="w-full">
+          <div className="flex items-center gap-2">
+            <Icon className="h-4 w-4 text-accent" />
+            <SelectValue />
+          </div>
+        </SelectTrigger>
+        <SelectContent>
+          {METRICS.map((m) => {
+            const MIcon = m.icon;
+            return (
+              <SelectItem key={m.key} value={m.key}>
+                <div className="flex items-center gap-2">
+                  <MIcon className="h-4 w-4" />
+                  <span>{m.label}</span>
+                </div>
+              </SelectItem>
+            );
+          })}
+        </SelectContent>
+      </Select>
+    </div>
   );
 }
 
@@ -129,16 +186,16 @@ function RecentSidebar({ results, currentId }: { results: AnalysisResult[]; curr
 
 function ShinParallelPanel({ m }: { m: AnalysisMetrics }) {
   const avgScore = Math.round(m.shinParallel.reduce((a, b) => a + b.parallelismScore, 0) / m.shinParallel.length);
-  // Downsample for chart: every Nth frame
   const step = Math.max(1, Math.floor(m.shinParallel.length / 80));
   const chartData = m.shinParallel.filter((_, i) => i % step === 0).map((f) => ({
-    frame: f.frame,
-    score: f.parallelismScore,
-    angle: Math.round(f.shinAngle * 10) / 10,
+    frame: f.frame, score: f.parallelismScore, angle: Math.round(f.shinAngle * 10) / 10,
   }));
   return (
-    <MetricSection title="Shin Parallel" summary={`Avg parallelism: ${avgScore}/100`}>
-      <MetricChart>
+    <div>
+      <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Shin Parallel</p>
+      <p className="text-2xl font-bold text-foreground">{avgScore}<span className="text-sm font-normal text-muted-foreground">/100</span></p>
+      <p className="text-xs text-muted-foreground">Average parallelism score across all frames</p>
+      <MetricChart height={200}>
         <AreaChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
           <XAxis dataKey="frame" tick={{ fontSize: 9 }} />
@@ -148,43 +205,51 @@ function ShinParallelPanel({ m }: { m: AnalysisMetrics }) {
           <Area type="monotone" dataKey="score" stroke="hsl(var(--accent))" fill="hsl(var(--accent))" fillOpacity={0.1} strokeWidth={2} />
         </AreaChart>
       </MetricChart>
-    </MetricSection>
+    </div>
   );
 }
 
 function COMPanel({ m }: { m: AnalysisMetrics }) {
   const step = Math.max(1, Math.floor(m.com.length / 80));
   const chartData = m.com.filter((_, i) => i % step === 0).map((f) => ({
-    frame: f.frame,
-    x: Math.round(f.x * 100) / 100,
-    y: Math.round(f.y * 100) / 100,
+    frame: f.frame, x: Math.round(f.x * 100) / 100, y: Math.round(f.y * 100) / 100,
   }));
   return (
-    <MetricSection title="Center of Mass" summary="3D position (x, y, z) per frame">
-      <MetricChart>
+    <div>
+      <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Center of Mass</p>
+      <p className="text-lg font-bold text-foreground">3D Position Tracking</p>
+      <p className="text-xs text-muted-foreground">X (lateral), Y (vertical), Z (downhill) per frame</p>
+      <MetricChart height={200}>
         <LineChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
           <XAxis dataKey="frame" tick={{ fontSize: 9 }} />
           <YAxis tick={{ fontSize: 9 }} />
           <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8, border: "1px solid hsl(var(--border))" }} />
-          <Line type="monotone" dataKey="x" stroke="hsl(var(--accent))" strokeWidth={1.5} dot={false} name="X" />
-          <Line type="monotone" dataKey="y" stroke="hsl(var(--foreground))" strokeWidth={1.5} dot={false} name="Y" />
+          <Line type="monotone" dataKey="x" stroke="hsl(var(--accent))" strokeWidth={1.5} dot={false} name="X (lateral)" />
+          <Line type="monotone" dataKey="y" stroke="hsl(var(--foreground))" strokeWidth={1.5} dot={false} strokeDasharray="4 4" name="Y (vertical)" />
         </LineChart>
       </MetricChart>
-    </MetricSection>
+    </div>
   );
 }
 
 function AngulationPanel({ m }: { m: AnalysisMetrics }) {
   const avgAbs = Math.round(m.angulation.reduce((a, b) => a + b.absolute, 0) / m.angulation.length * 10) / 10;
   const step = Math.max(1, Math.floor(m.angulation.length / 80));
-  const chartData = m.angulation.filter((_, i) => i % step === 0).map((f) => ({
-    frame: f.frame,
-    degrees: f.signed,
-  }));
+  const chartData = m.angulation.filter((_, i) => i % step === 0).map((f) => ({ frame: f.frame, degrees: f.signed }));
   return (
-    <MetricSection title="Angulation" summary={`Avg ${avgAbs}° upper/lower body separation`}>
-      <MetricChart>
+    <div>
+      <div className="flex items-baseline justify-between">
+        <div>
+          <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Angulation</p>
+          <p className="text-lg font-bold text-foreground">Upper vs Lower Body</p>
+        </div>
+        <div className="text-right">
+          <p className="text-2xl font-bold text-accent">{avgAbs}°</p>
+          <p className="text-[10px] text-muted-foreground">avg separation</p>
+        </div>
+      </div>
+      <MetricChart height={200}>
         <AreaChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
           <XAxis dataKey="frame" tick={{ fontSize: 9 }} />
@@ -194,43 +259,56 @@ function AngulationPanel({ m }: { m: AnalysisMetrics }) {
           <Area type="monotone" dataKey="degrees" stroke="hsl(var(--accent))" fill="hsl(var(--accent))" fillOpacity={0.1} strokeWidth={2} />
         </AreaChart>
       </MetricChart>
-    </MetricSection>
+    </div>
   );
 }
 
 function CounterPanel({ m }: { m: AnalysisMetrics }) {
   const avgAbs = Math.round(m.counter.reduce((a, b) => a + b.absolute, 0) / m.counter.length * 10) / 10;
+  const peakAbs = Math.round(Math.max(...m.counter.map((c) => c.absolute)) * 10) / 10;
   const step = Math.max(1, Math.floor(m.counter.length / 80));
-  const chartData = m.counter.filter((_, i) => i % step === 0).map((f) => ({
-    frame: f.frame,
-    degrees: f.signed,
-  }));
+  const chartData = m.counter.filter((_, i) => i % step === 0).map((f) => ({ frame: f.frame, signed: f.signed, absolute: f.absolute }));
   return (
-    <MetricSection title="Counter-Rotation" summary={`Avg ${avgAbs}° torso–pelvis separation`}>
-      <MetricChart>
-        <AreaChart data={chartData}>
+    <div>
+      <div className="flex items-baseline justify-between">
+        <div>
+          <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Counter-Rotation</p>
+          <p className="text-lg font-bold text-foreground">Torso–Pelvis Yaw</p>
+        </div>
+        <div className="text-right">
+          <p className="text-2xl font-bold text-accent">{avgAbs}°</p>
+          <p className="text-[10px] text-muted-foreground">avg counter</p>
+        </div>
+      </div>
+      <MetricChart height={200}>
+        <LineChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
           <XAxis dataKey="frame" tick={{ fontSize: 9 }} />
           <YAxis tick={{ fontSize: 9 }} />
           <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8, border: "1px solid hsl(var(--border))" }}
-            formatter={(val: number) => [`${val}°`, "Counter"]} />
-          <Area type="monotone" dataKey="degrees" stroke="hsl(var(--foreground))" fill="hsl(var(--foreground))" fillOpacity={0.05} strokeWidth={2} />
-        </AreaChart>
+            formatter={(val: number, name: string) => [`${val}°`, name === "signed" ? "Signed" : "Absolute"]} />
+          <Line type="monotone" dataKey="signed" stroke="hsl(var(--accent))" strokeWidth={2} dot={false} name="signed" />
+          <Line type="monotone" dataKey="absolute" stroke="hsl(var(--foreground))" strokeWidth={1.5} dot={false} strokeDasharray="4 4" name="absolute" />
+        </LineChart>
       </MetricChart>
-    </MetricSection>
+      <div className="mt-4 grid grid-cols-2 gap-3">
+        <StatCard label="Avg Counter" value={`${avgAbs}°`} sub="Active counter" />
+        <StatCard label="Peak Counter" value={`${peakAbs}°`} sub="Maximum separation" />
+      </div>
+    </div>
   );
 }
 
 function AngVsIncPanel({ m }: { m: AnalysisMetrics }) {
   const step = Math.max(1, Math.floor(m.angulationVsInclination.length / 80));
   const chartData = m.angulationVsInclination.filter((_, i) => i % step === 0).map((f) => ({
-    frame: f.frame,
-    lower: f.lowerBodyLean,
-    upper: f.upperBodyLean,
+    frame: f.frame, lower: f.lowerBodyLean, upper: f.upperBodyLean,
   }));
   return (
-    <MetricSection title="Angulation vs Inclination" summary="Lower-body lean vs upper-body lean">
-      <MetricChart>
+    <div>
+      <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Angulation vs Inclination</p>
+      <p className="text-lg font-bold text-foreground">Lower vs Upper Body Lean</p>
+      <MetricChart height={200}>
         <LineChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
           <XAxis dataKey="frame" tick={{ fontSize: 9 }} />
@@ -238,22 +316,22 @@ function AngVsIncPanel({ m }: { m: AnalysisMetrics }) {
           <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8, border: "1px solid hsl(var(--border))" }}
             formatter={(val: number, name: string) => [`${val}°`, name === "lower" ? "Lower Body" : "Upper Body"]} />
           <Line type="monotone" dataKey="lower" stroke="hsl(var(--accent))" strokeWidth={1.5} dot={false} name="lower" />
-          <Line type="monotone" dataKey="upper" stroke="hsl(var(--foreground))" strokeWidth={1.5} dot={false} name="upper" />
+          <Line type="monotone" dataKey="upper" stroke="hsl(var(--foreground))" strokeWidth={1.5} dot={false} strokeDasharray="4 4" name="upper" />
         </LineChart>
       </MetricChart>
-    </MetricSection>
+    </div>
   );
 }
 
 function TurnSegmentsPanel({ m }: { m: AnalysisMetrics }) {
   const chartData = m.turnSegments.map((t) => ({
-    turn: t.id.replace("turn_", "#"),
-    duration: t.durationMs,
-    dir: t.direction,
+    turn: t.id.replace("turn_", "T"), duration: t.durationMs, dir: t.direction,
   }));
   return (
-    <MetricSection title="Turn Segments" summary={`${m.turnSegments.length} turns detected`}>
-      <div className="mb-3 flex flex-wrap gap-2">
+    <div>
+      <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Turn Segments</p>
+      <p className="text-lg font-bold text-foreground">{m.turnSegments.length} Turns Detected</p>
+      <div className="mt-3 flex flex-wrap gap-2">
         {m.turnSegments.map((t) => (
           <span key={t.id} className={cn(
             "rounded-full px-2 py-0.5 text-[10px] font-medium",
@@ -263,7 +341,7 @@ function TurnSegmentsPanel({ m }: { m: AnalysisMetrics }) {
           </span>
         ))}
       </div>
-      <MetricChart height={120}>
+      <MetricChart height={160}>
         <BarChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
           <XAxis dataKey="turn" tick={{ fontSize: 9 }} />
@@ -273,46 +351,109 @@ function TurnSegmentsPanel({ m }: { m: AnalysisMetrics }) {
           <Bar dataKey="duration" fill="hsl(var(--accent))" radius={[3, 3, 0, 0]} />
         </BarChart>
       </MetricChart>
-    </MetricSection>
+    </div>
   );
 }
 
 function EdgeSimilarityPanel({ m }: { m: AnalysisMetrics }) {
   const e = m.edgeSimilarity;
+  const barData = e.perTurn.map((t) => ({
+    turn: t.turnId.replace("turn_", "T"),
+    score: t.score,
+  }));
   return (
-    <MetricSection title="Edge Similarity" summary={`Overall: ${e.overall} · Left: ${e.left} · Right: ${e.right}`} defaultOpen>
-      <div className="grid grid-cols-3 gap-3">
-        <StatCard label="Overall" value={e.overall} />
-        <StatCard label="Left" value={e.left} />
-        <StatCard label="Right" value={e.right} />
+    <div>
+      <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Edge Similarity</p>
+      <div className="flex items-baseline gap-6">
+        <p className="text-4xl font-bold text-foreground">{e.overall}</p>
+        <div className="flex gap-6">
+          <div className="text-center">
+            <p className="text-xl font-bold text-foreground">{e.left}</p>
+            <p className="text-[10px] text-muted-foreground">Left Turns</p>
+          </div>
+          <div className="text-center">
+            <p className="text-xl font-bold text-muted-foreground">{e.right}</p>
+            <p className="text-[10px] text-muted-foreground">Right Turns</p>
+          </div>
+        </div>
       </div>
-      {e.perTurn.length > 0 && (
-        <MetricChart height={120}>
-          <BarChart data={e.perTurn.map((t) => ({ turn: t.turnId.replace("turn_", "#"), score: t.score }))}>
-            <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-            <XAxis dataKey="turn" tick={{ fontSize: 9 }} />
-            <YAxis domain={[0, 100]} tick={{ fontSize: 9 }} />
-            <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8, border: "1px solid hsl(var(--border))" }}
-              formatter={(val: number) => [`${val}/100`, "Edge Score"]} />
-            <Bar dataKey="score" fill="hsl(var(--accent))" radius={[3, 3, 0, 0]} />
-          </BarChart>
-        </MetricChart>
+      <p className="mt-1 text-xs text-muted-foreground">Overall edge quality score based on apex shin parallelism.</p>
+      {barData.length > 0 && (
+        <>
+          <p className="mt-6 text-[10px] uppercase tracking-widest text-muted-foreground">Per-Turn Edge Score</p>
+          <MetricChart height={180}>
+            <BarChart data={barData}>
+              <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+              <XAxis dataKey="turn" tick={{ fontSize: 9 }} />
+              <YAxis domain={[0, 100]} tick={{ fontSize: 9 }} />
+              <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8, border: "1px solid hsl(var(--border))" }}
+                formatter={(val: number) => [`${val}/100`, "Edge Score"]} />
+              <Bar dataKey="score" fill="hsl(var(--accent))" radius={[3, 3, 0, 0]} />
+            </BarChart>
+          </MetricChart>
+        </>
       )}
-    </MetricSection>
+    </div>
   );
 }
 
 function TurnCadencePanel({ m }: { m: AnalysisMetrics }) {
   const c = m.turnCadence;
+  const cvLabel = c.turnDurationCv < 0.2 ? "Consistent" : c.turnDurationCv < 0.35 ? "Moderate" : "Variable";
   return (
-    <MetricSection title="Turn Cadence" summary={`${c.tpmMedian} tpm median · CV ${c.turnDurationCv}`}>
-      <div className="grid grid-cols-3 gap-3">
-        <StatCard label="Median TPM" value={c.tpmMedian} />
-        <StatCard label="Peak 6 TPM" value={c.tpmPeak6} />
-        <StatCard label="Duration CV" value={c.turnDurationCv} sub="lower = more consistent" />
+    <div>
+      <div className="rounded-lg border border-border bg-secondary/50 p-6 text-center">
+        <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Turn Cadence</p>
+        <p className="mt-2 text-4xl font-bold text-accent">{c.tpmMedian}</p>
+        <p className="text-sm text-muted-foreground">median turns per minute</p>
       </div>
-    </MetricSection>
+      <div className="mt-4 grid grid-cols-3 gap-3">
+        <StatCard label="TPM Peak (6)" value={c.tpmPeak6} sub="tpm" />
+        <StatCard label="Duration CV" value={`${Math.round(c.turnDurationCv * 100)}%`} sub={cvLabel} />
+        <StatCard label="Total Turns" value={m.turnSegments.length} />
+      </div>
+    </div>
   );
+}
+
+// ─── 3D Model panel ─────────────────────────────────────────────────────────
+function ModelPanel({ result, videoTime, videoPlaying, onSeek }: {
+  result: AnalysisResult; videoTime: number; videoPlaying: boolean; onSeek: (t: number) => void;
+}) {
+  return (
+    <div>
+      <p className="text-[10px] uppercase tracking-widest text-muted-foreground">3D Body Model</p>
+      <p className="text-lg font-bold text-foreground">Pose Reconstruction</p>
+      <div className="mt-4">
+        <ModelViewer
+          duration={result.duration ?? 10}
+          currentTime={videoTime}
+          onSeek={onSeek}
+          isPlaying={videoPlaying}
+          modelUrl={result.modelUrl}
+          className="border-0"
+        />
+      </div>
+    </div>
+  );
+}
+
+// ─── Metric content renderer ────────────────────────────────────────────────
+function MetricContent({ metricKey, m, result, videoTime, videoPlaying, onSeek }: {
+  metricKey: MetricKey; m: AnalysisMetrics; result: AnalysisResult;
+  videoTime: number; videoPlaying: boolean; onSeek: (t: number) => void;
+}) {
+  switch (metricKey) {
+    case "model": return <ModelPanel result={result} videoTime={videoTime} videoPlaying={videoPlaying} onSeek={onSeek} />;
+    case "edge": return <EdgeSimilarityPanel m={m} />;
+    case "shin": return <ShinParallelPanel m={m} />;
+    case "angulation": return <AngulationPanel m={m} />;
+    case "counter": return <CounterPanel m={m} />;
+    case "angVsInc": return <AngVsIncPanel m={m} />;
+    case "com": return <COMPanel m={m} />;
+    case "turnSegments": return <TurnSegmentsPanel m={m} />;
+    case "cadence": return <TurnCadencePanel m={m} />;
+  }
 }
 
 // ─── Main Results Page ──────────────────────────────────────────────────────
@@ -323,6 +464,7 @@ export default function ResultsPage() {
   const [allResults, setAllResults] = useState<AnalysisResult[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [selectedMetric, setSelectedMetric] = useState<MetricKey>("edge");
   const [theater, setTheater] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [supportOpen, setSupportOpen] = useState(false);
@@ -466,7 +608,7 @@ export default function ResultsPage() {
         <RecentSidebar results={allResults} currentId={result.id} />
         <div className="flex-1 overflow-auto">
           <Section>
-            <div className={cn("mx-auto", theater ? "max-w-6xl" : "max-w-2xl")}>
+            <div className="mx-auto max-w-5xl">
               {/* Header */}
               <div className="flex items-center justify-between">
                 <div>
@@ -477,9 +619,11 @@ export default function ResultsPage() {
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Button variant="outline" size="sm" onClick={() => setTheater(!theater)} aria-label="Toggle theater mode">
-                    {theater ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
-                  </Button>
+                  {m && (
+                    <span className="rounded-full border border-border px-3 py-1 text-sm font-bold text-foreground">
+                      Score {m.edgeSimilarity.overall}
+                    </span>
+                  )}
                   <Button variant="outline" size="sm" aria-label="Download results">
                     <Download className="h-4 w-4" />
                   </Button>
@@ -489,42 +633,27 @@ export default function ResultsPage() {
                 </div>
               </div>
 
-              {/* Video + Model panels */}
-              <div className={cn("mt-6 grid gap-4", theater ? "md:grid-cols-2" : "grid-cols-1")}>
-                <div className="overflow-hidden rounded-xl border border-border bg-secondary">
-                  {result.videoUrl ? (
-                    <video ref={videoRef} src={result.videoUrl} controls className="w-full"
-                      onTimeUpdate={handleVideoTimeUpdate} onPlay={handleVideoPlay} onPause={handleVideoPause} />
-                  ) : (
-                    <div className="flex h-48 items-center justify-center text-sm text-muted-foreground">Video preview unavailable</div>
-                  )}
-                </div>
-                {theater && (
-                  <ModelViewer duration={result.duration ?? 10} currentTime={videoTime} onSeek={handleModelSeek} isPlaying={videoPlaying} modelUrl={result.modelUrl} />
-                )}
-              </div>
-
-              {/* ── Overview cards ── */}
+              {/* Metric nav dropdown (mobile) */}
               {m && (
-                <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
-                  <StatCard label="Edge Score" value={m.edgeSimilarity.overall} />
-                  <StatCard label="Turns" value={m.turnSegments.length} />
-                  <StatCard label="Cadence" value={`${m.turnCadence.tpmMedian}`} sub="turns/min" />
-                  <StatCard label="Consistency" value={m.turnCadence.turnDurationCv} sub="duration CV" />
+                <div className="mt-6">
+                  <MetricDropdown selected={selectedMetric} onSelect={setSelectedMetric} />
                 </div>
               )}
 
-              {/* ── Expandable metric sections ── */}
+              {/* Content area: sidebar + metric panel */}
               {m && (
-                <div className="mt-6 space-y-3">
-                  <EdgeSimilarityPanel m={m} />
-                  <ShinParallelPanel m={m} />
-                  <AngulationPanel m={m} />
-                  <CounterPanel m={m} />
-                  <AngVsIncPanel m={m} />
-                  <COMPanel m={m} />
-                  <TurnSegmentsPanel m={m} />
-                  <TurnCadencePanel m={m} />
+                <div className="mt-6 flex gap-6">
+                  <MetricNav selected={selectedMetric} onSelect={setSelectedMetric} />
+                  <div className="min-w-0 flex-1 rounded-xl border border-border p-5">
+                    <MetricContent
+                      metricKey={selectedMetric}
+                      m={m}
+                      result={result}
+                      videoTime={videoTime}
+                      videoPlaying={videoPlaying}
+                      onSeek={handleModelSeek}
+                    />
+                  </div>
                 </div>
               )}
 
