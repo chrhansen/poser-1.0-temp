@@ -176,8 +176,6 @@ export const mockPartners: Partner[] = [
       next: `import { PoserEmbed } from '@poser/react';\n\nexport default function ResultsPage() {\n  return (\n    <main>\n      <PoserEmbed token="TOKEN" />\n    </main>\n  );\n}`,
     },
   },
-  { id: "p2", name: "SkiTech Labs", logoUrl: "", description: "R&D partner for motion capture technology.", url: "https://skitechlabs.example.com", slug: "skitech-labs", domain: "skitechlabs.example.com" },
-  { id: "p3", name: "Mountain Sports Co.", logoUrl: "", description: "Premium ski equipment and apparel.", url: "https://mountainsports.example.com", slug: "mountain-sports", domain: "mountainsports.example.com" },
 ];
 
 // ─── Metrics ────────────────────────────────────────────────────────────────
