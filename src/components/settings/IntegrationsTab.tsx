@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Loader2, Key, Globe, Pencil, RefreshCw, Copy, Check } from "lucide-react";
+import { Loader2, Globe, Pencil, Copy, Check } from "lucide-react";
 
 function CopyButton({ text, label }: { text: string; label: string }) {
   const [copied, setCopied] = useState(false);
@@ -45,27 +45,8 @@ export function IntegrationsTab() {
     return <div className="flex items-center justify-center py-12"><Loader2 className="h-5 w-5 animate-spin text-muted-foreground" /></div>;
   }
 
-  // Mock API key for now
-  const apiKey = "pk_live_xxxxxxxxxxxxxxxxxxxxxxxx";
-
   return (
     <div className="space-y-6">
-      {/* API Keys */}
-      <div className="rounded-xl border border-border p-6">
-        <h2 className="text-sm font-semibold text-foreground">API Key</h2>
-        <p className="mt-1 text-sm text-muted-foreground">Use this key to authenticate embed widgets and API requests.</p>
-        <div className="mt-4 flex items-center gap-3">
-          <div className="flex flex-1 items-center gap-2 rounded-lg border border-border bg-secondary px-3 py-2">
-            <Key className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-            <code className="flex-1 text-xs text-muted-foreground">{apiKey}</code>
-            <CopyButton text={apiKey} label="API key" />
-          </div>
-          <Button variant="outline" size="sm">
-            <RefreshCw className="mr-2 h-3 w-3" /> Regenerate
-          </Button>
-        </div>
-      </div>
-
       {/* Webhooks placeholder */}
       <div className="rounded-xl border border-border p-6">
         <h2 className="text-sm font-semibold text-foreground">Webhooks</h2>
