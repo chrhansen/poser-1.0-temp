@@ -52,7 +52,8 @@ const App = () => (
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/results/:id" element={<Results />} />
             <Route path="/settings" element={<Settings />} />
-            <Route path="/billing" element={<Billing />} />
+            {/* Billing redirect → Settings billing tab */}
+            <Route path="/billing" element={<Navigate to="/settings?tab=billing" replace />} />
 
             {/* TODO_BACKEND_HOOKUP: Re-wrap with <ProtectedRoute requireInternal> once auth is connected */}
             <Route path="/internal/metrics-debug" element={<MetricsDebug />} />
