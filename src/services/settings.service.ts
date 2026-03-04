@@ -11,7 +11,7 @@ export const settingsService = {
     return { ...mockProfile };
   },
 
-  updateProfile: async (data: Partial<Pick<SettingsProfile, "name" | "notifications">>): Promise<SettingsProfile> => {
+  updateProfile: async (data: Partial<Pick<SettingsProfile, "name" | "username" | "bio" | "notifications">>): Promise<SettingsProfile> => {
     // TODO_BACKEND_HOOKUP: Persist profile changes
     await delay(500);
     return { ...mockProfile, ...data };

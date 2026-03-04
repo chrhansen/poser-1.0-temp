@@ -3,6 +3,7 @@ import { AppLayout } from "@/components/layout/Layout";
 import { Section } from "@/components/shared/Section";
 import { PageLoader } from "@/components/shared/PageLoader";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
@@ -23,7 +24,9 @@ export default function SettingsPage() {
 
   // Form state
   const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
+  const [bio, setBio] = useState("");
   const [notifComplete, setNotifComplete] = useState(true);
   const [notifTips, setNotifTips] = useState(false);
 
@@ -32,7 +35,9 @@ export default function SettingsPage() {
       setProfile(p);
       originalRef.current = p;
       setName(p.name);
+      setUsername(p.username);
       setEmail(p.email);
+      setBio(p.bio);
       setNotifComplete(p.notifications.analysisComplete);
       setNotifTips(p.notifications.weeklyTips);
       setAvatarPreview(p.avatarUrl);
@@ -44,9 +49,9 @@ export default function SettingsPage() {
   useEffect(() => {
     if (!originalRef.current) return;
     const o = originalRef.current;
-    const isDirty = name !== o.name || notifComplete !== o.notifications.analysisComplete || notifTips !== o.notifications.weeklyTips;
+    const isDirty = name !== o.name || username !== o.username || bio !== o.bio || notifComplete !== o.notifications.analysisComplete || notifTips !== o.notifications.weeklyTips;
     setDirty(isDirty);
-  }, [name, notifComplete, notifTips]);
+  }, [name, username, bio, notifComplete, notifTips]);
 
   // Unsaved change guard
   useEffect(() => {
@@ -91,6 +96,8 @@ export default function SettingsPage() {
     try {
       const updated = await settingsService.updateProfile({
         name,
+        username,
+        bio,
         notifications: { analysisComplete: notifComplete, weeklyTips: notifTips },
       });
       originalRef.current = updated;
@@ -156,12 +163,26 @@ export default function SettingsPage() {
               <p className="mt-1 text-sm text-muted-foreground">Manage your account details.</p>
               <div className="mt-4 space-y-3">
                 <div className="space-y-1">
-                  <Label htmlFor="settings-name">Name</Label>
+                  <Label htmlFor="settings-name">Full Name</Label>
                   <Input id="settings-name" value={name} onChange={(e) => setName(e.target.value)} />
                 </div>
                 <div className="space-y-1">
-                  <Label htmlFor="settings-email">Email</Label>
+                  <Label htmlFor="settings-username">Username</Label>
+                  <div className="relative">
+                    <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">@</span>
+                    <Input id="settings-username" value={username} onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, ""))} className="pl-7" />
+                  </div>
+                  <p className="text-xs text-muted-foreground">This is your unique identifier on Poser</p>
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="settings-email">Email Address</Label>
                   <Input id="settings-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                  <p className="text-xs text-muted-foreground">We'll send analysis results and notifications to this email</p>
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="settings-bio">Bio</Label>
+                  <Textarea id="settings-bio" value={bio} onChange={(e) => setBio(e.target.value)} placeholder="Tell us about yourself" rows={3} />
+                  <p className="text-xs text-muted-foreground">A brief description that appears on your profile</p>
                 </div>
               </div>
             </div>

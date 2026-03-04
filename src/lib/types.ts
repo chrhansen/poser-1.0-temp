@@ -170,7 +170,9 @@ export interface BillingInfo {
 
 export interface SettingsProfile {
   name: string;
+  username: string;
   email: string;
+  bio: string;
   avatarUrl?: string;
   emailConfirmed: boolean;
   notifications: {
