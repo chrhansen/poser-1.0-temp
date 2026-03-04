@@ -209,7 +209,9 @@ export const mockBilling: BillingInfo = {
 // ─── Settings ───────────────────────────────────────────────────────────────
 export const mockProfile: SettingsProfile = {
   name: "Alex Chen",
+  username: "alexchen",
   email: "alex@example.com",
+  bio: "",
   avatarUrl: undefined,
   emailConfirmed: true,
   notifications: {
