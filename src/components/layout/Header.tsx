@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { Menu, X, User as UserIcon, LogOut } from "lucide-react";
+import poserLogo from "@/assets/poser-logo.svg";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -36,7 +37,8 @@ export function Header() {
     <>
       <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-xl">
         <div className="container flex h-16 items-center justify-between">
-          <Link to="/" className="text-xl font-bold tracking-tight text-foreground">
+          <Link to="/" className="flex items-center gap-2 text-xl font-bold tracking-tight text-foreground">
+            <img src={poserLogo} alt="" className="h-5 w-auto" />
             poser
           </Link>
 
