@@ -16,7 +16,7 @@ export default function PrivacyPage() {
             
           </ul>
           <h2 className="text-foreground">How We Use Your Data</h2>
-          <p>We use your data solely to provide and improve our analysis service. Videos are processed and stored securely.</p>
+          <p>We use your data solely to provide and improve our analysis service. Videos are processed and stored securely in the EU.</p>
           {/* TODO_BACKEND_HOOKUP: Add full legal privacy policy */}
         </div>
       </Section>
