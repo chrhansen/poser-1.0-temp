@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
 import { Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { Section } from "@/components/shared/Section";
@@ -203,7 +204,7 @@ function CreatePartnerForm({ onCreated }: { onCreated: (p: Partner) => void }) {
 }
 
 // ─── Embed Widget Promo ─────────────────────────────────────────────────────
-function EmbedWidgetPromo({ onContactSupport }: { onContactSupport?: () => void }) {
+function EmbedWidgetPromo({ onContactSupport, isAuthenticated }: { onContactSupport?: () => void; isAuthenticated: boolean }) {
   return (
     <div>
       <div>
@@ -283,9 +284,14 @@ function EmbedWidgetPromo({ onContactSupport }: { onContactSupport?: () => void 
           <p className="mt-1 text-sm text-muted-foreground">
             If you run into any issues setting up the embed widget, our team is happy to help.
           </p>
-          <Button variant="outline" size="sm" className="mt-3" onClick={() => onContactSupport?.()}>
+          <Button variant="outline" size="sm" className="mt-3" onClick={() => onContactSupport?.()} disabled={!isAuthenticated}>
             Contact support
           </Button>
+          {!isAuthenticated && (
+            <p className="mt-2 text-xs text-muted-foreground">
+              Please <Link to="/settings" className="text-primary underline underline-offset-2 hover:text-primary/80 transition-colors">sign in</Link> to contact support.
+            </p>
+          )}
         </div>
       </div>
     </div>
@@ -294,6 +300,7 @@ function EmbedWidgetPromo({ onContactSupport }: { onContactSupport?: () => void 
 
 // ─── Integrations Page ──────────────────────────────────────────────────────
 export default function IntegrationsPage() {
+  const { user } = useAuth();
   const [partners, setPartners] = useState<Partner[]>([]);
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState<string | null>(null);
@@ -338,7 +345,7 @@ export default function IntegrationsPage() {
 
           {/* Embed widget promo */}
           <div className="mt-8">
-            <EmbedWidgetPromo onContactSupport={() => setContactOpen(true)} />
+            <EmbedWidgetPromo onContactSupport={() => setContactOpen(true)} isAuthenticated={!!user} />
           </div>
 
           <ContactSupportDialog open={contactOpen} onOpenChange={setContactOpen} />
