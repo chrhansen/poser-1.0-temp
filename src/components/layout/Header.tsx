@@ -141,16 +141,27 @@ export function Header() {
         {mobileOpen && (
           <div className="border-t border-border bg-background px-6 pb-6 pt-4 md:hidden">
             <nav className="flex flex-col gap-4">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  to={link.href}
-                  onClick={() => setMobileOpen(false)}
-                  className="text-sm font-medium text-muted-foreground hover:text-foreground"
-                >
-                  {link.label}
-                </Link>
-              ))}
+              {navLinks.map((link) => {
+                const isHash = link.href.startsWith("/#");
+                return isHash ? (
+                  <button
+                    key={link.href}
+                    onClick={() => { setMobileOpen(false); handleNavClick(link.href); }}
+                    className="text-sm font-medium text-muted-foreground hover:text-foreground text-left"
+                  >
+                    {link.label}
+                  </button>
+                ) : (
+                  <Link
+                    key={link.href}
+                    to={link.href}
+                    onClick={() => setMobileOpen(false)}
+                    className="text-sm font-medium text-muted-foreground hover:text-foreground"
+                  >
+                    {link.label}
+                  </Link>
+                );
+              })}
               <div className="flex flex-col gap-2 border-t border-border pt-4">
                 {!user ? (
                   <>
