@@ -313,17 +313,26 @@ export default function LandingPage() {
           className="mx-auto max-w-lg text-center"
         >
           <h2 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">
-            Ready to improve?
+            See what to change before your next ski day.
           </h2>
           <p className="mt-3 text-muted-foreground">
-            Start with a free analysis. No credit card required.
+            Try a demo analysis or upload your own clip and get clearer technique feedback.
           </p>
-          <Button size="lg" className="mt-6" asChild>
-            <a href="/pricing">
-              See pricing
+          <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+            <Button size="lg" onClick={() => {
+              setActiveTab("demo");
+              document.getElementById("upload")?.scrollIntoView({ behavior: "smooth" });
+            }}>
+              Try demo analysis
               <ArrowRight className="ml-2 h-4 w-4" />
-            </a>
-          </Button>
+            </Button>
+            <Button variant="outline" size="lg" onClick={() => {
+              setActiveTab("clip");
+              document.getElementById("upload")?.scrollIntoView({ behavior: "smooth" });
+            }}>
+              Upload your clip
+            </Button>
+          </div>
         </motion.div>
       </Section>
     </Layout>
