@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Upload, Target, TrendingUp, ArrowRight, QrCode, Smartphone, Eye, AlertTriangle, Crosshair } from "lucide-react";
+import { Upload, Target, TrendingUp, ArrowRight, QrCode, Smartphone, Eye, AlertTriangle, Crosshair, BookOpen, Video, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Layout } from "@/components/layout/Layout";
 import { Section } from "@/components/shared/Section";
