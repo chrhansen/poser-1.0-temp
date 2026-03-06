@@ -89,14 +89,14 @@ export function Header() {
                   Log in
                 </Button>
                 <Button size="sm" asChild>
-                  <Link to="/#upload" onClick={scrollToUpload}>Upload clip</Link>
+                  <Link to="/#upload" onClick={scrollToUpload}>Try demo</Link>
                 </Button>
               </>
             )}
             {!loading && user && (
               <>
                 <Button size="sm" asChild>
-                  <Link to="/#upload" onClick={scrollToUpload}>Upload clip</Link>
+                  <Link to="/#upload" onClick={scrollToUpload}>Try demo</Link>
                 </Button>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -168,7 +168,7 @@ export function Header() {
                       Log in
                     </Button>
                     <Button size="sm" className="w-full" asChild>
-                      <Link to="/#upload" onClick={() => setMobileOpen(false)}>Upload clip</Link>
+                      <Link to="/#upload" onClick={() => setMobileOpen(false)}>Try demo</Link>
                     </Button>
                   </>
                 ) : (
