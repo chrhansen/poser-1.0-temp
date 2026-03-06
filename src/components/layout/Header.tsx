@@ -24,7 +24,22 @@ export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const { user, signOut, loading } = useAuth();
+
+  const handleNavClick = (href: string) => {
+    if (href.startsWith("/#")) {
+      const id = href.slice(2);
+      if (location.pathname === "/") {
+        document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+      } else {
+        navigate("/");
+        setTimeout(() => {
+          document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+        }, 100);
+      }
+    }
+  };
 
   const scrollToUpload = () => {
     if (location.pathname === "/") {
