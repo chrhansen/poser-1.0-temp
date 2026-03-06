@@ -58,18 +58,29 @@ export function Header() {
 
           {/* Desktop nav */}
           <nav className="hidden items-center gap-8 md:flex">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                to={link.href}
-                className={cn(
-                  "text-sm font-medium transition-colors hover:text-foreground",
-                  location.pathname === link.href ? "text-foreground" : "text-muted-foreground"
-                )}
-              >
-                {link.label}
-              </Link>
-            ))}
+            {navLinks.map((link) => {
+              const isHash = link.href.startsWith("/#");
+              return isHash ? (
+                <button
+                  key={link.href}
+                  onClick={() => handleNavClick(link.href)}
+                  className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  {link.label}
+                </button>
+              ) : (
+                <Link
+                  key={link.href}
+                  to={link.href}
+                  className={cn(
+                    "text-sm font-medium transition-colors hover:text-foreground",
+                    location.pathname === link.href ? "text-foreground" : "text-muted-foreground"
+                  )}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
           </nav>
 
           <div className="hidden items-center gap-3 md:flex">
