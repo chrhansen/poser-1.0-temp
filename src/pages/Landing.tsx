@@ -44,15 +44,16 @@ function DemoContent() {
         <Target className="h-5 w-5 text-muted-foreground" />
       </div>
       <p className="text-sm font-medium text-foreground">
-        See Poser in action with a sample ski clip
+        See a sample run analyzed from start to finish
       </p>
       <p className="text-xs text-muted-foreground max-w-xs">
-        We'll run an analysis on a pre-recorded clip so you can see the kind of feedback you'll get.
+        Watch how Poser goes from uploaded clip to movement breakdown to clear technique feedback.
       </p>
       <Button size="lg">
         Run demo analysis
         <ArrowRight className="ml-2 h-4 w-4" />
       </Button>
+      <p className="text-[11px] text-muted-foreground">No signup required</p>
     </div>
   );
 }
@@ -60,6 +61,12 @@ function DemoContent() {
 function ClipContent() {
   return (
     <div className="flex flex-col gap-6">
+      <div className="text-center mb-2">
+        <p className="text-sm font-medium text-foreground">Upload a short ski clip</p>
+        <p className="text-xs text-muted-foreground mt-1">
+          Drag and drop a clip from this device, or send one from your phone.
+        </p>
+      </div>
       <UploadBlock />
       <div className="relative flex items-center gap-4">
         <div className="h-px flex-1 bg-border" />
@@ -72,7 +79,7 @@ function ClipContent() {
         </div>
         <p className="text-sm font-medium text-foreground">Send from your phone</p>
         <p className="text-xs text-muted-foreground max-w-xs">
-          Scan the QR code with your phone camera to upload a clip directly from your camera roll.
+          Most ski videos live on your phone. Scan to upload there.
         </p>
         <div className="mt-1 flex h-28 w-28 items-center justify-center rounded-lg border border-border bg-secondary">
           <QrCode className="h-14 w-14 text-muted-foreground/60" />
