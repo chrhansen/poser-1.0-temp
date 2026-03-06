@@ -98,7 +98,7 @@ export const mockPricingPlans: PricingPlan[] = [
   {
     id: "pro",
     name: "Trip Pack",
-    price: 29,
+    price: 19,
     interval: "one-time",
     features: ["5 analyses", "Ski Rank score", "Edge Similarity", "Turn Cadence"],
     highlighted: true,
