@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Menu, X, User as UserIcon, LogOut } from "lucide-react";
 import poserLogo from "@/assets/poser-logo.svg";
@@ -15,6 +15,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { LoginDialog } from "@/components/dialogs/LoginDialog";
 
 const navLinks = [
+  { label: "How it works", href: "/#how-it-works" },
   { label: "About", href: "/about" },
   { label: "Pricing", href: "/pricing" },
 ];
