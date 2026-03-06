@@ -110,9 +110,9 @@ export function UploadBlock() {
               <p className="mt-3 text-sm font-medium text-foreground">
                 Drag & drop your ski clip here
               </p>
-              <p className="mt-1 text-xs text-muted-foreground">
-                MP4, MOV, or WebM · up to 100MB
-              </p>
+               <p className="mt-1 text-xs text-muted-foreground">
+                 Up to 250 MB
+               </p>
               <Button variant="outline" size="sm" className="mt-4" onClick={() => inputRef.current?.click()}>
                 Browse files
               </Button>
