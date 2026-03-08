@@ -127,25 +127,12 @@ export function Header() {
                 );
               })}
               <div className="flex flex-col gap-2 border-t border-border pt-4">
-                {!user ? (
-                  <>
-                    <Button variant="ghost" size="sm" className="w-full" onClick={() => { setMobileOpen(false); setLoginOpen(true); }}>
-                      Log in
-                    </Button>
-                    <Button size="sm" className="w-full" asChild>
-                      <Link to="/#upload" onClick={() => setMobileOpen(false)}>Try demo</Link>
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <Link to="/dashboard" onClick={() => setMobileOpen(false)}>
-                      <Button variant="ghost" size="sm" className="w-full">Dashboard</Button>
-                    </Link>
-                    <Button variant="ghost" size="sm" className="w-full" onClick={() => { signOut(); setMobileOpen(false); }}>
-                      Sign out
-                    </Button>
-                  </>
-                )}
+                <Button variant="ghost" size="sm" className="w-full" onClick={() => { setMobileOpen(false); setLoginOpen(true); }}>
+                  Sign in
+                </Button>
+                <Button size="sm" className="w-full" asChild>
+                  <Link to="/#upload" onClick={() => setMobileOpen(false)}>Try demo</Link>
+                </Button>
               </div>
             </nav>
           </div>
