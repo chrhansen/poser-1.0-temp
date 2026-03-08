@@ -18,7 +18,7 @@ export function Header() {
   const [loginOpen, setLoginOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, signOut, loading } = useAuth();
+  const { loading } = useAuth();
 
   const handleNavClick = (href: string) => {
     if (href.startsWith("/#")) {
