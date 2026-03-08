@@ -1,15 +1,8 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { Menu, X, User as UserIcon, LogOut } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import poserLogo from "@/assets/poser-logo.svg";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
 import { LoginDialog } from "@/components/dialogs/LoginDialog";
@@ -24,7 +17,7 @@ export function Header() {
   const [loginOpen, setLoginOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, signOut, loading } = useAuth();
+  const { loading } = useAuth();
 
   const handleNavClick = (href: string) => {
     if (href.startsWith("/#")) {
@@ -83,47 +76,12 @@ export function Header() {
           </nav>
 
           <div className="hidden items-center gap-3 md:flex">
-            {!loading && !user && (
-              <>
-                <Button variant="ghost" size="sm" onClick={() => setLoginOpen(true)}>
-                  Log in
-                </Button>
-                <Button size="sm" asChild>
-                  <Link to="/#upload" onClick={scrollToUpload}>Try demo</Link>
-                </Button>
-              </>
-            )}
-            {!loading && user && (
-              <>
-                <Button size="sm" asChild>
-                  <Link to="/#upload" onClick={scrollToUpload}>Try demo</Link>
-                </Button>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="sm" className="gap-2">
-                      <UserIcon className="h-4 w-4" />
-                      <span className="max-w-[120px] truncate">{user.name}</span>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-48">
-                    <DropdownMenuItem asChild>
-                      <Link to="/dashboard">Dashboard</Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link to="/settings">Settings</Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link to="/billing">Billing</Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => signOut()}>
-                      <LogOut className="mr-2 h-4 w-4" />
-                      Sign out
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </>
-            )}
+            <Button variant="ghost" size="sm" onClick={() => setLoginOpen(true)}>
+              Sign in
+            </Button>
+            <Button size="sm" asChild>
+              <Link to="/#upload" onClick={scrollToUpload}>Try demo</Link>
+            </Button>
           </div>
 
           {/* Mobile toggle */}
@@ -162,25 +120,12 @@ export function Header() {
                 );
               })}
               <div className="flex flex-col gap-2 border-t border-border pt-4">
-                {!user ? (
-                  <>
-                    <Button variant="ghost" size="sm" className="w-full" onClick={() => { setMobileOpen(false); setLoginOpen(true); }}>
-                      Log in
-                    </Button>
-                    <Button size="sm" className="w-full" asChild>
-                      <Link to="/#upload" onClick={() => setMobileOpen(false)}>Try demo</Link>
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <Link to="/dashboard" onClick={() => setMobileOpen(false)}>
-                      <Button variant="ghost" size="sm" className="w-full">Dashboard</Button>
-                    </Link>
-                    <Button variant="ghost" size="sm" className="w-full" onClick={() => { signOut(); setMobileOpen(false); }}>
-                      Sign out
-                    </Button>
-                  </>
-                )}
+                <Button variant="ghost" size="sm" className="w-full" onClick={() => { setMobileOpen(false); setLoginOpen(true); }}>
+                  Sign in
+                </Button>
+                <Button size="sm" className="w-full" asChild>
+                  <Link to="/#upload" onClick={() => setMobileOpen(false)}>Try demo</Link>
+                </Button>
               </div>
             </nav>
           </div>
