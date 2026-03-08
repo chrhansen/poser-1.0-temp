@@ -40,8 +40,8 @@ type UploadTab = "demo" | "clip";
 function DemoContent() {
   return (
     <div className="flex flex-col items-center gap-4 py-6 text-center">
-      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-secondary">
-        <Target className="h-5 w-5 text-muted-foreground" />
+      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-accent">
+        <Target className="h-5 w-5 text-accent-foreground" />
       </div>
       <p className="text-sm font-medium text-foreground">
         See a sample run analyzed from start to finish
@@ -74,15 +74,15 @@ function ClipContent() {
         <div className="h-px flex-1 bg-border" />
       </div>
       <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border p-6 text-center">
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-secondary">
-          <Smartphone className="h-5 w-5 text-muted-foreground" />
+        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-accent">
+          <Smartphone className="h-5 w-5 text-accent-foreground" />
         </div>
         <p className="text-sm font-medium text-foreground">Send from your phone</p>
         <p className="text-xs text-muted-foreground max-w-xs">
           Most ski videos live on your phone. Scan to upload there.
         </p>
-        <div className="mt-1 flex h-28 w-28 items-center justify-center rounded-lg border border-border bg-secondary">
-          <QrCode className="h-14 w-14 text-muted-foreground/60" />
+        <div className="mt-1 flex h-28 w-28 items-center justify-center rounded-lg border border-border bg-accent">
+          <QrCode className="h-14 w-14 text-accent-foreground/60" />
         </div>
       </div>
     </div>
@@ -224,8 +224,8 @@ export default function LandingPage() {
               transition={{ delay: i * 0.1, duration: 0.4 }}
               className="flex flex-col items-center text-center md:items-start md:text-left"
             >
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-secondary">
-                <step.icon className="h-5 w-5 text-foreground" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-accent">
+                <step.icon className="h-5 w-5 text-accent-foreground" />
               </div>
               <h3 className="mt-4 text-lg font-semibold text-foreground">{step.title}</h3>
               <p className="mt-2 text-sm text-muted-foreground">{step.description}</p>
@@ -258,8 +258,8 @@ export default function LandingPage() {
               transition={{ delay: i * 0.1, duration: 0.4 }}
               className="flex flex-col items-center text-center md:items-start md:text-left"
             >
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-secondary">
-                <item.icon className="h-5 w-5 text-foreground" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-accent">
+                <item.icon className="h-5 w-5 text-accent-foreground" />
               </div>
               <h3 className="mt-4 text-lg font-semibold text-foreground">{item.title}</h3>
               <p className="mt-2 text-sm text-muted-foreground">{item.description}</p>
@@ -295,8 +295,8 @@ export default function LandingPage() {
               transition={{ delay: i * 0.1, duration: 0.4 }}
               className="flex flex-col items-center gap-3 rounded-xl border border-border bg-card p-6 text-center"
             >
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary">
-                <item.icon className="h-5 w-5 text-foreground" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent">
+                <item.icon className="h-5 w-5 text-accent-foreground" />
               </div>
               <p className="text-sm font-medium text-foreground">{item.title}</p>
             </motion.div>
