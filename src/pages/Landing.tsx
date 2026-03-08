@@ -224,8 +224,8 @@ export default function LandingPage() {
               transition={{ delay: i * 0.1, duration: 0.4 }}
               className="flex flex-col items-center text-center md:items-start md:text-left"
             >
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-secondary">
-                <step.icon className="h-5 w-5 text-foreground" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-accent">
+                <step.icon className="h-5 w-5 text-accent-foreground" />
               </div>
               <h3 className="mt-4 text-lg font-semibold text-foreground">{step.title}</h3>
               <p className="mt-2 text-sm text-muted-foreground">{step.description}</p>
