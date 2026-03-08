@@ -83,47 +83,12 @@ export function Header() {
           </nav>
 
           <div className="hidden items-center gap-3 md:flex">
-            {!loading && !user && (
-              <>
-                <Button variant="ghost" size="sm" onClick={() => setLoginOpen(true)}>
-                  Log in
-                </Button>
-                <Button size="sm" asChild>
-                  <Link to="/#upload" onClick={scrollToUpload}>Try demo</Link>
-                </Button>
-              </>
-            )}
-            {!loading && user && (
-              <>
-                <Button size="sm" asChild>
-                  <Link to="/#upload" onClick={scrollToUpload}>Try demo</Link>
-                </Button>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="sm" className="gap-2">
-                      <UserIcon className="h-4 w-4" />
-                      <span className="max-w-[120px] truncate">{user.name}</span>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-48">
-                    <DropdownMenuItem asChild>
-                      <Link to="/dashboard">Dashboard</Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link to="/settings">Settings</Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link to="/billing">Billing</Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => signOut()}>
-                      <LogOut className="mr-2 h-4 w-4" />
-                      Sign out
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </>
-            )}
+            <Button variant="ghost" size="sm" onClick={() => setLoginOpen(true)}>
+              Sign in
+            </Button>
+            <Button size="sm" asChild>
+              <Link to="/#upload" onClick={scrollToUpload}>Try demo</Link>
+            </Button>
           </div>
 
           {/* Mobile toggle */}
