@@ -81,8 +81,8 @@ function ClipContent() {
         <p className="text-xs text-muted-foreground max-w-xs">
           Most ski videos live on your phone. Scan to upload there.
         </p>
-        <div className="mt-1 flex h-28 w-28 items-center justify-center rounded-lg border border-border bg-secondary">
-          <QrCode className="h-14 w-14 text-muted-foreground/60" />
+        <div className="mt-1 flex h-28 w-28 items-center justify-center rounded-lg border border-border bg-accent">
+          <QrCode className="h-14 w-14 text-accent-foreground/60" />
         </div>
       </div>
     </div>
