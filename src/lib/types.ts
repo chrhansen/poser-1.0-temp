@@ -84,7 +84,51 @@ export interface AnalysisMetrics {
 
 // ─── Analysis Result ────────────────────────────────────────────────────────
 
-export type SkiLimiter = "balance" | "pressure" | "edging" | "rotary";
+export type SkiLimiter = "balance" | "pressure" | "edging" | "steering";
+
+// ─── Theme / Submetric types for Results page ───────────────────────────────
+
+export type ThemeKey = "balance" | "pressure" | "edging" | "steering";
+
+export interface SubmetricScore {
+  id: string;
+  name: string;
+  score: number;
+  interpretation: string;
+  whatItIs: string;
+  whyItMatters: string;
+  whatYoursLookedLike: string;
+  whatToTry: string;
+}
+
+export interface ThemeScore {
+  key: ThemeKey;
+  name: string;
+  score: number;
+  summary: string;
+  nextFocus: string;
+  submetrics: SubmetricScore[];
+}
+
+export interface KeyMoment {
+  id: string;
+  type: "weakest" | "best" | "representative";
+  label: string;
+  description: string;
+  turnId?: string;
+  frame?: number;
+}
+
+export interface ThemeScores {
+  balance: ThemeScore;
+  pressure: ThemeScore;
+  edging: ThemeScore;
+  steering: ThemeScore;
+  whyNotHigher: string;
+  nextFocus: string;
+  nextFocusDetail?: string;
+  keyMoments: KeyMoment[];
+}
 
 export interface AnalysisResult {
   id: string;
