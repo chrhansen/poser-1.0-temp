@@ -201,7 +201,7 @@ export default function LandingPage() {
 
           {/* Card content */}
           <div className="rounded-2xl border border-border bg-card p-6">
-            {activeTab === "demo" ? <DemoContent /> : <ClipContent />}
+            {activeTab === "demo" ? <DemoContent onStartDemo={() => setDemoOpen(true)} /> : <ClipContent />}
           </div>
         </div>
       </Section>
