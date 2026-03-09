@@ -8,10 +8,10 @@ interface DemoStep2Props {
 }
 
 const progressRows = [
-  { label: "Tracking skier", duration: 900 },
-  { label: "Estimating pose", duration: 1000 },
-  { label: "Measuring movement", duration: 1100 },
-  { label: "Generating feedback", duration: 800 },
+  { label: "Tracking location of skier", duration: 2700 },
+  { label: "Estimating body position in 3D", duration: 3000 },
+  { label: "Measuring signals and calculating metrics", duration: 3300 },
+  { label: "Generating feedback", duration: 2400 },
 ];
 
 // Simple skeleton keypoints for the overlay (percentage-based)
@@ -145,8 +145,8 @@ export function DemoStep2Analyze({ onComplete }: DemoStep2Props) {
           </div>
 
           <p className="text-sm text-muted-foreground leading-relaxed">
-            We track the skier, estimate body position, and generate technique
-            feedback.
+            We track the skier and estimate body position through the clip. Then
+            we derive metrics and generate an overall technique feedback.
           </p>
 
           {/* Progress rows */}
