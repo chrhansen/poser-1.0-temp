@@ -137,6 +137,10 @@ export default function DashboardPage() {
     });
   };
 
+  const handleRetry = (id: string) => {
+    analysisService.rerunAnalysis(id).then(() => loadData());
+  };
+
   useEffect(() => { loadData(); }, []);
 
   if (loading) return <AppLayout><PageLoader /></AppLayout>;
@@ -163,19 +167,18 @@ export default function DashboardPage() {
             <>
               {/* Mobile cards */}
               <div className="mt-6 space-y-3 md:hidden">
-                {results.map((r) => <ResultCard key={r.id} r={r} />)}
+                {results.map((r) => <ResultCard key={r.id} r={r} onRetry={handleRetry} />)}
               </div>
 
               {/* Desktop table */}
               <div className="mt-6 hidden overflow-hidden rounded-xl border border-border md:block">
-                <div className="grid grid-cols-5 gap-4 border-b border-border bg-secondary/50 px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  <span>Date</span>
-                  <span>Status</span>
-                  <span>Edge Score</span>
-                  <span>Duration</span>
-                  <span>Turns</span>
+                <div className="grid grid-cols-[1fr_1fr_1.2fr_auto] gap-4 border-b border-border bg-secondary/50 px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  <span>SkiRank</span>
+                  <span>Details</span>
+                  <span>Insight</span>
+                  <span />
                 </div>
-                {results.map((r) => <ResultTableRow key={r.id} r={r} />)}
+                {results.map((r) => <ResultTableRow key={r.id} r={r} onRetry={handleRetry} />)}
               </div>
             </>
           )}
