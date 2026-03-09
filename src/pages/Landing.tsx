@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Upload, Target, TrendingUp, ArrowRight, QrCode, Smartphone, Eye, AlertTriangle, Crosshair, BookOpen, Video, BarChart3 } from "lucide-react";
+import { DemoAnalysisModal } from "@/components/demo/DemoAnalysisModal";
 import { Button } from "@/components/ui/button";
 import { Layout } from "@/components/layout/Layout";
 import { Section } from "@/components/shared/Section";
@@ -37,7 +38,7 @@ const steps = [
 
 type UploadTab = "demo" | "clip";
 
-function DemoContent() {
+function DemoContent({ onStartDemo }: { onStartDemo: () => void }) {
   return (
     <div className="flex flex-col items-center gap-4 py-6 text-center">
       <div className="flex h-12 w-12 items-center justify-center rounded-full bg-accent">
@@ -49,7 +50,7 @@ function DemoContent() {
       <p className="text-xs text-muted-foreground max-w-xs">
         Watch how Poser goes from uploaded clip to movement breakdown to clear technique feedback.
       </p>
-      <Button size="lg">
+      <Button size="lg" onClick={onStartDemo}>
         Start demo analysis
         <ArrowRight className="ml-2 h-4 w-4" />
       </Button>
@@ -91,6 +92,7 @@ function ClipContent() {
 
 export default function LandingPage() {
   const [activeTab, setActiveTab] = useState<UploadTab>("demo");
+  const [demoOpen, setDemoOpen] = useState(false);
 
   const scrollToUpload = () => {
     document.getElementById("upload")?.scrollIntoView({ behavior: "smooth" });
@@ -199,7 +201,7 @@ export default function LandingPage() {
 
           {/* Card content */}
           <div className="rounded-2xl border border-border bg-card p-6">
-            {activeTab === "demo" ? <DemoContent /> : <ClipContent />}
+            {activeTab === "demo" ? <DemoContent onStartDemo={() => setDemoOpen(true)} /> : <ClipContent />}
           </div>
         </div>
       </Section>
@@ -335,6 +337,7 @@ export default function LandingPage() {
           </div>
         </motion.div>
       </Section>
+      <DemoAnalysisModal open={demoOpen} onOpenChange={setDemoOpen} />
     </Layout>
   );
 }
