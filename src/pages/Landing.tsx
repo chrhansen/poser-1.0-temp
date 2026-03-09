@@ -92,6 +92,7 @@ function ClipContent() {
 
 export default function LandingPage() {
   const [activeTab, setActiveTab] = useState<UploadTab>("demo");
+  const [demoOpen, setDemoOpen] = useState(false);
 
   const scrollToUpload = () => {
     document.getElementById("upload")?.scrollIntoView({ behavior: "smooth" });
