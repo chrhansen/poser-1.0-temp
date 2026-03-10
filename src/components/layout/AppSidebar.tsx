@@ -305,7 +305,7 @@ export function AppSidebar({ extraContent }: AppSidebarProps) {
             {/* Close button row */}
             <div className="flex items-center justify-between border-b border-border px-3 py-3">
               <Link to="/" onClick={() => setMobileOpen(false)}>
-                <img src={poserLogo} alt="poser" className="h-9 w-auto" />
+                <img src={poserLogo} alt="poser" className="h-6 w-auto" />
               </Link>
               <button
                 onClick={() => setMobileOpen(false)}
