@@ -17,6 +17,14 @@ interface UploadSkierSelectProps {
   onContinue: (skierId: number) => void;
 }
 
+const MAX_TRIM_SECONDS = 20;
+
+function formatTime(s: number) {
+  const m = Math.floor(s / 60);
+  const sec = Math.floor(s % 60);
+  return `${m}:${sec.toString().padStart(2, "0")}`;
+}
+
 export function UploadSkierSelect({ file, onCancel, onContinue }: UploadSkierSelectProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
