@@ -64,7 +64,7 @@ export function UploadBlock() {
     setProgress(0);
 
     try {
-      const result = await analysisService.uploadClip(file, skierPos, (pct) => setProgress(pct));
+      const result = await analysisService.uploadClip(file, "center", (pct) => setProgress(pct));
       setState("success");
       toast.success("Clip uploaded! Analyzing…");
       setTimeout(() => navigate(`/results/${result.id}`), 1200);
