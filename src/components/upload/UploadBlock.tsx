@@ -1,21 +1,16 @@
 import { useState, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Upload, X, Loader2, AlertCircle, CheckCircle } from "lucide-react";
+import { Upload, Loader2, AlertCircle, CheckCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
-import { analysisService, type SkierPosition } from "@/services/analysis.service";
+import { analysisService } from "@/services/analysis.service";
 import { AuthDialog } from "@/components/dialogs/AuthDialog";
+import { UploadSkierSelect } from "@/components/upload/UploadSkierSelect";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
-type UploadState = "idle" | "file-selected" | "skier-select" | "uploading" | "success" | "error";
-
-const skierPositions: { value: SkierPosition; label: string; desc: string }[] = [
-  { value: "left", label: "Left", desc: "Skier is on the left side" },
-  { value: "center", label: "Center", desc: "Skier is centered" },
-  { value: "right", label: "Right", desc: "Skier is on the right side" },
-];
+type UploadState = "idle" | "skier-select" | "uploading" | "success" | "error";
 
 export function UploadBlock() {
   const navigate = useNavigate();
@@ -24,7 +19,7 @@ export function UploadBlock() {
 
   const [state, setState] = useState<UploadState>("idle");
   const [file, setFile] = useState<File | null>(null);
-  const [skierPos, setSkierPos] = useState<SkierPosition>("center");
+  const [selectedSkierId, setSelectedSkierId] = useState<number | null>(null);
   const [progress, setProgress] = useState(0);
   const [errorMsg, setErrorMsg] = useState("");
   const [authOpen, setAuthOpen] = useState(false);
@@ -69,7 +64,7 @@ export function UploadBlock() {
     setProgress(0);
 
     try {
-      const result = await analysisService.uploadClip(file, skierPos, (pct) => setProgress(pct));
+      const result = await analysisService.uploadClip(file, "center", (pct) => setProgress(pct));
       setState("success");
       toast.success("Clip uploaded! Analyzing…");
       setTimeout(() => navigate(`/results/${result.id}`), 1200);
@@ -135,54 +130,27 @@ export function UploadBlock() {
             </motion.div>
           )}
 
-          {/* Skier selection */}
+          {/* Skier selection — video preview + overlay */}
           {state === "skier-select" && file && (
             <motion.div
               key="skier-select"
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -12 }}
-              className="rounded-2xl border border-border p-6"
             >
-              <div className="flex items-start justify-between">
-                <div>
-                  <p className="text-sm font-medium text-foreground">{file.name}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {(file.size / (1024 * 1024)).toFixed(1)} MB
-                  </p>
-                </div>
-                <button onClick={reset} className="text-muted-foreground hover:text-foreground">
-                  <X className="h-4 w-4" />
-                </button>
-              </div>
-
-              <div className="mt-6">
-                <p className="text-sm font-medium text-foreground">Where is the skier in the frame?</p>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  This helps our AI focus on the right person.
-                </p>
-                <div className="mt-3 grid grid-cols-3 gap-2">
-                  {skierPositions.map((pos) => (
-                    <button
-                      key={pos.value}
-                      onClick={() => setSkierPos(pos.value)}
-                      className={cn(
-                        "flex flex-col items-center gap-1 rounded-lg border p-3 text-center transition-colors",
-                        skierPos === pos.value
-                          ? "border-foreground bg-secondary"
-                          : "border-border hover:border-muted-foreground"
-                      )}
-                    >
-                      <span className="text-sm font-medium text-foreground">{pos.label}</span>
-                      <span className="text-[10px] text-muted-foreground">{pos.desc}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <Button className="mt-6 w-full" onClick={handleUpload}>
-                {user ? "Analyze my skiing" : "Sign in & analyze"}
-              </Button>
+              <UploadSkierSelect
+                file={file}
+                onCancel={reset}
+                onContinue={(skierId) => {
+                  setSelectedSkierId(skierId);
+                  if (!user) {
+                    setAuthContext("upload");
+                    setAuthOpen(true);
+                  } else {
+                    handleUpload();
+                  }
+                }}
+              />
 
               {/* Inline helper for logged-out users */}
               {!user && (
