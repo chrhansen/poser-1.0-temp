@@ -1,5 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, BarChart3, Settings, CreditCard, HelpCircle, LogOut, PanelLeftClose, PanelLeft, Info, Tag, FileText, ChevronUp, Menu, X } from "lucide-react";
+import { LayoutDashboard, BarChart3, Settings, CreditCard, HelpCircle, LogOut, PanelLeftClose, PanelLeft, Info, Tag, FileText, ChevronUp, Menu, X, Plus } from "lucide-react";
+import { NewAnalysisSheet } from "@/components/upload/NewAnalysisSheet";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
 import React, { useState, createContext, useContext } from "react";
