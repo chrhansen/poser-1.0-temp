@@ -177,7 +177,6 @@ function SidebarInner({ extraContent, collapsed, setCollapsed, onNavigate, hideH
               ))}
             </>
           )}
-        </nav>
 
           {/* New Analysis button */}
           <SidebarTooltip key="new-analysis" label="New analysis" collapsed={collapsed}>
@@ -192,6 +191,7 @@ function SidebarInner({ extraContent, collapsed, setCollapsed, onNavigate, hideH
               {!collapsed && "New analysis"}
             </button>
           </SidebarTooltip>
+        </nav>
 
         {/* Recent analyses — always shown, scrollable */}
         {!collapsed && (
