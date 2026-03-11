@@ -189,10 +189,17 @@ export function UploadBlock() {
                 <p className="mt-3 text-center text-xs text-muted-foreground">
                   Requires a free account.{" "}
                   <button
-                    onClick={() => setAuthOpen(true)}
+                    onClick={() => { setAuthContext("signin"); setAuthOpen(true); }}
                     className="underline hover:text-foreground transition-colors"
                   >
-                    Sign in or create one
+                    Sign in
+                  </button>{" "}
+                  or{" "}
+                  <button
+                    onClick={() => { setAuthContext("signup"); setAuthOpen(true); }}
+                    className="underline hover:text-foreground transition-colors"
+                  >
+                    create one
                   </button>{" "}
                   to upload your own clip.
                 </p>
