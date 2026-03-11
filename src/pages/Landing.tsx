@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Upload, Target, TrendingUp, ArrowRight, QrCode, Smartphone, Eye, AlertTriangle, Crosshair, BookOpen, Video, BarChart3 } from "lucide-react";
+import { Upload, Target, TrendingUp, ArrowRight, Eye, AlertTriangle, Crosshair, BookOpen, Video, BarChart3 } from "lucide-react";
 import { DemoAnalysisModal } from "@/components/demo/DemoAnalysisModal";
 import { Button } from "@/components/ui/button";
 import { Layout } from "@/components/layout/Layout";
 import { Section } from "@/components/shared/Section";
-import { UploadBlock } from "@/components/upload/UploadBlock";
+import { UploadPickContent } from "@/components/upload/UploadPickContent";
 import { AuthDialog, type AuthContext } from "@/components/dialogs/AuthDialog";
 import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
@@ -65,46 +65,27 @@ function ClipContent({ onRequireAuth }: { onRequireAuth: () => void }) {
   const { user } = useAuth();
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="text-center mb-2">
-        <p className="text-sm font-medium text-foreground">Upload a short ski clip</p>
-        <p className="text-xs text-muted-foreground mt-1">
-          Drag and drop a clip from this device, or send one from your phone.
-        </p>
-      </div>
-      <UploadBlock />
-      <div className="relative flex items-center gap-4">
-        <div className="h-px flex-1 bg-border" />
-        <span className="text-xs font-medium text-muted-foreground">OR</span>
-        <div className="h-px flex-1 bg-border" />
-      </div>
-      <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border p-6 text-center">
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-accent">
-          <Smartphone className="h-5 w-5 text-accent-foreground" />
-        </div>
-        <p className="text-sm font-medium text-foreground">Send from your phone</p>
-        <p className="text-xs text-muted-foreground max-w-xs">
-          Most ski videos live on your phone. Scan to upload there.
-        </p>
-        <div className="mt-1 flex h-28 w-28 items-center justify-center rounded-lg border border-border bg-accent">
-          <QrCode className="h-14 w-14 text-accent-foreground/60" />
-        </div>
-      </div>
-
-      {/* Inline helper for logged-out users */}
-      {!user && (
-        <p className="text-center text-xs text-muted-foreground">
-          Requires a free account.{" "}
-          <button
-            onClick={onRequireAuth}
-            className="underline hover:text-foreground transition-colors"
-          >
-            Sign in or create one
-          </button>{" "}
-          to upload your own clip.
-        </p>
-      )}
-    </div>
+    <UploadPickContent
+      onContinue={() => {
+        if (!user) {
+          onRequireAuth();
+        }
+      }}
+      footer={
+        !user ? (
+          <p className="text-center text-xs text-muted-foreground">
+            Requires a free account.{" "}
+            <button
+              onClick={onRequireAuth}
+              className="underline hover:text-foreground transition-colors"
+            >
+              Sign in or create one
+            </button>{" "}
+            to upload your own clip.
+          </p>
+        ) : undefined
+      }
+    />
   );
 }
 
