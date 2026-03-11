@@ -207,7 +207,7 @@ export function UploadSkierSelect({ file, onCancel, onContinue }: UploadSkierSel
 
       {/* Scrubber */}
       {duration > 0 && (
-        <div className="px-5 pt-3">
+        <div>
           <div className="flex items-center gap-2 mb-2">
             <Scissors className="h-3.5 w-3.5 text-muted-foreground" />
             <span className="text-xs font-medium text-muted-foreground">
