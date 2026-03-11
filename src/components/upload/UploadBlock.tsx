@@ -28,6 +28,7 @@ export function UploadBlock() {
   const [progress, setProgress] = useState(0);
   const [errorMsg, setErrorMsg] = useState("");
   const [authOpen, setAuthOpen] = useState(false);
+  const [authContext, setAuthContext] = useState<"upload" | "signin" | "signup">("upload");
   const [dragOver, setDragOver] = useState(false);
 
   const handleFileSelect = useCallback((f: File) => {
