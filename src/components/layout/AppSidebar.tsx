@@ -51,6 +51,8 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
 
 interface AppSidebarProps {
   extraContent?: React.ReactNode;
+  mobileOpen?: boolean;
+  onMobileOpenChange?: (open: boolean) => void;
 }
 
 const TOOLTIP_DELAY = 100;
