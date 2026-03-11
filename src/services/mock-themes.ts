@@ -147,7 +147,8 @@ export const mockThemeScores_res1: ThemeScores = {
 
 /** Mock theme scores for res_5 (skiRank 65, limiter: balance) */
 export const mockThemeScores_res5: ThemeScores = {
-  whyNotHigher: "Balance was the biggest factor — fore-aft positioning cost you consistency.",
+  wentWell: "Steering showed good consistency, with clean direction changes in most turns.",
+  heldBackScore: "Balance was the biggest factor — fore-aft positioning cost you consistency.",
   nextFocus: "Work on staying centered over your feet, especially at the start of each turn.",
   keyMoments: [
     { id: "km_4", type: "weakest", label: "Weakest turn", description: "Lost balance rearward through the whole turn.", turnId: "turn_4", frame: 160 },
