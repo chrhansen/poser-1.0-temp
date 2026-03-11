@@ -19,7 +19,7 @@ export function UploadBlock() {
 
   const [state, setState] = useState<UploadState>("idle");
   const [file, setFile] = useState<File | null>(null);
-  const [skierPos, setSkierPos] = useState<SkierPosition>("center");
+  const [selectedSkierId, setSelectedSkierId] = useState<number | null>(null);
   const [progress, setProgress] = useState(0);
   const [errorMsg, setErrorMsg] = useState("");
   const [authOpen, setAuthOpen] = useState(false);
