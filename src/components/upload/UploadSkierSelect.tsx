@@ -232,7 +232,7 @@ export function UploadSkierSelect({ file, onCancel, onContinue }: UploadSkierSel
       )}
 
       {/* Thumbnail selectors + label */}
-      <div className="flex items-center gap-3 px-4 pt-3">
+      <div className="flex items-center gap-3">
         {MOCK_SKIERS.map((skier) => (
           <button
             key={skier.id}
