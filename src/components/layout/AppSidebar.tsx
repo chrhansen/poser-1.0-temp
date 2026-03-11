@@ -83,6 +83,7 @@ function SidebarInner({ extraContent, collapsed, setCollapsed, onNavigate, hideH
   const location = useLocation();
   const { user, signOut } = useAuth();
   const [supportOpen, setSupportOpen] = useState(false);
+  const [newAnalysisOpen, setNewAnalysisOpen] = useState(false);
 
   const handleNav = () => onNavigate?.();
 
