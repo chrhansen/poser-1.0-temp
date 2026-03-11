@@ -1,21 +1,16 @@
 import { useState, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Upload, X, Loader2, AlertCircle, CheckCircle } from "lucide-react";
+import { Upload, Loader2, AlertCircle, CheckCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
-import { analysisService, type SkierPosition } from "@/services/analysis.service";
+import { analysisService } from "@/services/analysis.service";
 import { AuthDialog } from "@/components/dialogs/AuthDialog";
+import { UploadSkierSelect } from "@/components/upload/UploadSkierSelect";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
-type UploadState = "idle" | "file-selected" | "skier-select" | "uploading" | "success" | "error";
-
-const skierPositions: { value: SkierPosition; label: string; desc: string }[] = [
-  { value: "left", label: "Left", desc: "Skier is on the left side" },
-  { value: "center", label: "Center", desc: "Skier is centered" },
-  { value: "right", label: "Right", desc: "Skier is on the right side" },
-];
+type UploadState = "idle" | "skier-select" | "uploading" | "success" | "error";
 
 export function UploadBlock() {
   const navigate = useNavigate();
