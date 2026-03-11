@@ -277,6 +277,7 @@ function SidebarInner({ extraContent, collapsed, setCollapsed, onNavigate, hideH
       </div>
 
       <ContactSupportDialog open={supportOpen} onOpenChange={setSupportOpen} />
+      <NewAnalysisSheet open={newAnalysisOpen} onOpenChange={setNewAnalysisOpen} />
     </>
   );
 }
