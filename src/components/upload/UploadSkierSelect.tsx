@@ -126,7 +126,7 @@ export function UploadSkierSelect({ file, onCancel, onContinue }: UploadSkierSel
       </div>
 
       {/* Video preview with skier overlays */}
-      <div className="relative mx-4 mt-3 overflow-hidden rounded-xl border border-border bg-secondary">
+      <div className="relative overflow-hidden rounded-xl border border-border bg-secondary">
         {videoUrl && (
           <video
             ref={videoRef}
