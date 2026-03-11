@@ -43,8 +43,10 @@ export function UploadSkierSelect({ file, onCancel, onContinue }: UploadSkierSel
 
   const handleLoadedMetadata = () => {
     if (videoRef.current) {
-      setDuration(videoRef.current.duration);
-      // Capture thumbnails from the first frame after a tiny delay
+      const dur = videoRef.current.duration;
+      setDuration(dur);
+      const endPct = dur > MAX_TRIM_SECONDS ? (MAX_TRIM_SECONDS / dur) * 100 : 100;
+      setTrimRange([0, endPct]);
       setTimeout(() => captureThumbnails(), 300);
     }
   };
