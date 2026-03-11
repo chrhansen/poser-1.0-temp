@@ -177,15 +177,13 @@ function SidebarInner({ extraContent, collapsed, setCollapsed, onNavigate, hideH
               ))}
             </>
           )}
-        </nav>
 
-        {/* New Analysis button */}
-        <div className="px-2 pb-1">
-          <SidebarTooltip label="New analysis" collapsed={collapsed}>
+          {/* New Analysis button */}
+          <SidebarTooltip key="new-analysis" label="New analysis" collapsed={collapsed}>
             <button
               onClick={() => setNewAnalysisOpen(true)}
               className={cn(
-                "flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-primary transition-colors hover:bg-primary/10",
+                "flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary/50 hover:text-foreground",
                 collapsed && "justify-center px-0"
               )}
             >
@@ -193,7 +191,7 @@ function SidebarInner({ extraContent, collapsed, setCollapsed, onNavigate, hideH
               {!collapsed && "New analysis"}
             </button>
           </SidebarTooltip>
-        </div>
+        </nav>
 
         {/* Recent analyses — always shown, scrollable */}
         {!collapsed && (
