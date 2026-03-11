@@ -3,7 +3,7 @@ import { X, Upload, QrCode, Smartphone, AlertCircle } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogOverlay, DialogPortal } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { UploadSkierSelect } from "@/components/upload/UploadSkierSelect";
 import { analysisService } from "@/services/analysis.service";
