@@ -1,5 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, BarChart3, Settings, CreditCard, HelpCircle, LogOut, PanelLeftClose, PanelLeft, Info, Tag, FileText, ChevronUp, Menu, X } from "lucide-react";
+import { LayoutDashboard, BarChart3, Settings, CreditCard, HelpCircle, LogOut, PanelLeftClose, PanelLeft, Info, Tag, FileText, ChevronUp, Menu, X, Plus } from "lucide-react";
+import { NewAnalysisSheet } from "@/components/upload/NewAnalysisSheet";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
 import React, { useState, createContext, useContext } from "react";
@@ -82,6 +83,7 @@ function SidebarInner({ extraContent, collapsed, setCollapsed, onNavigate, hideH
   const location = useLocation();
   const { user, signOut } = useAuth();
   const [supportOpen, setSupportOpen] = useState(false);
+  const [newAnalysisOpen, setNewAnalysisOpen] = useState(false);
 
   const handleNav = () => onNavigate?.();
 
@@ -177,6 +179,22 @@ function SidebarInner({ extraContent, collapsed, setCollapsed, onNavigate, hideH
           )}
         </nav>
 
+        {/* New Analysis button */}
+        <div className="px-2 pb-1">
+          <SidebarTooltip label="New analysis" collapsed={collapsed}>
+            <button
+              onClick={() => setNewAnalysisOpen(true)}
+              className={cn(
+                "flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-primary transition-colors hover:bg-primary/10",
+                collapsed && "justify-center px-0"
+              )}
+            >
+              <Plus className="h-4 w-4 shrink-0" />
+              {!collapsed && "New analysis"}
+            </button>
+          </SidebarTooltip>
+        </div>
+
         {/* Recent analyses — always shown, scrollable */}
         {!collapsed && (
           <div className="flex-1 overflow-y-auto border-t border-border px-2 py-3">
@@ -259,6 +277,7 @@ function SidebarInner({ extraContent, collapsed, setCollapsed, onNavigate, hideH
       </div>
 
       <ContactSupportDialog open={supportOpen} onOpenChange={setSupportOpen} />
+      <NewAnalysisSheet open={newAnalysisOpen} onOpenChange={setNewAnalysisOpen} />
     </>
   );
 }
