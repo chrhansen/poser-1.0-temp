@@ -60,6 +60,7 @@ export function UploadBlock() {
 
     // If not signed in, show auth dialog in upload context
     if (!user) {
+      setAuthContext("upload");
       setAuthOpen(true);
       return;
     }
