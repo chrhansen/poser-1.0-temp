@@ -79,7 +79,7 @@ export function OverviewSection({ skiRank, themes, onThemeSelect, onMomentSelect
               className={cn(
                 "flex flex-col items-start rounded-xl border p-4 text-left transition-all hover:shadow-md",
                 isWeakest
-                  ? "border-warm/30 bg-warm/[0.04]"
+                  ? "border-destructive/30 bg-destructive/[0.04]"
                   : "border-border bg-card hover:border-border/80"
               )}
             >
