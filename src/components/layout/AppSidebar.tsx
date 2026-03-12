@@ -9,6 +9,7 @@ import { RecentAnalysesList } from "./RecentAnalysesList";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
+import { Badge } from "@/components/ui/badge";
 import poserLogo from "@/assets/poser-logo.svg";
 import {
   DropdownMenu,
@@ -112,8 +113,9 @@ function SidebarInner({ extraContent, collapsed, setCollapsed, onNavigate, hideH
               </SidebarTooltip>
             ) : (
               <>
-                <Link to="/" onClick={handleNav}>
+                <Link to="/" onClick={handleNav} className="flex items-center gap-1.5">
                   <img src={poserLogo} alt="poser" className="h-6 w-auto" />
+                  <Badge variant="outline" className="text-[10px] px-1.5 py-0 font-semibold text-muted-foreground border-muted-foreground/30">Beta</Badge>
                 </Link>
                 <button
                   onClick={() => setCollapsed(true)}
@@ -329,8 +331,9 @@ export function AppSidebar({ extraContent, mobileOpen: controlledMobileOpen, onM
         <SheetTitle className="sr-only">Navigation</SheetTitle>
         <div className="flex h-full flex-col">
           <div className="flex items-center justify-between border-b border-border px-3 py-3">
-            <Link to="/" onClick={() => setMobileOpen(false)}>
+            <Link to="/" onClick={() => setMobileOpen(false)} className="flex items-center gap-1.5">
               <img src={poserLogo} alt="poser" className="h-6 w-auto" />
+              <Badge variant="outline" className="text-[10px] px-1.5 py-0 font-semibold text-muted-foreground border-muted-foreground/30">Beta</Badge>
             </Link>
             <button
               onClick={() => setMobileOpen(false)}

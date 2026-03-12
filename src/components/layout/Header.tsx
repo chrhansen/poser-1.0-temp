@@ -4,6 +4,7 @@ import { Menu, X } from "lucide-react";
 import poserLogo from "@/assets/poser-logo.svg";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/useAuth";
 import { AuthDialog, type AuthContext } from "@/components/dialogs/AuthDialog";
 
@@ -57,6 +58,7 @@ export function Header() {
           <Link to="/" className="flex items-center gap-2 text-xl font-bold tracking-tight text-foreground">
             <img src={poserLogo} alt="" className="h-6 w-auto" />
             poser
+            <Badge variant="outline" className="ml-1 text-[10px] px-1.5 py-0 font-semibold text-muted-foreground border-muted-foreground/30">Beta</Badge>
           </Link>
 
           {/* Desktop nav */}
