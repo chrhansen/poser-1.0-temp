@@ -5,7 +5,7 @@ import { PageLoader } from "@/components/shared/PageLoader";
 import { PageError } from "@/components/shared/PageError";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { analysisService } from "@/services/analysis.service";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import type { AnalysisResult, SkiLimiter } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -34,28 +34,33 @@ function formatClipMeta(r: AnalysisResult) {
 
 function ResultCard({ r, onRetry }: { r: AnalysisResult; onRetry: (id: string) => void }) {
   const { icon: Icon, cls } = statusConfig[r.status];
+  const navigate = useNavigate();
+
+  const handleCardClick = (e: React.MouseEvent) => {
+    if ((e.target as HTMLElement).closest("button, a")) return;
+    navigate(`/results/${r.id}`);
+  };
+
   return (
-    <div className="rounded-xl border border-border p-4 transition-shadow hover:shadow-md">
-      <Link to={r.status === "error" ? "#" : `/results/${r.id}`} className="block">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Icon className={cn("h-5 w-5 shrink-0", cls, r.status === "processing" && "animate-spin")} />
-            <div>
-              {r.status === "complete" && r.skiRank != null ? (
-                <p className="text-sm font-bold text-foreground">SkiRank {r.skiRank}</p>
-              ) : (
-                <p className={cn("text-sm font-medium", cls)}>{statusConfig[r.status].label}</p>
-              )}
-              <p className="text-xs text-muted-foreground">{formatClipMeta(r)}</p>
-            </div>
+    <div className="cursor-pointer rounded-xl border border-border p-4 transition-shadow hover:shadow-md" onClick={handleCardClick}>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <Icon className={cn("h-5 w-5 shrink-0", cls, r.status === "processing" && "animate-spin")} />
+          <div>
+            {r.status === "complete" && r.skiRank != null ? (
+              <p className="text-sm font-bold text-foreground">SkiRank {r.skiRank}</p>
+            ) : (
+              <p className={cn("text-sm font-medium", cls)}>{statusConfig[r.status].label}</p>
+            )}
+            <p className="text-xs text-muted-foreground">{formatClipMeta(r)}</p>
           </div>
-          {r.status === "complete" && r.biggestLimiter && (
-            <span className="text-xs text-muted-foreground">
-              Limiter: <span className="font-medium text-foreground">{limiterLabels[r.biggestLimiter]}</span>
-            </span>
-          )}
         </div>
-      </Link>
+        {r.status === "complete" && r.biggestLimiter && (
+          <span className="text-xs text-muted-foreground">
+            Limiter: <span className="font-medium text-foreground">{limiterLabels[r.biggestLimiter]}</span>
+          </span>
+        )}
+      </div>
       {r.status === "error" && (
         <div className="mt-3 flex items-center gap-2 border-t border-border pt-3">
           <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => onRetry(r.id)}>
@@ -74,8 +79,19 @@ function ResultCard({ r, onRetry }: { r: AnalysisResult; onRetry: (id: string) =
 
 function ResultTableRow({ r, onRetry }: { r: AnalysisResult; onRetry: (id: string) => void }) {
   const { icon: Icon, label, cls } = statusConfig[r.status];
+  const navigate = useNavigate();
+
+  const handleRowClick = (e: React.MouseEvent) => {
+    // Don't navigate if clicking a button or link inside the row
+    if ((e.target as HTMLElement).closest("button, a")) return;
+    navigate(`/results/${r.id}`);
+  };
+
   return (
-    <div className="grid grid-cols-[1fr_1fr_1.2fr_auto] items-center gap-4 border-b border-border px-4 py-3 text-sm transition-colors hover:bg-secondary/50 last:border-0">
+    <div
+      className="grid cursor-pointer grid-cols-[1fr_1fr_1.2fr_auto] items-center gap-4 border-b border-border px-4 py-3 text-sm transition-colors hover:bg-secondary/50 last:border-0"
+      onClick={handleRowClick}
+    >
       {/* SkiRank + status */}
       <div className="flex items-center gap-2">
         <Icon className={cn("h-3.5 w-3.5 shrink-0", cls, r.status === "processing" && "animate-spin")} />
@@ -96,7 +112,7 @@ function ResultTableRow({ r, onRetry }: { r: AnalysisResult; onRetry: (id: strin
         </span>
       ) : r.status === "error" ? (
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" className="h-7 text-xs" onClick={(e) => { e.preventDefault(); onRetry(r.id); }}>
+          <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => onRetry(r.id)}>
             <RotateCcw className="mr-1 h-3 w-3" /> Retry
           </Button>
           <Button variant="ghost" size="sm" className="h-7 text-xs" asChild>
@@ -109,12 +125,8 @@ function ResultTableRow({ r, onRetry }: { r: AnalysisResult; onRetry: (id: strin
         <span className="text-muted-foreground">—</span>
       )}
 
-      {/* Link arrow for non-error rows */}
-      {r.status !== "error" ? (
-        <Link to={`/results/${r.id}`} className="text-muted-foreground hover:text-foreground">
-          →
-        </Link>
-      ) : <span />}
+      {/* Link arrow */}
+      <span className="text-muted-foreground">→</span>
     </div>
   );
 }
