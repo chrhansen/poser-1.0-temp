@@ -188,7 +188,7 @@ export default function LandingPage() {
               <h2 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">
                 Try Poser in under a minute
               </h2>
-              <Badge variant="outline" className="text-[10px] px-1.5 py-0 font-semibold text-muted-foreground border-muted-foreground/30">Beta</Badge>
+              <Badge className="text-[10px] px-1.5 py-0 font-semibold bg-primary/15 text-primary border border-primary/30 hover:bg-primary/15">Beta</Badge>
             </div>
             <p className="mt-3 text-muted-foreground">
               Start with a demo clip, or use your own.

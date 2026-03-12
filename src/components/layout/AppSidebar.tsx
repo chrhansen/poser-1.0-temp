@@ -363,8 +363,9 @@ export function MobileTopBar({ onMenuClick }: { onMenuClick: () => void }) {
       >
         <Menu className="h-5 w-5" />
       </button>
-      <Link to="/" className="ml-2">
+      <Link to="/" className="ml-2 flex items-center gap-1.5">
         <img src={poserLogo} alt="poser" className="h-5 w-auto" />
+        <Badge className="text-[10px] px-1.5 py-0 font-semibold bg-primary/15 text-primary border border-primary/30 hover:bg-primary/15">Beta</Badge>
       </Link>
     </div>
   );
