@@ -89,11 +89,12 @@ export default function ResultsPage() {
     navigate("/dashboard");
   };
 
-  const handleRerun = async () => {
+  const handleRerun = () => {
     if (!result) return;
-    await analysisService.rerunAnalysis(result.id);
-    toast.success("Re-running clip…");
-    setResult({ ...result, status: "processing", progress: 0, failedReason: undefined });
+    // Create a mock file for demo — in production this would fetch the video from the backend
+    const mockFile = new File([new Blob([""], { type: "video/mp4" })], "rerun-clip.mp4", { type: "video/mp4" });
+    setRerunFile(mockFile);
+    setNewAnalysisOpen(true);
   };
 
   // Navigation handlers
