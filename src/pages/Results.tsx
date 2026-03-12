@@ -140,7 +140,7 @@ export default function ResultsPage() {
   if (result.status === "pending") {
     return (
       <AppLayout>
-        <Section>
+        <Section compact>
           <div className="flex flex-col items-center justify-center gap-4 text-center">
             <Clock className="h-10 w-10 text-muted-foreground" />
             <h1 className="text-2xl font-bold text-foreground">Queued for analysis</h1>
@@ -154,7 +154,7 @@ export default function ResultsPage() {
   if (result.status === "processing") {
     return (
       <AppLayout>
-        <Section>
+        <Section compact>
           <div className="mx-auto flex max-w-md flex-col items-center gap-6 text-center">
             <Loader2 className="h-10 w-10 animate-spin text-accent" />
             <h1 className="text-2xl font-bold text-foreground">Analyzing clip…</h1>
@@ -172,7 +172,7 @@ export default function ResultsPage() {
   if (result.status === "error") {
     return (
       <AppLayout>
-        <Section>
+        <Section compact>
           <div className="mx-auto flex max-w-md flex-col items-center gap-4 text-center">
             <AlertTriangle className="h-10 w-10 text-destructive" />
             <h1 className="text-2xl font-bold text-foreground">Couldn't analyze clip</h1>
@@ -201,7 +201,7 @@ export default function ResultsPage() {
 
   return (
     <AppLayout>
-      <Section className="py-6 md:py-8">
+      <Section compact>
         <div className="mx-auto max-w-5xl space-y-5">
           {/* Header */}
           <ResultsHeader result={result} />

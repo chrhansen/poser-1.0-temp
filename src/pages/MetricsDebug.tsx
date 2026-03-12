@@ -99,7 +99,7 @@ export default function MetricsDebugPage() {
 
   return (
     <AppLayout>
-      <Section>
+      <Section compact>
         <div className="mx-auto max-w-4xl">
           <h1 className="text-3xl font-bold tracking-tight text-foreground">
             Metrics <span className="text-sm font-normal text-muted-foreground">(internal)</span>

@@ -61,14 +61,14 @@ export default function BillingPage() {
   };
 
   if (loading) return <AppLayout><PageLoader /></AppLayout>;
-  if (!billing) return <AppLayout><Section><p className="text-muted-foreground">Unable to load billing info.</p></Section></AppLayout>;
+  if (!billing) return <AppLayout><Section compact><p className="text-muted-foreground">Unable to load billing info.</p></Section></AppLayout>;
 
   const usagePct = billing.usageLimit > 0 ? Math.round((billing.usageCredits / billing.usageLimit) * 100) : 0;
   const hasFailedInvoice = billing.invoices.some((inv) => inv.status === "failed");
 
   return (
     <AppLayout>
-      <Section>
+      <Section compact>
         <div className="mx-auto max-w-lg">
           <div className="flex items-center justify-between">
             <h1 className="text-3xl font-bold tracking-tight text-foreground">Billing</h1>
