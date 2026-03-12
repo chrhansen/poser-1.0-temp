@@ -190,6 +190,7 @@ export default function ResultsPage() {
         </Section>
         <ConfirmActionDialog open={deleteOpen} onOpenChange={setDeleteOpen} title="Delete clip?" description="This action cannot be undone." confirmLabel="Delete" destructive onConfirm={handleDelete} />
         <ContactSupportDialog open={supportOpen} onOpenChange={setSupportOpen} />
+        <NewAnalysisSheet open={newAnalysisOpen} onOpenChange={(open) => { setNewAnalysisOpen(open); if (!open) setRerunFile(undefined); }} rerunFile={rerunFile} />
       </AppLayout>
     );
   }
