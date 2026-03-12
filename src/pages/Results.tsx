@@ -45,6 +45,7 @@ export default function ResultsPage() {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [supportOpen, setSupportOpen] = useState(false);
   const [newAnalysisOpen, setNewAnalysisOpen] = useState(false);
+  const [rerunFile, setRerunFile] = useState<File | undefined>(undefined);
   const pollRef = useRef<ReturnType<typeof setInterval>>();
 
   // 3-level navigation state
