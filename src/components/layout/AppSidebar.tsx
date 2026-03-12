@@ -10,6 +10,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
+import { BetaBadge } from "@/components/shared/BetaBadge";
 import poserLogo from "@/assets/poser-logo.svg";
 import {
   DropdownMenu,
