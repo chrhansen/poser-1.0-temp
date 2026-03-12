@@ -34,28 +34,33 @@ function formatClipMeta(r: AnalysisResult) {
 
 function ResultCard({ r, onRetry }: { r: AnalysisResult; onRetry: (id: string) => void }) {
   const { icon: Icon, cls } = statusConfig[r.status];
+  const navigate = useNavigate();
+
+  const handleCardClick = (e: React.MouseEvent) => {
+    if ((e.target as HTMLElement).closest("button, a")) return;
+    navigate(`/results/${r.id}`);
+  };
+
   return (
-    <div className="rounded-xl border border-border p-4 transition-shadow hover:shadow-md">
-      <Link to={r.status === "error" ? "#" : `/results/${r.id}`} className="block">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Icon className={cn("h-5 w-5 shrink-0", cls, r.status === "processing" && "animate-spin")} />
-            <div>
-              {r.status === "complete" && r.skiRank != null ? (
-                <p className="text-sm font-bold text-foreground">SkiRank {r.skiRank}</p>
-              ) : (
-                <p className={cn("text-sm font-medium", cls)}>{statusConfig[r.status].label}</p>
-              )}
-              <p className="text-xs text-muted-foreground">{formatClipMeta(r)}</p>
-            </div>
+    <div className="cursor-pointer rounded-xl border border-border p-4 transition-shadow hover:shadow-md" onClick={handleCardClick}>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <Icon className={cn("h-5 w-5 shrink-0", cls, r.status === "processing" && "animate-spin")} />
+          <div>
+            {r.status === "complete" && r.skiRank != null ? (
+              <p className="text-sm font-bold text-foreground">SkiRank {r.skiRank}</p>
+            ) : (
+              <p className={cn("text-sm font-medium", cls)}>{statusConfig[r.status].label}</p>
+            )}
+            <p className="text-xs text-muted-foreground">{formatClipMeta(r)}</p>
           </div>
-          {r.status === "complete" && r.biggestLimiter && (
-            <span className="text-xs text-muted-foreground">
-              Limiter: <span className="font-medium text-foreground">{limiterLabels[r.biggestLimiter]}</span>
-            </span>
-          )}
         </div>
-      </Link>
+        {r.status === "complete" && r.biggestLimiter && (
+          <span className="text-xs text-muted-foreground">
+            Limiter: <span className="font-medium text-foreground">{limiterLabels[r.biggestLimiter]}</span>
+          </span>
+        )}
+      </div>
       {r.status === "error" && (
         <div className="mt-3 flex items-center gap-2 border-t border-border pt-3">
           <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => onRetry(r.id)}>
