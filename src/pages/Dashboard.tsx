@@ -5,7 +5,7 @@ import { PageLoader } from "@/components/shared/PageLoader";
 import { PageError } from "@/components/shared/PageError";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { analysisService } from "@/services/analysis.service";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import type { AnalysisResult, SkiLimiter } from "@/lib/types";
 import { cn } from "@/lib/utils";
