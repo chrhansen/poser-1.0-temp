@@ -33,7 +33,7 @@ export function ThemeDetail({ theme, activeSubmetric, onSubmetricSelect, childre
             className={cn(
               "flex shrink-0 items-center gap-2 rounded-lg border px-3 py-2 text-left transition-all",
               activeSubmetric === sm.id
-                ? "border-warm/30 bg-warm/[0.06] shadow-sm"
+                ? "border-accent/30 bg-accent/[0.06] shadow-sm"
                 : "border-border bg-card hover:border-border/80 hover:shadow-sm"
             )}
           >

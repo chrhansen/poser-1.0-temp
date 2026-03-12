@@ -89,7 +89,7 @@ export function OverviewSection({ skiRank, themes, onThemeSelect, onMomentSelect
               </div>
               <p className="mt-1 text-xs text-muted-foreground">{t.summary}</p>
               {isWeakest && (
-                <span className="mt-2 inline-flex items-center gap-1 rounded-full bg-warm/10 px-2 py-0.5 text-[10px] font-semibold text-warm">
+                <span className="mt-2 inline-flex items-center gap-1 rounded-full bg-destructive/10 px-2 py-0.5 text-[10px] font-semibold text-destructive">
                   <AlertTriangle className="h-2.5 w-2.5" /> Biggest limiter
                 </span>
               )}

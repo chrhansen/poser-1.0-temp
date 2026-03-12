@@ -44,8 +44,8 @@ export function SubmetricDetail({
         </div>
 
         {/* Coaching card */}
-        <div className="mt-4 rounded-lg border border-warm/10 bg-warm/[0.04] px-3 py-2">
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-warm">What to try</p>
+        <div className="mt-4 rounded-lg border border-accent/10 bg-accent/[0.04] px-3 py-2">
+          <p className="text-[10px] font-semibold uppercase tracking-wider text-accent-foreground">What to try</p>
           <p className="mt-0.5 text-sm text-foreground">{submetric.whatToTry}</p>
         </div>
       </div>

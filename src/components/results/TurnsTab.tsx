@@ -79,8 +79,8 @@ export function TurnsTab({ metrics, selectedTurn, onTurnSelect }: TurnsTabProps)
 
       {/* Direction labels */}
       <div className="mt-2 flex gap-3 text-[10px] text-muted-foreground">
-        <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-warm" /> Left turn</span>
-        <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-warm opacity-60" /> Right turn</span>
+        <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-accent" /> Left turn</span>
+        <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-accent opacity-60" /> Right turn</span>
       </div>
     </div>
   );
