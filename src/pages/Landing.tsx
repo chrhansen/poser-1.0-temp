@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Upload, Target, TrendingUp, ArrowRight, Eye, AlertTriangle, Crosshair, BookOpen, Video, BarChart3 } from "lucide-react";
 import { DemoAnalysisModal } from "@/components/demo/DemoAnalysisModal";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { BetaBadge } from "@/components/shared/BetaBadge";
 import { Layout } from "@/components/layout/Layout";
 import { Section } from "@/components/shared/Section";
 import { UploadPickContent } from "@/components/upload/UploadPickContent";
@@ -188,7 +188,7 @@ export default function LandingPage() {
               <h2 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">
                 Try Poser in under a minute
               </h2>
-              <Badge className="text-[10px] px-1.5 py-0 font-semibold bg-primary/15 text-primary border border-primary/30 hover:bg-primary/15">Beta</Badge>
+              <BetaBadge />
             </div>
             <p className="mt-3 text-muted-foreground">
               Start with a demo clip, or use your own.
