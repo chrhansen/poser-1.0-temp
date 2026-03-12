@@ -33,10 +33,10 @@ export function OverviewSection({ skiRank, themes, onThemeSelect, onMomentSelect
   return (
     <div className="space-y-4">
       {/* SkiRank hero */}
-      <div className="rounded-2xl border border-warm/20 bg-gradient-to-br from-warm/[0.06] via-warm-glow/[0.03] to-transparent p-6 text-center shadow-sm">
+      <div className="rounded-2xl border border-accent/20 bg-gradient-to-br from-accent/[0.06] via-accent/[0.03] to-transparent p-6 text-center shadow-sm">
         <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Overall technique score</p>
-        <p className="mt-2 text-5xl font-bold text-warm">{skiRank}</p>
-        <p className="mt-1 text-xs font-semibold text-warm">SkiRank</p>
+        <p className="mt-2 text-5xl font-bold text-accent-foreground">{skiRank}</p>
+        <p className="mt-1 text-xs font-semibold text-accent-foreground">SkiRank</p>
         <p className="mt-2 text-xs text-muted-foreground">
           Strongest: <span className="font-medium text-foreground capitalize">{strongest}</span> · Main limiter: <span className="font-medium text-foreground capitalize">{weakest}</span>
         </p>
