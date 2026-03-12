@@ -58,8 +58,8 @@ export function OverviewSection({ skiRank, themes, onThemeSelect, onMomentSelect
       </div>
 
       {/* Next focus */}
-      <div className="rounded-xl border border-warm/15 bg-warm/[0.04] p-4">
-        <p className="text-xs font-semibold uppercase tracking-wider text-warm">Next focus</p>
+      <div className="rounded-xl border border-accent/15 bg-accent/[0.04] p-4">
+        <p className="text-xs font-semibold uppercase tracking-wider text-accent-foreground">Next focus</p>
         <p className="mt-1.5 text-sm font-medium text-foreground">{themes.nextFocus}</p>
         {themes.nextFocusDetail && (
           <p className="mt-1 text-xs text-muted-foreground">{themes.nextFocusDetail}</p>
