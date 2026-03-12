@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, BarChart3, Settings, CreditCard, HelpCircle, LogOut, PanelLeftClose, PanelLeft, Info, Tag, FileText, ChevronUp, Menu, X, Plus } from "lucide-react";
+import { LayoutDashboard, BarChart3, Settings, CreditCard, HelpCircle, LogOut, PanelLeftClose, PanelLeft, Info, Tag, FileText, ChevronUp, Menu, X, Upload } from "lucide-react";
 import { NewAnalysisSheet } from "@/components/upload/NewAnalysisSheet";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
@@ -182,7 +182,7 @@ function SidebarInner({ extraContent, collapsed, setCollapsed, onNavigate, hideH
           )}
 
           {/* New Analysis button */}
-          <SidebarTooltip key="new-analysis" label="New analysis" collapsed={collapsed}>
+          <SidebarTooltip key="upload-clip" label="Upload clip" collapsed={collapsed}>
             <button
               onClick={() => setNewAnalysisOpen(true)}
               className={cn(
@@ -190,8 +190,8 @@ function SidebarInner({ extraContent, collapsed, setCollapsed, onNavigate, hideH
                 collapsed && "justify-center px-0"
               )}
             >
-              <Plus className="h-4 w-4 shrink-0" />
-              {!collapsed && "New analysis"}
+              <Upload className="h-4 w-4 shrink-0" />
+              {!collapsed && "Upload clip"}
             </button>
           </SidebarTooltip>
         </nav>

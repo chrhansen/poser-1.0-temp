@@ -84,14 +84,14 @@ export default function ResultsPage() {
   const handleDelete = async () => {
     if (!result) return;
     await analysisService.deleteResult(result.id);
-    toast.success("Analysis deleted.");
+    toast.success("Clip deleted.");
     navigate("/dashboard");
   };
 
   const handleRerun = async () => {
     if (!result) return;
     await analysisService.rerunAnalysis(result.id);
-    toast.success("Re-running analysis…");
+    toast.success("Re-running clip…");
     setResult({ ...result, status: "processing", progress: 0, failedReason: undefined });
   };
 
@@ -144,7 +144,7 @@ export default function ResultsPage() {
           <div className="flex flex-col items-center justify-center gap-4 text-center">
             <Clock className="h-10 w-10 text-muted-foreground" />
             <h1 className="text-2xl font-bold text-foreground">Queued for analysis</h1>
-            <p className="text-muted-foreground">Your clip is in the queue. Analysis will begin shortly.</p>
+            <p className="text-muted-foreground">Your clip is in the queue. Processing will begin shortly.</p>
           </div>
         </Section>
       </AppLayout>
@@ -157,7 +157,7 @@ export default function ResultsPage() {
         <Section>
           <div className="mx-auto flex max-w-md flex-col items-center gap-6 text-center">
             <Loader2 className="h-10 w-10 animate-spin text-accent" />
-            <h1 className="text-2xl font-bold text-foreground">Analyzing your clip…</h1>
+            <h1 className="text-2xl font-bold text-foreground">Analyzing clip…</h1>
             <p className="text-muted-foreground">This usually takes 1–2 minutes.</p>
             <div className="w-full">
               <Progress value={result.progress ?? 0} className="h-2" />
@@ -175,18 +175,18 @@ export default function ResultsPage() {
         <Section>
           <div className="mx-auto flex max-w-md flex-col items-center gap-4 text-center">
             <AlertTriangle className="h-10 w-10 text-destructive" />
-            <h1 className="text-2xl font-bold text-foreground">Analysis failed</h1>
+            <h1 className="text-2xl font-bold text-foreground">Couldn't analyze clip</h1>
             <p className="text-sm text-muted-foreground">{result.failedReason ?? "An unexpected error occurred."}</p>
             <div className="flex gap-3">
-              <Button onClick={handleRerun}><RefreshCw className="mr-2 h-4 w-4" />Re-run analysis</Button>
+              <Button onClick={handleRerun}><RefreshCw className="mr-2 h-4 w-4" />Re-run clip</Button>
               <Button variant="outline" onClick={() => setSupportOpen(true)}><HelpCircle className="mr-2 h-4 w-4" />Contact support</Button>
             </div>
             <Button variant="ghost" size="sm" className="text-destructive" onClick={() => setDeleteOpen(true)}>
-              <Trash2 className="mr-2 h-4 w-4" />Delete analysis
+              <Trash2 className="mr-2 h-4 w-4" />Delete clip
             </Button>
           </div>
         </Section>
-        <ConfirmActionDialog open={deleteOpen} onOpenChange={setDeleteOpen} title="Delete analysis?" description="This action cannot be undone." confirmLabel="Delete" destructive onConfirm={handleDelete} />
+        <ConfirmActionDialog open={deleteOpen} onOpenChange={setDeleteOpen} title="Delete clip?" description="This action cannot be undone." confirmLabel="Delete" destructive onConfirm={handleDelete} />
         <ContactSupportDialog open={supportOpen} onOpenChange={setSupportOpen} />
       </AppLayout>
     );
@@ -194,7 +194,7 @@ export default function ResultsPage() {
 
   // ── Complete state ──
   const themes = getThemeScores(result);
-  if (!themes) return <AppLayout><PageError message="No analysis data available." onRetry={loadData} /></AppLayout>;
+  if (!themes) return <AppLayout><PageError message="No clip data available." onRetry={loadData} /></AppLayout>;
 
   const currentTheme = activeView !== "overview" ? themes[activeView as ThemeKey] : null;
   const currentSubmetric = currentTheme?.submetrics.find((s) => s.id === activeSubmetric) ?? null;
@@ -263,7 +263,7 @@ export default function ResultsPage() {
         </div>
       </Section>
 
-      <ConfirmActionDialog open={deleteOpen} onOpenChange={setDeleteOpen} title="Delete analysis?" description="This will permanently remove this analysis and all associated data." confirmLabel="Delete" destructive onConfirm={handleDelete} />
+      <ConfirmActionDialog open={deleteOpen} onOpenChange={setDeleteOpen} title="Delete clip?" description="This will permanently remove this clip and all associated data." confirmLabel="Delete" destructive onConfirm={handleDelete} />
       <ContactSupportDialog open={supportOpen} onOpenChange={setSupportOpen} />
       <NewAnalysisSheet open={newAnalysisOpen} onOpenChange={setNewAnalysisOpen} />
     </AppLayout>

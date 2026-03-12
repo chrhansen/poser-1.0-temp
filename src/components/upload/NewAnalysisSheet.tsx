@@ -13,7 +13,7 @@ export function NewAnalysisSheet({ open, onOpenChange }: NewAnalysisSheetProps) 
   const isMobile = useIsMobile();
 
   const handleContinue = (_skierId: number) => {
-    toast.success("Analysis started! (UI-only demo)");
+    toast.success("Clip uploaded! (UI-only demo)");
     onOpenChange(false);
   };
 
@@ -31,7 +31,7 @@ export function NewAnalysisSheet({ open, onOpenChange }: NewAnalysisSheetProps) 
           className="flex h-[92dvh] flex-col p-0 rounded-t-xl [&>button]:hidden"
         >
           <SheetTitle className="border-b border-border px-4 py-3 sm:px-6 text-base font-semibold">
-            New Analysis
+            Upload clip
           </SheetTitle>
           {body}
         </SheetContent>
@@ -43,7 +43,7 @@ export function NewAnalysisSheet({ open, onOpenChange }: NewAnalysisSheetProps) 
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="flex max-w-lg flex-col overflow-hidden rounded-xl p-0 max-h-[85vh]">
         <DialogTitle className="border-b border-border px-4 py-3 sm:px-6 text-base font-semibold">
-          New Analysis
+            Upload clip
         </DialogTitle>
         {body}
       </DialogContent>

@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import type { AnalysisResult, SkiLimiter } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { Plus, Clock, Loader2, CheckCircle, XCircle, RotateCcw, AlertTriangle } from "lucide-react";
+import { Upload, Clock, Loader2, CheckCircle, XCircle, RotateCcw, AlertTriangle } from "lucide-react";
 import { NewAnalysisSheet } from "@/components/upload/NewAnalysisSheet";
 
 const statusConfig: Record<AnalysisResult["status"], { icon: typeof Clock; label: string; cls: string }> = {
@@ -144,7 +144,7 @@ export default function DashboardPage() {
   useEffect(() => { loadData(); }, []);
 
   if (loading) return <AppLayout><PageLoader /></AppLayout>;
-  if (error) return <AppLayout><PageError message="Failed to load analyses." onRetry={loadData} /></AppLayout>;
+  if (error) return <AppLayout><PageError message="Failed to load clips." onRetry={loadData} /></AppLayout>;
 
   return (
     <AppLayout>
@@ -153,14 +153,14 @@ export default function DashboardPage() {
           <div className="flex items-center justify-between">
             <h1 className="text-3xl font-bold tracking-tight text-foreground">Dashboard</h1>
             <Button size="sm" onClick={() => setNewAnalysisOpen(true)}>
-              <Plus className="mr-1 h-4 w-4" /> New analysis
+              <Upload className="mr-1 h-4 w-4" /> Upload clip
             </Button>
           </div>
 
           {results.length === 0 ? (
-            <EmptyState
-              title="No analyses yet"
-              description="Upload a clip to get your first analysis."
+              <EmptyState
+              title="No clips yet"
+              description="Upload a clip to get your first feedback."
               action={<Button onClick={() => setNewAnalysisOpen(true)}>Upload clip</Button>}
             />
           ) : (
