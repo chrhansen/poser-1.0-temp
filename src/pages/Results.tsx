@@ -263,7 +263,7 @@ export default function ResultsPage() {
         </div>
       </Section>
 
-      <ConfirmActionDialog open={deleteOpen} onOpenChange={setDeleteOpen} title="Delete analysis?" description="This will permanently remove this analysis and all associated data." confirmLabel="Delete" destructive onConfirm={handleDelete} />
+      <ConfirmActionDialog open={deleteOpen} onOpenChange={setDeleteOpen} title="Delete clip?" description="This will permanently remove this clip and all associated data." confirmLabel="Delete" destructive onConfirm={handleDelete} />
       <ContactSupportDialog open={supportOpen} onOpenChange={setSupportOpen} />
       <NewAnalysisSheet open={newAnalysisOpen} onOpenChange={setNewAnalysisOpen} />
     </AppLayout>
