@@ -13,7 +13,7 @@ export function NewAnalysisSheet({ open, onOpenChange }: NewAnalysisSheetProps) 
   const isMobile = useIsMobile();
 
   const handleContinue = (_skierId: number) => {
-    toast.success("Analysis started! (UI-only demo)");
+    toast.success("Clip uploaded! (UI-only demo)");
     onOpenChange(false);
   };
 
