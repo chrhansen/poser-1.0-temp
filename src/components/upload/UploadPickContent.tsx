@@ -60,8 +60,9 @@ export function UploadPickContent({ onContinue, footer, initialFile, submitLabel
     return (
       <UploadSkierSelect
         file={file}
-        onCancel={reset}
+        onCancel={initialFile ? () => {} : reset}
         onContinue={onContinue}
+        submitLabel={submitLabel}
       />
     );
   }

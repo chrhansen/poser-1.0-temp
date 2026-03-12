@@ -51,7 +51,7 @@ export function NewAnalysisSheet({ open, onOpenChange, rerunFile }: NewAnalysisS
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="flex max-w-lg flex-col overflow-hidden rounded-xl p-0 max-h-[85vh]">
         <DialogTitle className="border-b border-border px-4 py-3 sm:px-6 text-base font-semibold">
-            Upload clip
+            {title}
         </DialogTitle>
         {body}
       </DialogContent>
