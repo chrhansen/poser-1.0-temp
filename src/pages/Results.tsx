@@ -201,7 +201,7 @@ export default function ResultsPage() {
 
   return (
     <AppLayout>
-      <Section className="py-6 md:py-8">
+      <Section compact>
         <div className="mx-auto max-w-5xl space-y-5">
           {/* Header */}
           <ResultsHeader result={result} />
