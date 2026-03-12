@@ -11,17 +11,23 @@ interface NewAnalysisSheetProps {
   rerunFile?: File;
 }
 
-export function NewAnalysisSheet({ open, onOpenChange }: NewAnalysisSheetProps) {
+export function NewAnalysisSheet({ open, onOpenChange, rerunFile }: NewAnalysisSheetProps) {
   const isMobile = useIsMobile();
+  const isRerun = !!rerunFile;
+  const title = isRerun ? "Re-run analysis" : "Upload clip";
 
   const handleContinue = (_skierId: number) => {
-    toast.success("Clip uploaded! (UI-only demo)");
+    toast.success(isRerun ? "Re-running analysis… (UI-only demo)" : "Clip uploaded! (UI-only demo)");
     onOpenChange(false);
   };
 
   const body = (
     <div className="overflow-y-auto px-4 py-6 sm:px-6">
-      <UploadPickContent onContinue={handleContinue} />
+      <UploadPickContent
+        onContinue={handleContinue}
+        initialFile={rerunFile}
+        submitLabel={isRerun ? "Re-run analysis" : undefined}
+      />
     </div>
   );
 
