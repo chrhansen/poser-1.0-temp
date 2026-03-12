@@ -124,6 +124,7 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [newAnalysisOpen, setNewAnalysisOpen] = useState(false);
+  const [rerunFile, setRerunFile] = useState<File | undefined>(undefined);
 
   const loadData = () => {
     setLoading(true);
