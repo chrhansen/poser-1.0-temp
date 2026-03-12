@@ -58,7 +58,7 @@ export function Header() {
           <Link to="/" className="flex items-center gap-2 text-xl font-bold tracking-tight text-foreground">
             <img src={poserLogo} alt="" className="h-6 w-auto" />
             poser
-            <Badge className="ml-1 text-[10px] px-1.5 py-0 font-semibold bg-primary/15 text-primary border border-primary/30 hover:bg-primary/15">Beta</Badge>
+            <BetaBadge className="ml-1" />
           </Link>
 
           {/* Desktop nav */}
