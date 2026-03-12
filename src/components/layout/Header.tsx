@@ -4,7 +4,7 @@ import { Menu, X } from "lucide-react";
 import poserLogo from "@/assets/poser-logo.svg";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Badge } from "@/components/ui/badge";
+import { BetaBadge } from "@/components/shared/BetaBadge";
 import { useAuth } from "@/hooks/useAuth";
 import { AuthDialog, type AuthContext } from "@/components/dialogs/AuthDialog";
 
