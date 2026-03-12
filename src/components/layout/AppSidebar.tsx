@@ -115,7 +115,7 @@ function SidebarInner({ extraContent, collapsed, setCollapsed, onNavigate, hideH
               <>
                 <Link to="/" onClick={handleNav} className="flex items-center gap-1.5">
                   <img src={poserLogo} alt="poser" className="h-6 w-auto" />
-                  <Badge variant="outline" className="text-[10px] px-1.5 py-0 font-semibold text-muted-foreground border-muted-foreground/30">Beta</Badge>
+                  <Badge className="text-[10px] px-1.5 py-0 font-semibold bg-primary/15 text-primary border border-primary/30 hover:bg-primary/15">Beta</Badge>
                 </Link>
                 <button
                   onClick={() => setCollapsed(true)}
@@ -333,7 +333,7 @@ export function AppSidebar({ extraContent, mobileOpen: controlledMobileOpen, onM
           <div className="flex items-center justify-between border-b border-border px-3 py-3">
             <Link to="/" onClick={() => setMobileOpen(false)} className="flex items-center gap-1.5">
               <img src={poserLogo} alt="poser" className="h-6 w-auto" />
-              <Badge variant="outline" className="text-[10px] px-1.5 py-0 font-semibold text-muted-foreground border-muted-foreground/30">Beta</Badge>
+              <Badge className="text-[10px] px-1.5 py-0 font-semibold bg-primary/15 text-primary border border-primary/30 hover:bg-primary/15">Beta</Badge>
             </Link>
             <button
               onClick={() => setMobileOpen(false)}
@@ -363,8 +363,9 @@ export function MobileTopBar({ onMenuClick }: { onMenuClick: () => void }) {
       >
         <Menu className="h-5 w-5" />
       </button>
-      <Link to="/" className="ml-2">
+      <Link to="/" className="ml-2 flex items-center gap-1.5">
         <img src={poserLogo} alt="poser" className="h-5 w-auto" />
+        <Badge className="text-[10px] px-1.5 py-0 font-semibold bg-primary/15 text-primary border border-primary/30 hover:bg-primary/15">Beta</Badge>
       </Link>
     </div>
   );
