@@ -187,7 +187,14 @@ export default function DashboardPage() {
           )}
         </div>
       </Section>
-      <NewAnalysisSheet open={newAnalysisOpen} onOpenChange={setNewAnalysisOpen} />
+      <NewAnalysisSheet
+        open={newAnalysisOpen}
+        onOpenChange={(open) => {
+          setNewAnalysisOpen(open);
+          if (!open) setRerunFile(undefined);
+        }}
+        rerunFile={rerunFile}
+      />
     </AppLayout>
   );
 }
