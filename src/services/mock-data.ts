@@ -115,7 +115,7 @@ export const mockPricingPlans: PricingPlan[] = [
   {
     id: "max",
     name: "Season Pass",
-    price: 79,
+    price: 69,
     interval: "one-time",
     features: ["25 analyses", "Everything in Trip Pack"],
     highlighted: true,
