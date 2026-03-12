@@ -28,7 +28,7 @@ export function ThemeNav({ themes, activeView, activeSubmetric, onViewChange, on
         className={cn(
           "flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium transition-all",
           activeView === "overview"
-            ? "bg-warm/10 text-foreground shadow-[inset_3px_0_0_hsl(var(--warm))]"
+            ? "bg-accent/10 text-foreground shadow-[inset_3px_0_0_hsl(var(--accent))]"
             : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
         )}
       >
