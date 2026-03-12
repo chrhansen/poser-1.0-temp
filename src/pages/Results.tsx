@@ -186,7 +186,7 @@ export default function ResultsPage() {
             </Button>
           </div>
         </Section>
-        <ConfirmActionDialog open={deleteOpen} onOpenChange={setDeleteOpen} title="Delete analysis?" description="This action cannot be undone." confirmLabel="Delete" destructive onConfirm={handleDelete} />
+        <ConfirmActionDialog open={deleteOpen} onOpenChange={setDeleteOpen} title="Delete clip?" description="This action cannot be undone." confirmLabel="Delete" destructive onConfirm={handleDelete} />
         <ContactSupportDialog open={supportOpen} onOpenChange={setSupportOpen} />
       </AppLayout>
     );
