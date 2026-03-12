@@ -4,7 +4,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { useState } from "react";
 
 const BADGE_CLASSES =
-  "text-[10px] leading-none px-1.5 py-[1px] font-semibold bg-primary/15 text-primary border border-primary/30 hover:bg-primary/15 cursor-default";
+  "text-[15px] leading-none px-2 py-[2px] font-semibold bg-primary/15 text-primary border border-primary/30 hover:bg-primary/15 cursor-default";
 
 const TIP_TEXT = "Not all features are fully functioning. Until then, Poser is free.";
 
