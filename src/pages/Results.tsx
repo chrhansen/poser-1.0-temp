@@ -182,7 +182,7 @@ export default function ResultsPage() {
               <Button variant="outline" onClick={() => setSupportOpen(true)}><HelpCircle className="mr-2 h-4 w-4" />Contact support</Button>
             </div>
             <Button variant="ghost" size="sm" className="text-destructive" onClick={() => setDeleteOpen(true)}>
-              <Trash2 className="mr-2 h-4 w-4" />Delete analysis
+              <Trash2 className="mr-2 h-4 w-4" />Delete clip
             </Button>
           </div>
         </Section>
