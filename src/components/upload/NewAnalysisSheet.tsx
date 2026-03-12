@@ -39,7 +39,7 @@ export function NewAnalysisSheet({ open, onOpenChange, rerunFile }: NewAnalysisS
           className="flex h-[92dvh] flex-col p-0 rounded-t-xl [&>button]:hidden"
         >
           <SheetTitle className="border-b border-border px-4 py-3 sm:px-6 text-base font-semibold">
-            Upload clip
+            {title}
           </SheetTitle>
           {body}
         </SheetContent>
