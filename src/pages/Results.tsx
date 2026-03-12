@@ -267,7 +267,7 @@ export default function ResultsPage() {
 
       <ConfirmActionDialog open={deleteOpen} onOpenChange={setDeleteOpen} title="Delete clip?" description="This will permanently remove this clip and all associated data." confirmLabel="Delete" destructive onConfirm={handleDelete} />
       <ContactSupportDialog open={supportOpen} onOpenChange={setSupportOpen} />
-      <NewAnalysisSheet open={newAnalysisOpen} onOpenChange={setNewAnalysisOpen} />
+      <NewAnalysisSheet open={newAnalysisOpen} onOpenChange={setNewAnalysisOpen} rerunFile={rerunFile} />
     </AppLayout>
   );
 }
