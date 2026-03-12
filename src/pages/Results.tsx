@@ -172,7 +172,7 @@ export default function ResultsPage() {
   if (result.status === "error") {
     return (
       <AppLayout>
-        <Section>
+        <Section compact>
           <div className="mx-auto flex max-w-md flex-col items-center gap-4 text-center">
             <AlertTriangle className="h-10 w-10 text-destructive" />
             <h1 className="text-2xl font-bold text-foreground">Couldn't analyze clip</h1>
