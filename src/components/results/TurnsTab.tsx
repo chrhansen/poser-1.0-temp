@@ -68,7 +68,7 @@ export function TurnsTab({ metrics, selectedTurn, onTurnSelect }: TurnsTabProps)
               {barData.map((entry) => (
                 <Cell
                   key={entry.turnId}
-                  fill={selectedTurn === entry.turnId ? "hsl(var(--warm-glow))" : "hsl(var(--warm))"}
+                  fill={selectedTurn === entry.turnId ? "hsl(var(--accent))" : "hsl(var(--accent-foreground))"}
                   opacity={selectedTurn && selectedTurn !== entry.turnId ? 0.4 : 1}
                 />
               ))}
