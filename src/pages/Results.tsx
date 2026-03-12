@@ -154,7 +154,7 @@ export default function ResultsPage() {
   if (result.status === "processing") {
     return (
       <AppLayout>
-        <Section>
+        <Section compact>
           <div className="mx-auto flex max-w-md flex-col items-center gap-6 text-center">
             <Loader2 className="h-10 w-10 animate-spin text-accent" />
             <h1 className="text-2xl font-bold text-foreground">Analyzing clip…</h1>
