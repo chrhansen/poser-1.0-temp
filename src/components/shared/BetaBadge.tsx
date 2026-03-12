@@ -39,7 +39,7 @@ export function BetaBadge({ className = "" }: { className?: string }) {
             <Badge className={`${BADGE_CLASSES} ${className}`}>Beta</Badge>
           </span>
         </PopoverTrigger>
-        <PopoverContent side="bottom" sideOffset={6} className="max-w-52 text-center text-sm p-3">
+        <PopoverContent side="bottom" sideOffset={6} className="max-w-52 text-center text-sm font-normal p-3">
           {TIP_TEXT}
         </PopoverContent>
       </Popover>
