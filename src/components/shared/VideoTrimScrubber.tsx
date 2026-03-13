@@ -26,6 +26,7 @@ function formatTime(s: number) {
 
 const FILMSTRIP_FRAMES = 12;
 const BAR_HEIGHT = 56; // px
+const HANDLE_W = 14; // px – width of each bracket handle
 
 /* ─── Component ─── */
 
