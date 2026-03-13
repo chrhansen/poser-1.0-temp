@@ -263,7 +263,7 @@ export function VideoTrimScrubber({
       </div>
 
       {/* Time labels */}
-      <div className="mt-1.5 flex items-center justify-between text-xs text-muted-foreground" style={{ paddingLeft: HANDLE_W, paddingRight: HANDLE_W }}>
+      <div className="mt-1.5 flex items-center justify-between text-xs text-muted-foreground">
         <span>{formatTime(trimStart)}</span>
         <span className="font-medium">{formatTime(trimDuration)} selected</span>
         <span>{formatTime(trimEnd)}</span>
