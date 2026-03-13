@@ -291,30 +291,29 @@ export function VideoSkierSelect({
         )}
       </div>
 
-      {/* Trim scrubber */}
+      {/* Filmstrip trim & scrubber */}
       {duration > 0 && (
-        <div>
-          <div className="flex items-center gap-2 mb-2">
-            <Scissors className="h-3.5 w-3.5 text-muted-foreground" />
-            <span className="text-xs font-medium text-muted-foreground">
-              Select the section to analyze (max. {maxTrimSeconds}s)
-            </span>
-          </div>
-          <Slider
-            value={trimRange}
-            onValueChange={handleTrimChange}
-            min={0}
-            max={100}
-            step={0.5}
-            minStepsBetweenThumbs={1}
-            className="w-full"
-          />
-          <div className="mt-1 flex items-center justify-between text-xs text-muted-foreground">
-            <span>{formatTime(trimStart)}</span>
-            <span>Duration: {formatTime(trimDuration)}</span>
-            <span>{formatTime(trimEnd)}</span>
-          </div>
-        </div>
+        <VideoTrimScrubber
+          videoEl={videoRef.current}
+          duration={duration}
+          maxTrimSeconds={maxTrimSeconds}
+          trimRange={trimRange}
+          onTrimChange={(range) => {
+            setTrimRange(range);
+            // Seek video to whichever handle moved
+            if (videoRef.current && duration > 0) {
+              const prev = trimRange;
+              const startMoved = range[0] !== prev[0];
+              const seekPct = startMoved ? range[0] : range[1];
+              videoRef.current.currentTime = (seekPct / 100) * duration;
+            }
+          }}
+          onPlayheadSeek={(pct) => {
+            if (videoRef.current && duration > 0) {
+              videoRef.current.currentTime = (pct / 100) * duration;
+            }
+          }}
+        />
       )}
 
       {/* Skier thumbnail selectors */}
