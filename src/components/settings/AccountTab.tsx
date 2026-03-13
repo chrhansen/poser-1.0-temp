@@ -40,9 +40,9 @@ export function AccountTab() {
   useEffect(() => {
     if (!originalRef.current) return;
     const o = originalRef.current;
-    const isDirty = name !== o.name || username !== o.username || bio !== o.bio || notifComplete !== o.notifications.analysisComplete || notifTips !== o.notifications.weeklyTips;
+    const isDirty = name !== o.name || username !== o.username || bio !== o.bio;
     setDirty(isDirty);
-  }, [name, username, bio, notifComplete, notifTips]);
+  }, [name, username, bio]);
 
   useEffect(() => {
     if (!dirty) return;
