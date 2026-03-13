@@ -123,7 +123,10 @@ export function VideoTrimScrubber({
     const track = trackRef.current;
     if (!track) return 0;
     const rect = track.getBoundingClientRect();
-    return Math.max(0, Math.min(100, ((clientX - rect.left) / rect.width) * 100));
+    // Account for handle padding on each side
+    const innerLeft = rect.left + HANDLE_W;
+    const innerWidth = rect.width - HANDLE_W * 2;
+    return Math.max(0, Math.min(100, ((clientX - innerLeft) / innerWidth) * 100));
   }, []);
 
   const maxPct = (maxTrimSeconds / Math.max(duration, 0.01)) * 100;
