@@ -21,6 +21,8 @@ interface ModelViewerProps {
   isPlaying?: boolean;
   /** Optional model data URL */
   modelUrl?: string;
+  /** Hide controls and timestamp overlay for compact/inset usage */
+  compact?: boolean;
   className?: string;
 }
 
