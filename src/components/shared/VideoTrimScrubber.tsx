@@ -43,15 +43,26 @@ export function VideoTrimScrubber({
   const [frames, setFrames] = useState<string[]>([]);
   const [playheadPct, setPlayheadPct] = useState(trimRange[0]);
   const [dragging, setDragging] = useState<"start" | "end" | "playhead" | null>(null);
+  const generatingRef = useRef(false);
 
   // Keep playhead clamped within trim range
   useEffect(() => {
     setPlayheadPct((prev) => Math.max(trimRange[0], Math.min(prev, trimRange[1])));
   }, [trimRange]);
 
-  // Generate filmstrip thumbnails
+  // Generate filmstrip thumbnails using a cloned video to avoid seeking conflicts
   useEffect(() => {
     if (!videoEl || duration <= 0) return;
+
+    let cancelled = false;
+    generatingRef.current = true;
+
+    // Create a separate video element for thumbnail capture so we don't
+    // interfere with the user-facing video's currentTime.
+    const thumbVideo = document.createElement("video");
+    thumbVideo.src = videoEl.currentSrc || videoEl.src;
+    thumbVideo.muted = true;
+    thumbVideo.preload = "auto";
 
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
@@ -62,37 +73,48 @@ export function VideoTrimScrubber({
     canvas.width = thumbW;
     canvas.height = thumbH;
 
-    let cancelled = false;
     const newFrames: string[] = [];
 
     const captureFrame = async (index: number) => {
       if (cancelled || index >= FILMSTRIP_FRAMES) {
-        if (!cancelled) setFrames(newFrames);
+        if (!cancelled) {
+          setFrames(newFrames);
+          generatingRef.current = false;
+        }
         return;
       }
-      const time = (index / FILMSTRIP_FRAMES) * duration;
-      videoEl.currentTime = time;
+      // Offset slightly so frame 0 isn't a black pre-decoded frame
+      const time = Math.max(0.1, (index / FILMSTRIP_FRAMES) * duration);
+      thumbVideo.currentTime = time;
       await new Promise<void>((resolve) => {
         const handler = () => {
-          videoEl.removeEventListener("seeked", handler);
+          thumbVideo.removeEventListener("seeked", handler);
           resolve();
         };
-        videoEl.addEventListener("seeked", handler);
+        thumbVideo.addEventListener("seeked", handler);
       });
       if (cancelled) return;
 
-      const vw = videoEl.videoWidth;
-      const vh = videoEl.videoHeight;
+      const vw = thumbVideo.videoWidth;
+      const vh = thumbVideo.videoHeight;
       const scale = Math.max(thumbW / vw, thumbH / vh);
       const sw = vw * scale;
       const sh = vh * scale;
-      ctx.drawImage(videoEl, (thumbW - sw) / 2, (thumbH - sh) / 2, sw, sh);
+      ctx.clearRect(0, 0, thumbW, thumbH);
+      ctx.drawImage(thumbVideo, (thumbW - sw) / 2, (thumbH - sh) / 2, sw, sh);
       newFrames.push(canvas.toDataURL("image/jpeg", 0.5));
       await captureFrame(index + 1);
     };
 
-    captureFrame(0);
-    return () => { cancelled = true; };
+    thumbVideo.addEventListener("loadeddata", () => {
+      if (!cancelled) captureFrame(0);
+    }, { once: true });
+
+    return () => {
+      cancelled = true;
+      generatingRef.current = false;
+      thumbVideo.src = "";
+    };
   }, [videoEl, duration]);
 
   /* ─── Pointer helpers ─── */
