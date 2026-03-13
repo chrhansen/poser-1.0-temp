@@ -21,6 +21,8 @@ interface ModelViewerProps {
   isPlaying?: boolean;
   /** Optional model data URL */
   modelUrl?: string;
+  /** Hide controls and timestamp overlay for compact/inset usage */
+  compact?: boolean;
   className?: string;
 }
 
@@ -92,7 +94,7 @@ function SkeletonSvg({ time, duration }: { time: number; duration: number }) {
   );
 }
 
-export function ModelViewer({ duration, currentTime, onSeek, isPlaying, modelUrl, className }: ModelViewerProps) {
+export function ModelViewer({ duration, currentTime, onSeek, isPlaying, modelUrl, compact, className }: ModelViewerProps) {
   const [internalTime, setInternalTime] = useState(currentTime);
   const [playing, setPlaying] = useState(isPlaying ?? false);
   const animRef = useRef<ReturnType<typeof setInterval>>();
@@ -113,6 +115,8 @@ export function ModelViewer({ duration, currentTime, onSeek, isPlaying, modelUrl
         setInternalTime((t) => {
           const next = t + 0.1;
           if (next >= duration) {
+            // Loop in compact mode
+            if (compact) return 0;
             setPlaying(false);
             return duration;
           }
@@ -121,24 +125,27 @@ export function ModelViewer({ duration, currentTime, onSeek, isPlaying, modelUrl
       }, 100);
     }
     return () => { if (animRef.current) clearInterval(animRef.current); };
-  }, [playing, duration]);
+  }, [playing, duration, compact]);
 
   const handleSeek = useCallback((val: number[]) => {
     setInternalTime(val[0]);
     onSeek?.(val[0]);
   }, [onSeek]);
 
+  if (compact) {
+    return (
+      <div className={cn("overflow-hidden rounded-xl border border-border bg-secondary", className)}>
+        <SkeletonSvg time={internalTime} duration={duration} />
+      </div>
+    );
+  }
+
   return (
     <div className={cn("flex flex-col rounded-xl border border-border bg-secondary", className)}>
       {/* Viewport */}
       <div className="relative flex h-48 items-center justify-center overflow-hidden rounded-t-xl bg-background/50">
-        {modelUrl ? (
-          <SkeletonSvg time={internalTime} duration={duration} />
-        ) : (
-          <SkeletonSvg time={internalTime} duration={duration} />
-        )}
+        <SkeletonSvg time={internalTime} duration={duration} />
         <div className="absolute bottom-2 right-2 rounded bg-background/80 px-1.5 py-0.5 text-[10px] text-muted-foreground">
-          {/* TODO_BACKEND_HOOKUP: Replace with real 3D renderer */}
           Mock 3D · {internalTime.toFixed(1)}s
         </div>
       </div>
