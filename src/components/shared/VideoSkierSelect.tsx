@@ -1,8 +1,8 @@
 import { useRef, useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check, Scissors } from "lucide-react";
-import { Slider } from "@/components/ui/slider";
+import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { VideoTrimScrubber } from "./VideoTrimScrubber";
 import type { SkierDetection, SkierBbox } from "@/services/embed-api.service";
 import { embedApiService } from "@/services/embed-api.service";
 
@@ -21,14 +21,6 @@ interface VideoSkierSelectProps {
   maxTrimSeconds?: number;
   /** Render prop for the action button area. Receives whether a skier is selected and the result payload. */
   children: (props: { selected: boolean; getResult: () => VideoSkierSelectResult }) => React.ReactNode;
-}
-
-/* ─── Helpers ─── */
-
-function formatTime(s: number) {
-  const m = Math.floor(s / 60);
-  const sec = Math.floor(s % 60);
-  return `${m}:${sec.toString().padStart(2, "0")}`;
 }
 
 /* ─── Component ─── */
@@ -121,39 +113,6 @@ export function VideoSkierSelect({
     setThumbnails(newThumbs);
   };
 
-  const handleTrimChange = useCallback(
-    (values: number[]) => {
-      let [start, end] = values;
-      const maxPct = (maxTrimSeconds / Math.max(duration, 0.01)) * 100;
-      const prev = trimRange;
-
-      // Determine which thumb moved
-      const startMoved = start !== prev[0];
-      const endMoved = end !== prev[1];
-
-      if (end - start > maxPct) {
-        // Sliding window: push the other knob along
-        if (startMoved) {
-          end = Math.min(start + maxPct, 100);
-          // If end hit the wall, clamp start too
-          if (end >= 100) { end = 100; start = 100 - maxPct; }
-        } else {
-          start = Math.max(end - maxPct, 0);
-          if (start <= 0) { start = 0; end = maxPct; }
-        }
-      }
-
-      const newRange: [number, number] = [Math.max(start, 0), Math.min(end, 100)];
-      setTrimRange(newRange);
-      if (videoRef.current && duration > 0) {
-        const movedEnd = endMoved && !startMoved;
-        const seekPct = movedEnd ? newRange[1] : newRange[0];
-        videoRef.current.currentTime = (seekPct / 100) * duration;
-      }
-    },
-    [duration, maxTrimSeconds, trimRange]
-  );
-
   const handleVideoClick = (e: React.MouseEvent<HTMLVideoElement>) => {
     if (!manualMode) return;
     const rect = e.currentTarget.getBoundingClientRect();
@@ -172,7 +131,6 @@ export function VideoSkierSelect({
   // Computed
   const trimStart = (trimRange[0] / 100) * duration;
   const trimEnd = (trimRange[1] / 100) * duration;
-  const trimDuration = trimEnd - trimStart;
   const hasSelection = selectedSkier !== null;
 
   const selectedDet = detections.find((d) => d.object_id === selectedSkier);
@@ -291,30 +249,29 @@ export function VideoSkierSelect({
         )}
       </div>
 
-      {/* Trim scrubber */}
+      {/* Filmstrip trim & scrubber */}
       {duration > 0 && (
-        <div>
-          <div className="flex items-center gap-2 mb-2">
-            <Scissors className="h-3.5 w-3.5 text-muted-foreground" />
-            <span className="text-xs font-medium text-muted-foreground">
-              Select the section to analyze (max. {maxTrimSeconds}s)
-            </span>
-          </div>
-          <Slider
-            value={trimRange}
-            onValueChange={handleTrimChange}
-            min={0}
-            max={100}
-            step={0.5}
-            minStepsBetweenThumbs={1}
-            className="w-full"
-          />
-          <div className="mt-1 flex items-center justify-between text-xs text-muted-foreground">
-            <span>{formatTime(trimStart)}</span>
-            <span>Duration: {formatTime(trimDuration)}</span>
-            <span>{formatTime(trimEnd)}</span>
-          </div>
-        </div>
+        <VideoTrimScrubber
+          videoEl={videoRef.current}
+          duration={duration}
+          maxTrimSeconds={maxTrimSeconds}
+          trimRange={trimRange}
+          onTrimChange={(range) => {
+            setTrimRange(range);
+            // Seek video to whichever handle moved
+            if (videoRef.current && duration > 0) {
+              const prev = trimRange;
+              const startMoved = range[0] !== prev[0];
+              const seekPct = startMoved ? range[0] : range[1];
+              videoRef.current.currentTime = (seekPct / 100) * duration;
+            }
+          }}
+          onPlayheadSeek={(pct) => {
+            if (videoRef.current && duration > 0) {
+              videoRef.current.currentTime = (pct / 100) * duration;
+            }
+          }}
+        />
       )}
 
       {/* Skier thumbnail selectors */}

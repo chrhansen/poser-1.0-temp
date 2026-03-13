@@ -1,0 +1,288 @@
+import { useRef, useState, useEffect, useCallback } from "react";
+import { Scissors } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+/* ─── Types ─── */
+
+interface VideoTrimScrubberProps {
+  /** Reference to the <video> element for thumbnail generation & seeking */
+  videoEl: HTMLVideoElement | null;
+  duration: number;
+  maxTrimSeconds: number;
+  trimRange: [number, number]; // percentage 0–100
+  onTrimChange: (range: [number, number]) => void;
+  /** Called when the playhead scrubber moves (percentage 0–100) */
+  onPlayheadSeek: (pct: number) => void;
+  className?: string;
+}
+
+/* ─── Helpers ─── */
+
+function formatTime(s: number) {
+  const m = Math.floor(s / 60);
+  const sec = Math.floor(s % 60);
+  return `${m}:${sec.toString().padStart(2, "0")}`;
+}
+
+const FILMSTRIP_FRAMES = 12;
+const BAR_HEIGHT = 56; // px
+
+/* ─── Component ─── */
+
+export function VideoTrimScrubber({
+  videoEl,
+  duration,
+  maxTrimSeconds,
+  trimRange,
+  onTrimChange,
+  onPlayheadSeek,
+  className,
+}: VideoTrimScrubberProps) {
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [frames, setFrames] = useState<string[]>([]);
+  const [playheadPct, setPlayheadPct] = useState(trimRange[0]);
+  const [dragging, setDragging] = useState<"start" | "end" | "playhead" | null>(null);
+
+  // Keep playhead clamped within trim range
+  useEffect(() => {
+    setPlayheadPct((prev) => Math.max(trimRange[0], Math.min(prev, trimRange[1])));
+  }, [trimRange]);
+
+  // Generate filmstrip thumbnails
+  useEffect(() => {
+    if (!videoEl || duration <= 0) return;
+
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const thumbW = 80;
+    const thumbH = BAR_HEIGHT;
+    canvas.width = thumbW;
+    canvas.height = thumbH;
+
+    let cancelled = false;
+    const newFrames: string[] = [];
+
+    const captureFrame = async (index: number) => {
+      if (cancelled || index >= FILMSTRIP_FRAMES) {
+        if (!cancelled) setFrames(newFrames);
+        return;
+      }
+      const time = (index / FILMSTRIP_FRAMES) * duration;
+      videoEl.currentTime = time;
+      await new Promise<void>((resolve) => {
+        const handler = () => {
+          videoEl.removeEventListener("seeked", handler);
+          resolve();
+        };
+        videoEl.addEventListener("seeked", handler);
+      });
+      if (cancelled) return;
+
+      const vw = videoEl.videoWidth;
+      const vh = videoEl.videoHeight;
+      const scale = Math.max(thumbW / vw, thumbH / vh);
+      const sw = vw * scale;
+      const sh = vh * scale;
+      ctx.drawImage(videoEl, (thumbW - sw) / 2, (thumbH - sh) / 2, sw, sh);
+      newFrames.push(canvas.toDataURL("image/jpeg", 0.5));
+      await captureFrame(index + 1);
+    };
+
+    captureFrame(0);
+    return () => { cancelled = true; };
+  }, [videoEl, duration]);
+
+  /* ─── Pointer helpers ─── */
+
+  const getPct = useCallback((clientX: number) => {
+    const track = trackRef.current;
+    if (!track) return 0;
+    const rect = track.getBoundingClientRect();
+    return Math.max(0, Math.min(100, ((clientX - rect.left) / rect.width) * 100));
+  }, []);
+
+  const maxPct = (maxTrimSeconds / Math.max(duration, 0.01)) * 100;
+
+  const handlePointerDown = useCallback(
+    (type: "start" | "end" | "playhead") => (e: React.PointerEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      (e.target as HTMLElement).setPointerCapture(e.pointerId);
+      setDragging(type);
+    },
+    []
+  );
+
+  const handlePointerMove = useCallback(
+    (e: React.PointerEvent) => {
+      if (!dragging) return;
+      const pct = getPct(e.clientX);
+
+      if (dragging === "playhead") {
+        const clamped = Math.max(trimRange[0], Math.min(pct, trimRange[1]));
+        setPlayheadPct(clamped);
+        onPlayheadSeek(clamped);
+        return;
+      }
+
+      let [start, end] = trimRange;
+      if (dragging === "start") {
+        start = pct;
+        // Sliding window: push end if needed
+        if (end - start > maxPct) {
+          end = Math.min(start + maxPct, 100);
+          if (end >= 100) { end = 100; start = 100 - maxPct; }
+        }
+        // Don't let start pass end
+        if (start > end - 1) start = end - 1;
+        if (start < 0) start = 0;
+      } else {
+        end = pct;
+        // Sliding window: push start if needed
+        if (end - start > maxPct) {
+          start = Math.max(end - maxPct, 0);
+          if (start <= 0) { start = 0; end = maxPct; }
+        }
+        // Don't let end pass start
+        if (end < start + 1) end = start + 1;
+        if (end > 100) end = 100;
+      }
+
+      onTrimChange([start, end]);
+    },
+    [dragging, trimRange, maxPct, getPct, onTrimChange, onPlayheadSeek]
+  );
+
+  const handlePointerUp = useCallback(() => {
+    setDragging(null);
+  }, []);
+
+  // Click on track area → move playhead
+  const handleTrackClick = useCallback(
+    (e: React.MouseEvent) => {
+      // Only if clicking the track itself, not a handle
+      if ((e.target as HTMLElement).closest("[data-handle]")) return;
+      const pct = getPct(e.clientX);
+      const clamped = Math.max(trimRange[0], Math.min(pct, trimRange[1]));
+      setPlayheadPct(clamped);
+      onPlayheadSeek(clamped);
+    },
+    [getPct, trimRange, onPlayheadSeek]
+  );
+
+  /* ─── Computed ─── */
+  const trimStart = (trimRange[0] / 100) * duration;
+  const trimEnd = (trimRange[1] / 100) * duration;
+  const trimDuration = trimEnd - trimStart;
+
+  return (
+    <div className={cn("select-none", className)}>
+      <div className="flex items-center gap-2 mb-2">
+        <Scissors className="h-3.5 w-3.5 text-muted-foreground" />
+        <span className="text-xs font-medium text-muted-foreground">
+          Trim &amp; scrub (max. {maxTrimSeconds}s)
+        </span>
+      </div>
+
+      {/* Track */}
+      <div
+        ref={trackRef}
+        className="relative cursor-pointer rounded-lg overflow-hidden"
+        style={{ height: BAR_HEIGHT }}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        onPointerLeave={handlePointerUp}
+        onClick={handleTrackClick}
+      >
+        {/* Filmstrip background */}
+        <div className="absolute inset-0 flex">
+          {frames.length > 0
+            ? frames.map((src, i) => (
+                <img
+                  key={i}
+                  src={src}
+                  alt=""
+                  className="h-full flex-1 object-cover"
+                  draggable={false}
+                />
+              ))
+            : Array.from({ length: FILMSTRIP_FRAMES }).map((_, i) => (
+                <div key={i} className="h-full flex-1 bg-secondary" />
+              ))}
+        </div>
+
+        {/* Dimmed regions outside trim */}
+        <div
+          className="absolute inset-y-0 left-0 bg-background/70"
+          style={{ width: `${trimRange[0]}%` }}
+        />
+        <div
+          className="absolute inset-y-0 right-0 bg-background/70"
+          style={{ width: `${100 - trimRange[1]}%` }}
+        />
+
+        {/* Trim bracket border (top & bottom yellow lines) */}
+        <div
+          className="absolute inset-y-0 pointer-events-none border-y-[3px] border-primary"
+          style={{
+            left: `${trimRange[0]}%`,
+            width: `${trimRange[1] - trimRange[0]}%`,
+          }}
+        />
+
+        {/* Start handle (left bracket) */}
+        <div
+          data-handle
+          className={cn(
+            "absolute inset-y-0 z-20 flex w-4 cursor-ew-resize items-center justify-center rounded-l-md bg-primary transition-shadow",
+            dragging === "start" && "shadow-lg shadow-primary/40"
+          )}
+          style={{ left: `calc(${trimRange[0]}% - 16px)` }}
+          onPointerDown={handlePointerDown("start")}
+        >
+          <div className="h-5 w-0.5 rounded-full bg-primary-foreground/80" />
+        </div>
+
+        {/* End handle (right bracket) */}
+        <div
+          data-handle
+          className={cn(
+            "absolute inset-y-0 z-20 flex w-4 cursor-ew-resize items-center justify-center rounded-r-md bg-primary transition-shadow",
+            dragging === "end" && "shadow-lg shadow-primary/40"
+          )}
+          style={{ left: `${trimRange[1]}%` }}
+          onPointerDown={handlePointerDown("end")}
+        >
+          <div className="h-5 w-0.5 rounded-full bg-primary-foreground/80" />
+        </div>
+
+        {/* Playhead scrubber */}
+        <div
+          data-handle
+          className={cn(
+            "absolute z-30 cursor-ew-resize",
+            "top-0 bottom-0"
+          )}
+          style={{ left: `${playheadPct}%`, transform: "translateX(-50%)" }}
+          onPointerDown={handlePointerDown("playhead")}
+        >
+          {/* Vertical line */}
+          <div className="mx-auto h-full w-[3px] rounded-full bg-white shadow-[0_0_6px_rgba(0,0,0,0.5)]" />
+          {/* Top knob */}
+          <div className="absolute -top-1 left-1/2 -translate-x-1/2 h-2.5 w-4 rounded-b-sm bg-white shadow-md" />
+        </div>
+      </div>
+
+      {/* Time labels */}
+      <div className="mt-1.5 flex items-center justify-between text-xs text-muted-foreground">
+        <span>{formatTime(trimStart)}</span>
+        <span className="font-medium">
+          {formatTime(trimDuration)} selected
+        </span>
+        <span>{formatTime(trimEnd)}</span>
+      </div>
+    </div>
+  );
+}
