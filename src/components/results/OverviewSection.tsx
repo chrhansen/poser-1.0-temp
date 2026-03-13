@@ -1,5 +1,6 @@
 import type { ThemeScores, ThemeKey, KeyMoment } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { ModelViewer } from "@/components/results/ModelViewer";
 import { AlertTriangle, Trophy, Star, Eye } from "lucide-react";
 
 interface OverviewSectionProps {
