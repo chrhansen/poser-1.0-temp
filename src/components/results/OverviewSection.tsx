@@ -52,7 +52,8 @@ export function OverviewSection({ skiRank, themes, duration = 14, onThemeSelect,
               duration={duration}
               currentTime={0}
               isPlaying={true}
-              className="h-full w-full border-0 bg-transparent"
+              compact
+              className="h-full w-full"
             />
           </div>
         </div>
