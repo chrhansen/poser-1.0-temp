@@ -3,6 +3,7 @@ import { Upload, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { UploadSkierSelect } from "@/components/upload/UploadSkierSelect";
 import { analysisService } from "@/services/analysis.service";
+import { QrUploadSection } from "@/components/upload/QrUploadSection";
 import { cn } from "@/lib/utils";
 
 interface UploadPickContentProps {
