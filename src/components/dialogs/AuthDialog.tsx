@@ -216,13 +216,17 @@ export function AuthDialog({
               </DialogDescription>
             </DialogHeader>
 
-            <form onSubmit={handleVerify} className="mt-4 space-y-5">
+            <div className="mt-4 space-y-5">
               <div className="flex justify-center">
                 <InputOTP
                   maxLength={6}
                   value={otpValue}
-                  onChange={(val) => setOtpValue(val)}
+                  onChange={(val) => {
+                    setOtpValue(val);
+                    setError("");
+                  }}
                   autoFocus
+                  disabled={loading}
                 >
                   <InputOTPGroup>
                     <InputOTPSlot index={0} />
@@ -235,26 +239,25 @@ export function AuthDialog({
                 </InputOTP>
               </div>
 
-              {error && <p className="text-center text-sm text-destructive">{error}</p>}
+              {loading && (
+                <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Verifying…
+                </div>
+              )}
 
-              <Button
-                type="submit"
-                className="w-full h-11"
-                disabled={otpValue.length !== 6 || loading}
-              >
-                {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Verify and continue
-              </Button>
+              {error && <p className="text-center text-sm text-destructive">{error}</p>}
 
               <button
                 type="button"
                 className="flex w-full items-center justify-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
                 onClick={goBack}
+                disabled={loading}
               >
                 <ArrowLeft className="h-3 w-3" />
                 Back
               </button>
-            </form>
+            </div>
           </>
         )}
       </DialogContent>
