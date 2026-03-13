@@ -1,8 +1,8 @@
 import { useRef, useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check, Scissors } from "lucide-react";
-import { Slider } from "@/components/ui/slider";
+import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { VideoTrimScrubber } from "./VideoTrimScrubber";
 import type { SkierDetection, SkierBbox } from "@/services/embed-api.service";
 import { embedApiService } from "@/services/embed-api.service";
 
