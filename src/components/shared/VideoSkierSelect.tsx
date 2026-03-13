@@ -78,9 +78,7 @@ export function VideoSkierSelect({
       .detectSkiers(videoRef.current)
       .then((dets) => {
         setDetections(dets);
-        if (dets.length > 0) {
-          setSelectedSkier(dets[0].object_id);
-        } else {
+        if (dets.length === 0) {
           setManualMode(true);
         }
         // After detection, capture thumbnails for each detected skier
@@ -127,14 +125,28 @@ export function VideoSkierSelect({
     (values: number[]) => {
       let [start, end] = values;
       const maxPct = (maxTrimSeconds / Math.max(duration, 0.01)) * 100;
-      if (end - start > maxPct) {
-        end = start + maxPct;
-      }
       const prev = trimRange;
-      const newRange: [number, number] = [start, Math.min(end, 100)];
+
+      // Determine which thumb moved
+      const startMoved = start !== prev[0];
+      const endMoved = end !== prev[1];
+
+      if (end - start > maxPct) {
+        // Sliding window: push the other knob along
+        if (startMoved) {
+          end = Math.min(start + maxPct, 100);
+          // If end hit the wall, clamp start too
+          if (end >= 100) { end = 100; start = 100 - maxPct; }
+        } else {
+          start = Math.max(end - maxPct, 0);
+          if (start <= 0) { start = 0; end = maxPct; }
+        }
+      }
+
+      const newRange: [number, number] = [Math.max(start, 0), Math.min(end, 100)];
       setTrimRange(newRange);
       if (videoRef.current && duration > 0) {
-        const movedEnd = newRange[1] !== prev[1];
+        const movedEnd = endMoved && !startMoved;
         const seekPct = movedEnd ? newRange[1] : newRange[0];
         videoRef.current.currentTime = (seekPct / 100) * duration;
       }
