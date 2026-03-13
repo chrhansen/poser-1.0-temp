@@ -206,10 +206,9 @@ export function VideoTrimScrubber({
         onPointerLeave={handlePointerUp}
         onClick={handleTrackClick}
       >
-        {/* Filmstrip container – inset by handle width, clips thumbnails */}
+        {/* Filmstrip container – full width, handles overlap on top */}
         <div
-          className="absolute inset-y-0 overflow-hidden rounded-md"
-          style={{ left: HANDLE_W, right: HANDLE_W }}
+          className="absolute inset-0 overflow-hidden rounded-md"
         >
           {/* Filmstrip thumbnails */}
           <div className="absolute inset-0 flex">
