@@ -22,6 +22,7 @@ import MetricsDebug from "./pages/MetricsDebug";
 import EmbedWidgetPreview from "./pages/EmbedWidgetPreview";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
+import QrUpload from "./pages/QrUpload";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({
@@ -55,6 +56,7 @@ const App = () => (
 
             {/* Public embed (no auth, no shell) */}
             <Route path="/embed/results/:token" element={<EmbedResults />} />
+            <Route path="/qr-upload" element={<QrUpload />} />
 
             {/* Protected routes — require sign-in */}
             {/* TODO_BACKEND_HOOKUP: Re-wrap with <ProtectedRoute> once auth is connected */}
