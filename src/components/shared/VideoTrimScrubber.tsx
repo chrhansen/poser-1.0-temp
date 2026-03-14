@@ -197,10 +197,10 @@ export function VideoTrimScrubber({
         ref={trackRef}
         className="relative cursor-pointer"
         style={{ height: BAR_HEIGHT }}
+        onPointerDown={handleTrackPointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
         onPointerLeave={handlePointerUp}
-        onClick={handleTrackClick}
       >
         {/* Filmstrip container – full width, handles overlap on top */}
         <div
