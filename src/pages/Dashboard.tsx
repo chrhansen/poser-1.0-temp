@@ -107,7 +107,7 @@ function ResultTableRow({ r, onRetry }: { r: AnalysisResult; onRetry: (id: strin
           <span className={cls}>{label}</span>
         )}
       </div>
-      <span className="text-muted-foreground">{formatClipMeta(r)}</span>
+      <ClipMeta r={r} />
       {r.status === "complete" && r.biggestLimiter ? (
         <span className="text-muted-foreground">
           Biggest limiter: <span className="font-medium text-foreground">{limiterLabels[r.biggestLimiter]}</span>
