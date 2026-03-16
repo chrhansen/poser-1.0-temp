@@ -29,10 +29,15 @@ const limiterLabels: Record<SkiLimiter, string> = {
   steering: "Steering",
 };
 
-function formatClipMeta(r: AnalysisResult) {
-  const date = new Date(r.createdAt).toLocaleDateString();
-  const clip = r.clipLength ? `${r.clipLength}s clip` : null;
-  return [date, clip].filter(Boolean).join(" · ");
+function ClipMeta({ r }: { r: AnalysisResult }) {
+  const suffix = r.clipLength ? `${r.clipLength}s clip` : undefined;
+  return (
+    <RelativeDate
+      date={r.createdAt}
+      suffix={suffix}
+      className="text-xs text-muted-foreground"
+    />
+  );
 }
 
 function ResultCard({ r, onRetry }: { r: AnalysisResult; onRetry: (id: string) => void }) {
