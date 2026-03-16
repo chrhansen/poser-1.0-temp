@@ -60,7 +60,7 @@ function ResultCard({ r, onRetry }: { r: AnalysisResult; onRetry: (id: string) =
             ) : (
               <p className={cn("text-sm font-medium", cls)}>{statusConfig[r.status].label}</p>
             )}
-            <p className="text-xs text-muted-foreground">{formatClipMeta(r)}</p>
+            <ClipMeta r={r} />
           </div>
         </div>
         {r.status === "complete" && r.biggestLimiter && (
