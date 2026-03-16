@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { analysisService } from "@/services/analysis.service";
 import type { AnalysisResult } from "@/lib/types";
 import { Clock, Loader2, CheckCircle, XCircle } from "lucide-react";
+import { RelativeDate } from "@/components/shared/RelativeDate";
 
 const statusIcons: Record<AnalysisResult["status"], { icon: typeof Clock; cls: string }> = {
   pending: { icon: Clock, cls: "text-muted-foreground" },
