@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { AppLayout } from "@/components/layout/Layout";
 import { Section } from "@/components/shared/Section";
 import { PageLoader } from "@/components/shared/PageLoader";
@@ -11,6 +11,8 @@ import type { AnalysisResult, SkiLimiter } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { Upload, Clock, Loader2, CheckCircle, XCircle, RotateCcw, AlertTriangle } from "lucide-react";
 import { NewAnalysisSheet } from "@/components/upload/NewAnalysisSheet";
+
+const PAGE_SIZE = 20;
 
 const statusConfig: Record<AnalysisResult["status"], { icon: typeof Clock; label: string; cls: string }> = {
   pending: { icon: Clock, label: "Pending", cls: "text-muted-foreground" },
@@ -82,7 +84,6 @@ function ResultTableRow({ r, onRetry }: { r: AnalysisResult; onRetry: (id: strin
   const navigate = useNavigate();
 
   const handleRowClick = (e: React.MouseEvent) => {
-    // Don't navigate if clicking a button or link inside the row
     if ((e.target as HTMLElement).closest("button, a")) return;
     navigate(`/results/${r.id}`);
   };
@@ -92,7 +93,6 @@ function ResultTableRow({ r, onRetry }: { r: AnalysisResult; onRetry: (id: strin
       className="grid cursor-pointer grid-cols-[1fr_1fr_1.2fr_auto] items-center gap-4 border-b border-border px-4 py-3 text-sm transition-colors hover:bg-secondary/50 last:border-0"
       onClick={handleRowClick}
     >
-      {/* SkiRank + status */}
       <div className="flex items-center gap-2">
         <Icon className={cn("h-3.5 w-3.5 shrink-0", cls, r.status === "processing" && "animate-spin")} />
         {r.status === "complete" && r.skiRank != null ? (
@@ -101,11 +101,7 @@ function ResultTableRow({ r, onRetry }: { r: AnalysisResult; onRetry: (id: strin
           <span className={cls}>{label}</span>
         )}
       </div>
-
-      {/* Date + clip length */}
       <span className="text-muted-foreground">{formatClipMeta(r)}</span>
-
-      {/* Biggest limiter or error actions */}
       {r.status === "complete" && r.biggestLimiter ? (
         <span className="text-muted-foreground">
           Biggest limiter: <span className="font-medium text-foreground">{limiterLabels[r.biggestLimiter]}</span>
@@ -124,8 +120,6 @@ function ResultTableRow({ r, onRetry }: { r: AnalysisResult; onRetry: (id: strin
       ) : (
         <span className="text-muted-foreground">—</span>
       )}
-
-      {/* Link arrow */}
       <span className="text-muted-foreground">→</span>
     </div>
   );
@@ -135,20 +129,50 @@ export default function DashboardPage() {
   const [results, setResults] = useState<AnalysisResult[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(false);
   const [newAnalysisOpen, setNewAnalysisOpen] = useState(false);
   const [rerunFile, setRerunFile] = useState<File | undefined>(undefined);
+  const sentinelRef = useRef<HTMLDivElement>(null);
 
   const loadData = () => {
     setLoading(true);
     setError(false);
-    analysisService.getResults().then((r) => {
-      setResults(r);
+    analysisService.getResults(0, PAGE_SIZE).then((res) => {
+      setResults(res.data);
+      setHasMore(res.hasMore);
       setLoading(false);
     }).catch(() => {
       setError(true);
       setLoading(false);
     });
   };
+
+  const loadMore = useCallback(() => {
+    if (loadingMore || !hasMore) return;
+    setLoadingMore(true);
+    analysisService.getResults(results.length, PAGE_SIZE).then((res) => {
+      setResults((prev) => [...prev, ...res.data]);
+      setHasMore(res.hasMore);
+      setLoadingMore(false);
+    }).catch(() => {
+      setLoadingMore(false);
+    });
+  }, [loadingMore, hasMore, results.length]);
+
+  // Infinite scroll observer
+  useEffect(() => {
+    const el = sentinelRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) loadMore();
+      },
+      { rootMargin: "200px" }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [loadMore]);
 
   const handleRetry = (id: string) => {
     const mockFile = new File([new Blob([""], { type: "video/mp4" })], "retry-clip.mp4", { type: "video/mp4" });
@@ -194,6 +218,14 @@ export default function DashboardPage() {
                   <span />
                 </div>
                 {results.map((r) => <ResultTableRow key={r.id} r={r} onRetry={handleRetry} />)}
+              </div>
+
+              {/* Infinite scroll sentinel */}
+              <div ref={sentinelRef} className="flex justify-center py-6">
+                {loadingMore && <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />}
+                {!hasMore && results.length > 0 && (
+                  <p className="text-xs text-muted-foreground">All clips loaded</p>
+                )}
               </div>
             </>
           )}

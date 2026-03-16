@@ -22,7 +22,7 @@ export function RecentAnalysesList() {
   const { id: currentId } = useParams<{ id: string }>();
 
   useEffect(() => {
-    analysisService.getResults().then(setResults).catch(() => {});
+    analysisService.getResults().then((res) => setResults(res.data)).catch(() => {});
   }, []);
 
   if (results.length === 0) return null;

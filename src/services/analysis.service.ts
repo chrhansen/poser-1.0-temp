@@ -41,9 +41,13 @@ export const analysisService = {
     return mockResults.find((r) => r.id === id) ?? null;
   },
 
-  getResults: async (): Promise<AnalysisResult[]> => {
+  getResults: async (
+    offset = 0,
+    limit = 20
+  ): Promise<{ data: AnalysisResult[]; hasMore: boolean }> => {
     await delay(400);
-    return mockResults;
+    const page = mockResults.slice(offset, offset + limit);
+    return { data: page, hasMore: offset + limit < mockResults.length };
   },
 
   getEmbedResult: async (_token: string): Promise<AnalysisResult | null> => {
