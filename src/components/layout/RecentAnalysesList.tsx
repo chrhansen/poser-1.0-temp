@@ -53,9 +53,12 @@ export function RecentAnalysesList() {
                 </span>
               )}
             </div>
-            <p className="mt-1 text-[11px] text-muted-foreground">
-              {new Date(r.createdAt).toLocaleDateString()}
-              {r.duration ? ` · ${r.duration}s` : ""}
+            <p className="mt-1">
+              <RelativeDate
+                date={r.createdAt}
+                suffix={r.duration ? `${r.duration}s` : undefined}
+                className="text-[11px] text-muted-foreground"
+              />
             </p>
           </Link>
         ))}
