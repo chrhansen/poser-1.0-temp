@@ -11,6 +11,7 @@ import type { AnalysisResult, SkiLimiter } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { Upload, Clock, Loader2, CheckCircle, XCircle, RotateCcw, AlertTriangle } from "lucide-react";
 import { NewAnalysisSheet } from "@/components/upload/NewAnalysisSheet";
+import { RelativeDate } from "@/components/shared/RelativeDate";
 
 const PAGE_SIZE = 20;
 
