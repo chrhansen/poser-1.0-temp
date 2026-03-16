@@ -255,8 +255,8 @@ export default function ResultsPage() {
             </div>
           </div>
 
-          {/* Actions */}
-          <div className="flex gap-3 border-t border-border pt-5">
+          {/* Actions — pushed below fold */}
+          <div className="mt-24 flex gap-3 border-t border-border pt-5">
             <Button variant="outline" size="sm" className="text-destructive" onClick={() => setDeleteOpen(true)}>
               <Trash2 className="mr-2 h-4 w-4" /> Delete
             </Button>
