@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { analysisService } from "@/services/analysis.service";
 import type { AnalysisResult } from "@/lib/types";
 import { Clock, Loader2, CheckCircle, XCircle } from "lucide-react";
+import { RelativeDate } from "@/components/shared/RelativeDate";
 
 const statusIcons: Record<AnalysisResult["status"], { icon: typeof Clock; cls: string }> = {
   pending: { icon: Clock, cls: "text-muted-foreground" },
@@ -52,9 +53,12 @@ export function RecentAnalysesList() {
                 </span>
               )}
             </div>
-            <p className="mt-1 text-[11px] text-muted-foreground">
-              {new Date(r.createdAt).toLocaleDateString()}
-              {r.duration ? ` · ${r.duration}s` : ""}
+            <p className="mt-1">
+              <RelativeDate
+                date={r.createdAt}
+                suffix={r.duration ? `${r.duration}s` : undefined}
+                className="text-[11px] text-muted-foreground"
+              />
             </p>
           </Link>
         ))}

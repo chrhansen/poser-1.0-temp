@@ -11,6 +11,7 @@ import type { AnalysisResult, SkiLimiter } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { Upload, Clock, Loader2, CheckCircle, XCircle, RotateCcw, AlertTriangle } from "lucide-react";
 import { NewAnalysisSheet } from "@/components/upload/NewAnalysisSheet";
+import { RelativeDate } from "@/components/shared/RelativeDate";
 
 const PAGE_SIZE = 20;
 
@@ -28,10 +29,15 @@ const limiterLabels: Record<SkiLimiter, string> = {
   steering: "Steering",
 };
 
-function formatClipMeta(r: AnalysisResult) {
-  const date = new Date(r.createdAt).toLocaleDateString();
-  const clip = r.clipLength ? `${r.clipLength}s clip` : null;
-  return [date, clip].filter(Boolean).join(" · ");
+function ClipMeta({ r }: { r: AnalysisResult }) {
+  const suffix = r.clipLength ? `${r.clipLength}s clip` : undefined;
+  return (
+    <RelativeDate
+      date={r.createdAt}
+      suffix={suffix}
+      className="text-xs text-muted-foreground"
+    />
+  );
 }
 
 function ResultCard({ r, onRetry }: { r: AnalysisResult; onRetry: (id: string) => void }) {
@@ -54,7 +60,7 @@ function ResultCard({ r, onRetry }: { r: AnalysisResult; onRetry: (id: string) =
             ) : (
               <p className={cn("text-sm font-medium", cls)}>{statusConfig[r.status].label}</p>
             )}
-            <p className="text-xs text-muted-foreground">{formatClipMeta(r)}</p>
+            <ClipMeta r={r} />
           </div>
         </div>
         {r.status === "complete" && r.biggestLimiter && (
@@ -101,7 +107,7 @@ function ResultTableRow({ r, onRetry }: { r: AnalysisResult; onRetry: (id: strin
           <span className={cls}>{label}</span>
         )}
       </div>
-      <span className="text-muted-foreground">{formatClipMeta(r)}</span>
+      <ClipMeta r={r} />
       {r.status === "complete" && r.biggestLimiter ? (
         <span className="text-muted-foreground">
           Biggest limiter: <span className="font-medium text-foreground">{limiterLabels[r.biggestLimiter]}</span>

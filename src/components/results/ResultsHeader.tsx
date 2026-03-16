@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Download, Share2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import type { AnalysisResult } from "@/lib/types";
+import { formatDate } from "@/lib/date-utils";
 
 interface ResultsHeaderProps {
   result: AnalysisResult;
@@ -9,7 +10,7 @@ interface ResultsHeaderProps {
 
 export function ResultsHeader({ result }: ResultsHeaderProps) {
   const navigate = useNavigate();
-  const date = new Date(result.createdAt).toLocaleDateString();
+  const date = formatDate(result.createdAt);
   const clip = result.duration ? `${result.duration}s clip` : null;
   const meta = [date, clip].filter(Boolean).join(" · ");
 
