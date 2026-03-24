@@ -38,6 +38,8 @@ export function VideoTrimScrubber({
   trimRange,
   onTrimChange,
   onPlayheadSeek,
+  scrubOnly = false,
+  label,
   className,
 }: VideoTrimScrubberProps) {
   const trackRef = useRef<HTMLDivElement>(null);
