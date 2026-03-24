@@ -194,9 +194,13 @@ export function VideoTrimScrubber({
 
   return (
     <div className={cn("select-none", className)}>
-      <p className="text-xs font-medium text-muted-foreground mb-2">
-        Trim clip (max. {maxTrimSeconds}s) &amp; scrub to select which skier to analyze
-      </p>
+      {label !== undefined ? (
+        <p className="text-xs font-medium text-muted-foreground mb-2">{label}</p>
+      ) : !scrubOnly ? (
+        <p className="text-xs font-medium text-muted-foreground mb-2">
+          Trim clip (max. {maxTrimSeconds}s) &amp; scrub to select which skier to analyze
+        </p>
+      ) : null}
 
       {/* Outer track – handles pointer events across the full width */}
       <div
@@ -209,9 +213,7 @@ export function VideoTrimScrubber({
         onPointerLeave={handlePointerUp}
       >
         {/* Filmstrip container – full width, handles overlap on top */}
-        <div
-          className="absolute inset-0 overflow-hidden"
-        >
+        <div className="absolute inset-0 overflow-hidden rounded-lg">
           {/* Filmstrip thumbnails */}
           <div className="absolute inset-0 flex">
             {frames.length > 0
@@ -224,14 +226,20 @@ export function VideoTrimScrubber({
           </div>
 
           {/* Dimmed regions outside trim */}
-          <div className="absolute inset-y-0 left-0 bg-background/70" style={{ width: `${trimRange[0]}%` }} />
-          <div className="absolute inset-y-0 right-0 bg-background/70" style={{ width: `${100 - trimRange[1]}%` }} />
+          {!scrubOnly && (
+            <>
+              <div className="absolute inset-y-0 left-0 bg-background/70" style={{ width: `${trimRange[0]}%` }} />
+              <div className="absolute inset-y-0 right-0 bg-background/70" style={{ width: `${100 - trimRange[1]}%` }} />
+            </>
+          )}
 
           {/* Trim bracket (top & bottom border lines) */}
-          <div
-            className="absolute inset-y-0 pointer-events-none border-y-[3px] border-primary"
-            style={{ left: `${trimRange[0]}%`, width: `${trimRange[1] - trimRange[0]}%` }}
-          />
+          {!scrubOnly && (
+            <div
+              className="absolute inset-y-0 pointer-events-none border-y-[3px] border-primary"
+              style={{ left: `${trimRange[0]}%`, width: `${trimRange[1] - trimRange[0]}%` }}
+            />
+          )}
 
           {/* Playhead scrubber */}
           <div
@@ -245,31 +253,33 @@ export function VideoTrimScrubber({
           </div>
         </div>
 
-        {/* Start handle – positioned in the outer (non-clipped) layer */}
-        <HandleBracket
-          side="start"
-          pct={trimRange[0]}
-          trackRef={trackRef}
-          handleW={HANDLE_W}
-          active={dragging === "start"}
-          onPointerDown={handlePointerDown("start")}
-        />
-
-        {/* End handle */}
-        <HandleBracket
-          side="end"
-          pct={trimRange[1]}
-          trackRef={trackRef}
-          handleW={HANDLE_W}
-          active={dragging === "end"}
-          onPointerDown={handlePointerDown("end")}
-        />
+        {/* Trim handles – hidden in scrubOnly mode */}
+        {!scrubOnly && (
+          <>
+            <HandleBracket
+              side="start"
+              pct={trimRange[0]}
+              trackRef={trackRef}
+              handleW={HANDLE_W}
+              active={dragging === "start"}
+              onPointerDown={handlePointerDown("start")}
+            />
+            <HandleBracket
+              side="end"
+              pct={trimRange[1]}
+              trackRef={trackRef}
+              handleW={HANDLE_W}
+              active={dragging === "end"}
+              onPointerDown={handlePointerDown("end")}
+            />
+          </>
+        )}
       </div>
 
       {/* Time labels */}
       <div className="mt-1.5 flex items-center justify-between text-xs text-muted-foreground">
         <span>{formatTime(trimStart)}</span>
-        <span className="font-medium">{formatTime(trimDuration)} selected</span>
+        {!scrubOnly && <span className="font-medium">{formatTime(trimDuration)} selected</span>}
         <span>{formatTime(trimEnd)}</span>
       </div>
     </div>
