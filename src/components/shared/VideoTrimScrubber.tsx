@@ -10,6 +10,10 @@ interface VideoTrimScrubberProps {
   trimRange: [number, number]; // percentage 0–100
   onTrimChange: (range: [number, number]) => void;
   onPlayheadSeek: (pct: number) => void;
+  /** When true, only show the playhead scrubber — hide trim handles and bracket */
+  scrubOnly?: boolean;
+  /** Label shown above the scrubber */
+  label?: string;
   className?: string;
 }
 
