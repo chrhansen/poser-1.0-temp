@@ -1,7 +1,8 @@
 import { useRef, useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check } from "lucide-react";
+import { Check, Scissors, MousePointerClick } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import { VideoTrimScrubber } from "./VideoTrimScrubber";
 import type { SkierDetection, SkierBbox } from "@/services/embed-api.service";
 import { embedApiService } from "@/services/embed-api.service";
@@ -23,6 +24,8 @@ interface VideoSkierSelectProps {
   children: (props: { selected: boolean; getResult: () => VideoSkierSelectResult }) => React.ReactNode;
 }
 
+type InternalStep = "trim" | "select";
+
 /* ─── Component ─── */
 
 export function VideoSkierSelect({
@@ -35,6 +38,10 @@ export function VideoSkierSelect({
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [duration, setDuration] = useState(0);
   const [trimRange, setTrimRange] = useState<[number, number]>([0, 100]);
+
+  // Internal step: trim first (if needed), then select skier
+  const [internalStep, setInternalStep] = useState<InternalStep>("trim");
+  const needsTrim = duration > maxTrimSeconds;
 
   // Skier detection
   const [detections, setDetections] = useState<SkierDetection[]>([]);
@@ -59,6 +66,12 @@ export function VideoSkierSelect({
     setDuration(dur);
     const endPct = dur > maxTrimSeconds ? (maxTrimSeconds / dur) * 100 : 100;
     setTrimRange([0, endPct]);
+
+    // If video is short enough, skip trim step
+    if (dur <= maxTrimSeconds) {
+      setInternalStep("select");
+    }
+
     setTimeout(() => captureThumbnails(), 300);
   };
 
@@ -73,7 +86,6 @@ export function VideoSkierSelect({
         if (dets.length === 0) {
           setManualMode(true);
         }
-        // After detection, capture thumbnails for each detected skier
         setTimeout(() => captureThumbnails(dets), 100);
       })
       .catch(() => setManualMode(true))
@@ -114,6 +126,7 @@ export function VideoSkierSelect({
   };
 
   const handleVideoClick = (e: React.MouseEvent<HTMLVideoElement>) => {
+    if (internalStep !== "select") return;
     if (!manualMode) return;
     const rect = e.currentTarget.getBoundingClientRect();
     const x = (e.clientX - rect.left) / rect.width;
@@ -123,9 +136,18 @@ export function VideoSkierSelect({
   };
 
   const handleSelectDetection = (objectId: number) => {
+    if (internalStep !== "select") return;
     setSelectedSkier(objectId);
     setManualClick(null);
     setManualMode(false);
+  };
+
+  const handleConfirmTrim = () => {
+    setInternalStep("select");
+    // Seek to the start of the trimmed region so the user can scrub from there
+    if (videoRef.current && duration > 0) {
+      videoRef.current.currentTime = (trimRange[0] / 100) * duration;
+    }
   };
 
   // Computed
@@ -135,7 +157,6 @@ export function VideoSkierSelect({
 
   const selectedDet = detections.find((d) => d.object_id === selectedSkier);
 
-  // Overlay positions derived from detection bbox (center point)
   const getOverlayStyle = (det: SkierDetection) => {
     const cx = ((det.bbox.x1 + det.bbox.x2) / 2) * 100;
     const cy = ((det.bbox.y1 + det.bbox.y2) / 2) * 100;
@@ -170,15 +191,42 @@ export function VideoSkierSelect({
     };
   }, [selectedDet, manualClick, trimStart, trimEnd, selectedSkier, duration]);
 
+  const isTrimStep = internalStep === "trim" && needsTrim;
+  const isSelectStep = internalStep === "select";
+
   return (
     <div className="flex flex-col gap-3">
+      {/* Step indicator when trimming is needed */}
+      {needsTrim && (
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          <span className={cn(
+            "flex items-center gap-1 font-medium",
+            isTrimStep ? "text-primary" : "text-muted-foreground"
+          )}>
+            <Scissors className="h-3 w-3" />
+            1. Trim
+          </span>
+          <span className="text-border">→</span>
+          <span className={cn(
+            "flex items-center gap-1 font-medium",
+            isSelectStep ? "text-primary" : "text-muted-foreground"
+          )}>
+            <MousePointerClick className="h-3 w-3" />
+            2. Select skier
+          </span>
+        </div>
+      )}
+
       {/* Video preview with skier overlays */}
       <div className="relative overflow-hidden rounded-xl border border-border bg-secondary">
         {videoUrl && (
           <video
             ref={videoRef}
             src={videoUrl}
-            className={cn("w-full max-h-[40vh] object-contain", manualMode && "cursor-crosshair")}
+            className={cn(
+              "w-full max-h-[40vh] object-contain",
+              isSelectStep && manualMode && "cursor-crosshair"
+            )}
             onLoadedMetadata={handleLoadedMetadata}
             onClick={handleVideoClick}
             muted
@@ -189,143 +237,174 @@ export function VideoSkierSelect({
         {/* Hidden canvas for thumbnail capture */}
         <canvas ref={canvasRef} className="hidden" />
 
-        {/* Clickable skier zones from detections */}
-        {detections.map((det) => (
-          <button
-            key={det.object_id}
-            onClick={() => handleSelectDetection(det.object_id)}
-            className="absolute z-10 cursor-pointer focus:outline-none"
-            style={getOverlayStyle(det)}
-            aria-label={`Select ${det.label}`}
-          />
-        ))}
-
-        {/* Pulsing rings when no selection */}
-        <AnimatePresence>
-          {!selectedSkier &&
-            detections.map((det) => (
-              <motion.div
-                key={det.object_id}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="pointer-events-none absolute"
-                style={getOverlayStyle(det)}
-              >
-                <motion.div
-                  animate={{ scale: [1, 1.25, 1], opacity: [0.5, 0.15, 0.5] }}
-                  transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
-                  className="absolute inset-0 rounded-full border-2 border-primary"
-                />
-                <div className="absolute inset-[15%] rounded-full border-2 border-primary/70" />
-              </motion.div>
-            ))}
-        </AnimatePresence>
-
-        {/* Selection confirmation chip */}
-        <AnimatePresence>
-          {selectedDet && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="absolute z-20 flex items-center gap-1.5 rounded-full bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground shadow-lg"
-              style={{
-                left: `${((selectedDet.bbox.x1 + selectedDet.bbox.x2) / 2) * 100}%`,
-                top: `${selectedDet.bbox.y2 * 100 + 4}%`,
-                transform: "translateX(-50%)",
-              }}
-            >
-              <Check className="h-3 w-3" />
-              Skier selected
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Manual click indicator */}
-        {manualClick && manualMode && (
-          <div
-            className="absolute h-6 w-6 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-accent bg-accent/20 pointer-events-none"
-            style={{ left: `${manualClick.x * 100}%`, top: `${manualClick.y * 100}%` }}
-          />
-        )}
-      </div>
-
-      {/* Filmstrip trim & scrubber */}
-      {duration > 0 && (
-        <VideoTrimScrubber
-          videoEl={videoRef.current}
-          duration={duration}
-          maxTrimSeconds={maxTrimSeconds}
-          trimRange={trimRange}
-          onTrimChange={(range) => {
-            setTrimRange(range);
-            // Seek video to whichever handle moved
-            if (videoRef.current && duration > 0) {
-              const prev = trimRange;
-              const startMoved = range[0] !== prev[0];
-              const seekPct = startMoved ? range[0] : range[1];
-              videoRef.current.currentTime = (seekPct / 100) * duration;
-            }
-          }}
-          onPlayheadSeek={(pct) => {
-            if (videoRef.current && duration > 0) {
-              videoRef.current.currentTime = (pct / 100) * duration;
-            }
-          }}
-        />
-      )}
-
-      {/* Skier thumbnail selectors */}
-      <div>
-        {detecting && (
-          <p className="text-xs text-muted-foreground animate-pulse">Detecting skiers…</p>
-        )}
-        {!detecting && detections.length > 0 && (
-          <div className="flex items-center gap-3">
+        {/* Skier overlays – only shown in select step */}
+        {isSelectStep && (
+          <>
+            {/* Clickable skier zones from detections */}
             {detections.map((det) => (
               <button
                 key={det.object_id}
                 onClick={() => handleSelectDetection(det.object_id)}
-                className={cn(
-                  "relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg border-2 transition-all",
-                  selectedSkier === det.object_id && !manualMode
-                    ? "border-primary ring-2 ring-primary/30"
-                    : "border-border hover:border-muted-foreground"
-                )}
+                className="absolute z-10 cursor-pointer focus:outline-none"
+                style={getOverlayStyle(det)}
                 aria-label={`Select ${det.label}`}
-              >
-                {thumbnails[det.object_id] ? (
-                  <img
-                    src={thumbnails[det.object_id]}
-                    alt={det.label}
-                    className="h-full w-full object-cover"
-                  />
-                ) : (
-                  <div className="flex h-full w-full items-center justify-center bg-secondary/50">
-                    <span className="text-[10px] font-medium text-muted-foreground">{det.label}</span>
-                  </div>
-                )}
-                {selectedSkier === det.object_id && !manualMode && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-primary/20">
-                    <Check className="h-4 w-4 text-primary-foreground drop-shadow" />
-                  </div>
-                )}
-              </button>
+              />
             ))}
-            <span className="text-xs text-muted-foreground">Select a skier</span>
-          </div>
-        )}
-        {!detecting && manualMode && !manualClick && (
-          <p className="text-xs text-muted-foreground">
-            Click on the skier in the video above to select them.
-          </p>
-        )}
-        {manualClick && (
-          <p className="text-xs text-accent">Skier selected via manual click.</p>
+
+            {/* Pulsing rings when no selection */}
+            <AnimatePresence>
+              {!selectedSkier &&
+                detections.map((det) => (
+                  <motion.div
+                    key={det.object_id}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="pointer-events-none absolute"
+                    style={getOverlayStyle(det)}
+                  >
+                    <motion.div
+                      animate={{ scale: [1, 1.25, 1], opacity: [0.5, 0.15, 0.5] }}
+                      transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+                      className="absolute inset-0 rounded-full border-2 border-primary"
+                    />
+                    <div className="absolute inset-[15%] rounded-full border-2 border-primary/70" />
+                  </motion.div>
+                ))}
+            </AnimatePresence>
+
+            {/* Selection confirmation chip */}
+            <AnimatePresence>
+              {selectedDet && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="absolute z-20 flex items-center gap-1.5 rounded-full bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground shadow-lg"
+                  style={{
+                    left: `${((selectedDet.bbox.x1 + selectedDet.bbox.x2) / 2) * 100}%`,
+                    top: `${selectedDet.bbox.y2 * 100 + 4}%`,
+                    transform: "translateX(-50%)",
+                  }}
+                >
+                  <Check className="h-3 w-3" />
+                  Skier selected
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Manual click indicator */}
+            {manualClick && manualMode && (
+              <div
+                className="absolute h-6 w-6 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-accent bg-accent/20 pointer-events-none"
+                style={{ left: `${manualClick.x * 100}%`, top: `${manualClick.y * 100}%` }}
+              />
+            )}
+          </>
         )}
       </div>
 
-      {/* Action slot via render prop */}
-      {children({ selected: hasSelection, getResult })}
+      {/* Step 1: Trim – show trim scrubber with handles */}
+      {isTrimStep && duration > 0 && (
+        <>
+          <VideoTrimScrubber
+            videoEl={videoRef.current}
+            duration={duration}
+            maxTrimSeconds={maxTrimSeconds}
+            trimRange={trimRange}
+            onTrimChange={(range) => {
+              setTrimRange(range);
+              if (videoRef.current && duration > 0) {
+                const prev = trimRange;
+                const startMoved = range[0] !== prev[0];
+                const seekPct = startMoved ? range[0] : range[1];
+                videoRef.current.currentTime = (seekPct / 100) * duration;
+              }
+            }}
+            onPlayheadSeek={(pct) => {
+              if (videoRef.current && duration > 0) {
+                videoRef.current.currentTime = (pct / 100) * duration;
+              }
+            }}
+            label={`Select the best ${maxTrimSeconds} seconds from your clip`}
+          />
+
+          <Button className="w-full" onClick={handleConfirmTrim}>
+            Confirm trim & continue
+          </Button>
+        </>
+      )}
+
+      {/* Step 2: Select skier – show scrub-only filmstrip + skier thumbnails */}
+      {isSelectStep && duration > 0 && (
+        <>
+          <VideoTrimScrubber
+            videoEl={videoRef.current}
+            duration={duration}
+            maxTrimSeconds={maxTrimSeconds}
+            trimRange={trimRange}
+            onTrimChange={() => {}}
+            onPlayheadSeek={(pct) => {
+              if (videoRef.current && duration > 0) {
+                videoRef.current.currentTime = (pct / 100) * duration;
+              }
+            }}
+            scrubOnly
+            label="Scrub to find a clear frame, then click the skier to track"
+          />
+
+          {/* Skier thumbnail selectors */}
+          <div>
+            {detecting && (
+              <p className="text-xs text-muted-foreground animate-pulse">Detecting skiers…</p>
+            )}
+            {!detecting && detections.length > 0 && (
+              <div className="flex items-center gap-3">
+                {detections.map((det) => (
+                  <button
+                    key={det.object_id}
+                    onClick={() => handleSelectDetection(det.object_id)}
+                    className={cn(
+                      "relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg border-2 transition-all",
+                      selectedSkier === det.object_id && !manualMode
+                        ? "border-primary ring-2 ring-primary/30"
+                        : "border-border hover:border-muted-foreground"
+                    )}
+                    aria-label={`Select ${det.label}`}
+                  >
+                    {thumbnails[det.object_id] ? (
+                      <img
+                        src={thumbnails[det.object_id]}
+                        alt={det.label}
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center bg-secondary/50">
+                        <span className="text-[10px] font-medium text-muted-foreground">{det.label}</span>
+                      </div>
+                    )}
+                    {selectedSkier === det.object_id && !manualMode && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-primary/20">
+                        <Check className="h-4 w-4 text-primary-foreground drop-shadow" />
+                      </div>
+                    )}
+                  </button>
+                ))}
+                <span className="text-xs text-muted-foreground">Select a skier</span>
+              </div>
+            )}
+            {!detecting && manualMode && !manualClick && (
+              <p className="text-xs text-muted-foreground">
+                Click on the skier in the video above to select them.
+              </p>
+            )}
+            {manualClick && (
+              <p className="text-xs text-accent">Skier selected via manual click.</p>
+            )}
+          </div>
+
+          {/* Action slot via render prop */}
+          {children({ selected: hasSelection, getResult })}
+        </>
+      )}
     </div>
   );
 }
