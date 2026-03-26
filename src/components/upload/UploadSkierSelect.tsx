@@ -23,7 +23,7 @@ export function UploadSkierSelect({ file, onCancel, onContinue, submitLabel }: U
               onContinue(result.objectId);
             }}
           >
-            {selected ? (submitLabel ?? "Analyze my skiing") : "Select a skier to continue"}
+            {selected ? (submitLabel ?? "Analyze skier") : "Select a skier to continue"}
           </Button>
         )}
       </VideoSkierSelect>
