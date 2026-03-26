@@ -99,15 +99,23 @@ export function VideoSkierSelect({
       <div className="flex flex-col gap-2">
         {totalSteps > 1 && (
           <div className="flex items-center gap-2">
-            {Array.from({ length: totalSteps }).map((_, i) => (
-              <div
-                key={i}
-                className={cn(
-                  "h-1.5 flex-1 rounded-full transition-colors",
-                  i + 1 <= currentStepNum ? "bg-primary" : "bg-border"
-                )}
-              />
-            ))}
+            {Array.from({ length: totalSteps }).map((_, i) => {
+              const active = i + 1 <= currentStepNum;
+              return (
+                <div key={i} className="flex items-center gap-2 flex-1">
+                  <div className={cn(
+                    "flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold transition-colors",
+                    active ? "bg-primary text-primary-foreground" : "bg-border text-muted-foreground"
+                  )}>
+                    {i + 1}
+                  </div>
+                  <div className={cn(
+                    "h-1.5 flex-1 rounded-full transition-colors",
+                    active ? "bg-primary" : "bg-border"
+                  )} />
+                </div>
+              );
+            })}
           </div>
         )}
 

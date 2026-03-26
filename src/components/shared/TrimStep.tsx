@@ -325,17 +325,14 @@ export function TrimStep({ videoUrl, duration, maxTrimSeconds, onConfirm, onCanc
         <Button className="w-full" size="lg" onClick={() => onConfirm(trimStart, trimEnd)}>
           Use this clip
         </Button>
-        <div className="flex items-center justify-center gap-4">
-          {onCancel && (
+        {onCancel && (
+          <div className="flex items-center justify-center">
             <button onClick={onCancel} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
               Cancel
             </button>
-          )}
-          <button onClick={resetTrim} className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
-            <RotateCcw className="h-3.5 w-3.5" />
-            Reset to first {maxTrimSeconds}s
-          </button>
-        </div>
+          </div>
+        )}
+      </div>
       </div>
     </div>
   );
