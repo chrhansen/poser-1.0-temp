@@ -20,6 +20,16 @@ export const serviceConfig = {
 const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
 export { delay };
 
+// ─── Default replay outputs for complete results ────────────────────────────
+const defaultReplayOutputs: ReplayOutput[] = [
+  { type: "follow_cam", label: "Follow Cam", description: "A tracked replay that keeps the skier centered.", available: true },
+  { type: "follow_cam_skeleton", label: "Follow Cam + Skeleton", description: "A tracked replay with pose overlay to show movement timing and body alignment.", available: true },
+  { type: "original_skeleton", label: "Original + Skeleton", description: "The original camera view with pose overlay.", available: true },
+];
+
+const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
+export { delay };
+
 // ─── Users ──────────────────────────────────────────────────────────────────
 export const mockUser: User = {
   id: "usr_1",
