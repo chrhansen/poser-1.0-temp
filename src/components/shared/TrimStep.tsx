@@ -196,13 +196,6 @@ export function TrimStep({ videoUrl, duration, maxTrimSeconds, onConfirm, onCanc
       setPlaying(true);
     }
   };
-
-  const resetTrim = () => {
-    setTrimStart(0);
-    setTrimEnd(Math.min(duration, maxTrimSeconds));
-    if (videoRef.current) videoRef.current.currentTime = 0;
-  };
-
   const trimDuration = trimEnd - trimStart;
   const startPct = toPct(trimStart);
   const endPct = toPct(trimEnd);
