@@ -90,6 +90,18 @@ export type SkiLimiter = "balance" | "pressure" | "edging" | "steering";
 
 export type ThemeKey = "balance" | "pressure" | "edging" | "steering";
 
+// ─── Replay output types (Motion Replay Beta) ──────────────────────────────
+
+export type ReplayOutputType = "follow_cam" | "follow_cam_skeleton" | "original_skeleton";
+
+export interface ReplayOutput {
+  type: ReplayOutputType;
+  label: string;
+  description: string;
+  url?: string;
+  available: boolean;
+}
+
 export interface SubmetricScore {
   id: string;
   name: string;
@@ -148,6 +160,8 @@ export interface AnalysisResult {
   biggestLimiter?: SkiLimiter;
   themeScores?: ThemeScores;
   embedToken?: string;
+  filename?: string;
+  replayOutputs?: ReplayOutput[];
 }
 
 export interface PricingPlan {

@@ -8,6 +8,7 @@ import type {
   MetricsData,
   BillingInfo,
   SettingsProfile,
+  ReplayOutput,
 } from "@/lib/types";
 import { generateMockMetrics } from "./mock-metrics";
 
