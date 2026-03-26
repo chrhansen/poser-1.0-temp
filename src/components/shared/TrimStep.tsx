@@ -39,6 +39,22 @@ export function TrimStep({ videoUrl, duration, maxTrimSeconds, onConfirm, onCanc
   const [dragging, setDragging] = useState<"start" | "end" | "window" | null>(null);
   const dragStartRef = useRef<{ mouseX: number; origStart: number; origEnd: number }>({ mouseX: 0, origStart: 0, origEnd: 0 });
 
+  // iOS Safari: force a seek to render the first frame (otherwise preview stays gray)
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    const forceFirstFrame = () => {
+      // Seek to trimStart (or a tiny offset) to force iOS to render a frame
+      v.currentTime = trimStart || 0.01;
+    };
+    if (v.readyState >= 2) {
+      forceFirstFrame();
+    } else {
+      v.addEventListener("loadeddata", forceFirstFrame, { once: true });
+      v.addEventListener("canplaythrough", forceFirstFrame, { once: true });
+    }
+  }, [videoUrl]); // eslint-disable-line react-hooks/exhaustive-deps
+
   // Sync video time
   useEffect(() => {
     const v = videoRef.current;
