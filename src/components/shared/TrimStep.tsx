@@ -275,13 +275,6 @@ export function TrimStep({ videoUrl, duration, maxTrimSeconds, onConfirm, onCanc
               onPointerDown={(e) => handlePointerDown("window", e)}
             />
 
-            {/* Playhead */}
-            <div
-              className="absolute z-30 top-0 bottom-0 pointer-events-none"
-              style={{ left: `${playheadPct}%`, transform: "translateX(-50%)" }}
-            >
-              <div className="mx-auto h-full w-[3px] rounded-full bg-background shadow-[0_0_6px_rgba(0,0,0,0.5)]" />
-            </div>
           </div>
 
           {/* Left handle */}
