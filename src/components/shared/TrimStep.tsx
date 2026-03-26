@@ -96,7 +96,8 @@ export function TrimStep({ videoUrl, duration, maxTrimSeconds, onConfirm, onCanc
       await capture(i + 1);
     };
 
-    const startCapture = () => { if (!cancelled) capture(0); };
+    let captureStarted = false;
+    const startCapture = () => { if (!cancelled && !captureStarted) { captureStarted = true; capture(0); } };
     // iOS Safari: loadeddata may not fire; listen to multiple events
     tv.addEventListener("loadeddata", startCapture, { once: true });
     tv.addEventListener("canplaythrough", startCapture, { once: true });
