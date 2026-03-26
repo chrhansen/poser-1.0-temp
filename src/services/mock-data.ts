@@ -8,6 +8,7 @@ import type {
   MetricsData,
   BillingInfo,
   SettingsProfile,
+  ReplayOutput,
 } from "@/lib/types";
 import { generateMockMetrics } from "./mock-metrics";
 
@@ -18,6 +19,14 @@ export const serviceConfig = {
 
 const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
 export { delay };
+
+// ─── Default replay outputs for complete results ────────────────────────────
+const defaultReplayOutputs: ReplayOutput[] = [
+  { type: "follow_cam", label: "Follow Cam", description: "A tracked replay that keeps the skier centered.", available: true },
+  { type: "follow_cam_skeleton", label: "Follow Cam + Skeleton", description: "A tracked replay with pose overlay to show movement timing and body alignment.", available: true },
+  { type: "original_skeleton", label: "Original + Skeleton", description: "The original camera view with pose overlay.", available: true },
+];
+
 
 // ─── Users ──────────────────────────────────────────────────────────────────
 export const mockUser: User = {
@@ -43,9 +52,9 @@ export const mockResults: AnalysisResult[] = [
     duration: 14,
     clipLength: 26,
     metrics: generateMockMetrics(14 * 30, 42),
-    skiRank: 80,
-    biggestLimiter: "edging",
     embedToken: "tok_abc123",
+    filename: "morning-run-grindelwald.mp4",
+    replayOutputs: defaultReplayOutputs,
   },
   {
     id: "res_2",
@@ -57,6 +66,7 @@ export const mockResults: AnalysisResult[] = [
     duration: 22,
     clipLength: 34,
     progress: 42,
+    filename: "powder-day-verbier.mp4",
   },
   {
     id: "res_3",
@@ -68,6 +78,7 @@ export const mockResults: AnalysisResult[] = [
     duration: 8,
     clipLength: 15,
     failedReason: "Video quality too low for reliable analysis. Please upload a higher resolution clip.",
+    filename: "foggy-clip.mp4",
   },
   {
     id: "res_4",
@@ -77,6 +88,7 @@ export const mockResults: AnalysisResult[] = [
     status: "pending",
     createdAt: "2026-03-02T08:00:00Z",
     clipLength: 20,
+    filename: "steep-section-zermatt.mp4",
   },
   {
     id: "res_5",
@@ -88,12 +100,13 @@ export const mockResults: AnalysisResult[] = [
     duration: 18,
     clipLength: 30,
     metrics: generateMockMetrics(18 * 30, 99),
-    skiRank: 65,
-    biggestLimiter: "balance",
     embedToken: "tok_def456",
+    filename: "carving-practice.mp4",
+    replayOutputs: [
+      ...defaultReplayOutputs,
+    ],
   },
 ];
-
 // ─── Pricing ────────────────────────────────────────────────────────────────
 export const mockPricingPlans: PricingPlan[] = [
   {

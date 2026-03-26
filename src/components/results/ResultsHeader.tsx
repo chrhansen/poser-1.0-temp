@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Download, Share2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import type { AnalysisResult } from "@/lib/types";
@@ -27,7 +28,12 @@ export function ResultsHeader({ result }: ResultsHeaderProps) {
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div>
-          <h1 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">Clip feedback</h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
+              {result.filename ?? "Clip replay"}
+            </h1>
+            <Badge variant="secondary" className="text-[10px]">Motion Replay Beta</Badge>
+          </div>
           <p className="text-xs text-muted-foreground">{meta}</p>
         </div>
       </div>

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Upload, Target, TrendingUp, ArrowRight, Eye, AlertTriangle, Crosshair, BookOpen, Video, BarChart3 } from "lucide-react";
+import { Upload, Target, TrendingUp, ArrowRight, Video, Bone, Box, Eye } from "lucide-react";
 import { DemoAnalysisModal } from "@/components/demo/DemoAnalysisModal";
 import { Button } from "@/components/ui/button";
 import { BetaBadge } from "@/components/shared/BetaBadge";
@@ -8,9 +8,9 @@ import { Layout } from "@/components/layout/Layout";
 import { Section } from "@/components/shared/Section";
 import { UploadPickContent } from "@/components/upload/UploadPickContent";
 import { AuthDialog, type AuthContext } from "@/components/dialogs/AuthDialog";
+import { ComingSoonStrip } from "@/components/results/ComingSoonStrip";
 import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
-import heroImage from "@/assets/hero-ski.jpg";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
@@ -25,18 +25,25 @@ const steps = [
   {
     icon: Upload,
     title: "Upload a short clip",
-    description: "Record and upload a video of you skiing.",
+    description: "Record or upload a short ski clip.",
   },
   {
     icon: Target,
-    title: "Poser analyzes the movement",
-    description: "Poser estimates body position through the turn and looks for technique patterns.",
+    title: "Poser tracks the skier",
+    description: "Poser follows the skier, estimates body motion, and builds replay outputs.",
   },
   {
-    icon: TrendingUp,
-    title: "Get clear feedback",
-    description: "See what looks strong, what looks off, and what to work on next.",
+    icon: Eye,
+    title: "Explore replay views",
+    description: "Watch your clip as a follow cam replay, with skeleton overlays, or as a 3D body model.",
   },
+];
+
+const heroOutputs = [
+  { icon: Video, label: "Follow Cam", active: false },
+  { icon: Bone, label: "Follow Cam + Skeleton", active: true },
+  { icon: Video, label: "Original + Skeleton", active: false },
+  { icon: Box, label: "3D Model", active: false },
 ];
 
 type UploadTab = "demo" | "clip";
@@ -48,16 +55,16 @@ function DemoContent({ onStartDemo }: { onStartDemo: () => void }) {
         <Target className="h-5 w-5 text-accent-foreground" />
       </div>
       <p className="text-sm font-medium text-foreground">
-        See a sample clip analyzed from start to finish
+        See a sample ski clip transformed into replay views and 3D motion outputs.
       </p>
       <p className="text-xs text-muted-foreground max-w-xs">
-        Watch how Poser goes from uploaded clip to movement breakdown to clear technique feedback.
+        Watch how Poser goes from uploaded clip to follow cam, skeleton overlay, and 3D body model.
       </p>
       <Button size="lg" onClick={onStartDemo}>
-        Start demo analysis
+        Start demo replay
         <ArrowRight className="ml-2 h-4 w-4" />
       </Button>
-      <p className="text-[11px] text-muted-foreground">No signup required</p>
+      <p className="text-[11px] text-muted-foreground">No signup required for demo</p>
     </div>
   );
 }
@@ -126,14 +133,14 @@ export default function LandingPage() {
               custom={0}
               className="text-balance text-4xl font-bold tracking-tight text-foreground md:text-6xl"
             >
-              Know what to change in your skiing.
+              See your skiing from new angles.
             </motion.h1>
             <motion.p
               variants={fadeUp}
               custom={1}
               className="mx-auto mt-6 max-w-lg text-lg text-muted-foreground"
             >
-              Upload a short ski clip and Poser shows the stance and movement changes that matter most for better turns.
+              Upload a short ski clip and Poser turns it into replay views, skeleton overlays, and a 3D body model in minutes. SkiRank and technique feedback are coming soon.
             </motion.p>
             <motion.div
               variants={fadeUp}
@@ -144,11 +151,11 @@ export default function LandingPage() {
                 setActiveTab("demo");
                 document.getElementById("upload")?.scrollIntoView({ behavior: "smooth" });
               }}>
-                Try demo analysis
+                Try demo replay
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
               <Button variant="outline" size="lg" onClick={handleUploadClick}>
-                Upload your clip
+                Upload my clip
               </Button>
             </motion.div>
             <motion.p
@@ -156,26 +163,49 @@ export default function LandingPage() {
               custom={3}
               className="mt-4 text-xs text-muted-foreground"
             >
-              No sensors · short clip · results in minutes
+              Visual outputs now · SkiRank coming soon
             </motion.p>
           </motion.div>
         </div>
 
-        {/* Hero image */}
+        {/* Hero preview card */}
         <motion.div
           initial={{ opacity: 0, scale: 1.02 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, delay: 0.3 }}
           className="container pb-8 md:pb-16"
         >
-          <div className="overflow-hidden rounded-xl border border-border shadow-xl">
-            <img
-              src={heroImage}
-              alt="Skier carving a turn on a mountain slope"
-              className="w-full object-cover"
-              style={{ maxHeight: "480px" }}
-              loading="eager"
-            />
+          <div className="overflow-hidden rounded-xl border border-border bg-card shadow-xl">
+            {/* Output pill tabs */}
+            <div className="flex gap-1 overflow-x-auto border-b border-border bg-secondary/30 p-1.5">
+              {heroOutputs.map((o) => {
+                const Icon = o.icon;
+                return (
+                  <div
+                    key={o.label}
+                    className={cn(
+                      "flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium",
+                      o.active
+                        ? "bg-background text-foreground shadow-sm"
+                        : "text-muted-foreground"
+                    )}
+                  >
+                    <Icon className="h-3.5 w-3.5" />
+                    {o.label}
+                  </div>
+                );
+              })}
+            </div>
+            {/* Preview area */}
+            <div className="relative flex aspect-video items-center justify-center bg-secondary/20" style={{ maxHeight: "480px" }}>
+              <div className="flex flex-col items-center gap-3 text-center">
+                <Bone className="h-16 w-16 text-primary/30" />
+                <p className="text-sm font-medium text-foreground">Follow Cam + Skeleton</p>
+                <p className="max-w-xs text-xs text-muted-foreground">
+                  A tracked replay with pose overlay to show movement timing and body alignment.
+                </p>
+              </div>
+            </div>
           </div>
         </motion.div>
       </section>
@@ -186,12 +216,12 @@ export default function LandingPage() {
           <div className="text-center mb-8">
             <div className="flex items-center justify-center gap-2 mb-1">
               <h2 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">
-                Try Poser in under a minute
+                Try Poser Motion Replay in under a minute
               </h2>
               <BetaBadge />
             </div>
             <p className="mt-3 text-muted-foreground">
-              Start with a demo clip, or use your own.
+              Start with a demo clip, or upload your own.
             </p>
           </div>
           {/* Pill switch */}
@@ -213,7 +243,7 @@ export default function LandingPage() {
                     : "text-muted-foreground hover:text-foreground"
                 )}
               >
-                {tab === "demo" ? "Try demo" : "Use my clip"}
+                {tab === "demo" ? "Try demo replay" : "Use my clip"}
               </button>
             ))}
           </div>
@@ -236,7 +266,7 @@ export default function LandingPage() {
             How it works
           </h2>
           <p className="mx-auto mt-3 max-w-md text-muted-foreground">
-            From clip to next-step feedback.
+            From clip to replay views in minutes.
           </p>
         </div>
         <div className="mt-12 grid gap-8 md:grid-cols-3">
@@ -257,23 +287,26 @@ export default function LandingPage() {
             </motion.div>
           ))}
         </div>
+        <div className="mt-12">
+          <ComingSoonStrip />
+        </div>
       </Section>
 
-      {/* Feedback section */}
+      {/* Outputs section */}
       <Section>
         <div className="text-center">
           <h2 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">
-            Clear feedback, not just another video.
+            Replay views that reveal your movement.
           </h2>
           <p className="mx-auto mt-3 max-w-lg text-muted-foreground">
-            Poser helps you see the movement behind your turns and gives you something useful to work on next.
+            Poser generates multiple output views from a single clip so you can see your skiing from angles you've never had.
           </p>
         </div>
         <div className="mt-12 grid gap-8 md:grid-cols-3">
           {[
-            { icon: Eye, title: "Visual breakdown", description: "See pose overlays and movement through the turn." },
-            { icon: AlertTriangle, title: "Technique callouts", description: "Spot stance, balance, shin alignment, and body-position issues." },
-            { icon: Crosshair, title: "One next focus", description: "Finish each analysis knowing what to try on your next run." },
+            { icon: Video, title: "Follow Cam replay", description: "A head-tracked replay that keeps the skier centered for easier viewing." },
+            { icon: Bone, title: "Skeleton overlay", description: "See pose and body alignment overlaid on the replay or original clip." },
+            { icon: Box, title: "3D body model", description: "An interactive 3D replay to inspect movement from any angle." },
           ].map((item, i) => (
             <motion.div
               key={item.title}
@@ -297,20 +330,17 @@ export default function LandingPage() {
       <Section className="bg-surface-sunken">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">
-            For the moments skiers get stuck.
+            For skiers who want to see their movement.
           </h2>
           <p className="mx-auto mt-3 max-w-md text-muted-foreground">
-            You can feel when a turn is off. Poser helps you see why.
-          </p>
-          <p className="mx-auto mt-3 max-w-lg text-sm text-muted-foreground">
-            Use it between lessons, after filming with friends, or anytime you want a clearer picture of your technique.
+            Use replay views between lessons, after filming with friends, or anytime you want to see how you actually move on skis.
           </p>
         </div>
         <div className="mt-12 grid gap-6 md:grid-cols-3">
           {[
-            { icon: BookOpen, title: "Between lessons" },
+            { icon: TrendingUp, title: "Review between lessons" },
             { icon: Video, title: "After a filmed run" },
-            { icon: BarChart3, title: "To track changes over time" },
+            { icon: Eye, title: "See what the camera missed" },
           ].map((item, i) => (
             <motion.div
               key={item.title}
@@ -338,21 +368,21 @@ export default function LandingPage() {
           className="mx-auto max-w-lg text-center"
         >
           <h2 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">
-            See what to change before your next ski day.
+            See your skiing from new angles today.
           </h2>
           <p className="mt-3 text-muted-foreground">
-            Try a demo analysis or upload your own clip and get clearer technique feedback.
+            Try a demo replay or upload your own clip and get visual outputs in minutes.
           </p>
           <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
             <Button size="lg" onClick={() => {
               setActiveTab("demo");
               document.getElementById("upload")?.scrollIntoView({ behavior: "smooth" });
             }}>
-              Try demo analysis
+              Try demo replay
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
             <Button variant="outline" size="lg" onClick={handleUploadClick}>
-              Upload your clip
+              Upload my clip
             </Button>
           </div>
         </motion.div>
@@ -364,7 +394,6 @@ export default function LandingPage() {
         onOpenChange={setAuthOpen}
         context={authContext}
         onSuccess={() => {
-          // After auth, switch to clip tab and scroll to upload
           setActiveTab("clip");
           setTimeout(() => {
             document.getElementById("upload")?.scrollIntoView({ behavior: "smooth" });

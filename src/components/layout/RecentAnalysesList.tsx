@@ -47,19 +47,24 @@ export function RecentAnalysesList() {
           >
             <div className="flex items-center justify-between">
               <StatusBadge status={r.status} />
-              {r.status === "complete" && r.metrics && (
-                <span className="text-xs font-bold text-foreground">
-                  {r.metrics.edgeSimilarity.overall}
-                </span>
+              {r.status === "complete" && r.replayOutputs && (
+                <div className="flex gap-1">
+                  {r.replayOutputs.filter((o) => o.available).length > 0 && (
+                    <span className="rounded bg-accent/60 px-1.5 py-0.5 text-[9px] font-medium text-accent-foreground">
+                      {r.replayOutputs.filter((o) => o.available).length} outputs
+                    </span>
+                  )}
+                </div>
               )}
             </div>
-            <p className="mt-1">
-              <RelativeDate
-                date={r.createdAt}
-                suffix={r.duration ? `${r.duration}s` : undefined}
-                className="text-[11px] text-muted-foreground"
-              />
+            <p className="mt-1 truncate text-xs font-medium text-foreground">
+              {r.filename ?? "Untitled clip"}
             </p>
+            <RelativeDate
+              date={r.createdAt}
+              suffix={r.duration ? `${r.duration}s` : undefined}
+              className="text-[11px] text-muted-foreground"
+            />
           </Link>
         ))}
       </div>

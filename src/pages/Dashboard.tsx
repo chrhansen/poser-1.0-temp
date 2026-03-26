@@ -7,7 +7,8 @@ import { EmptyState } from "@/components/shared/EmptyState";
 import { analysisService } from "@/services/analysis.service";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import type { AnalysisResult, SkiLimiter } from "@/lib/types";
+import { Badge } from "@/components/ui/badge";
+import type { AnalysisResult } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { Upload, Clock, Loader2, CheckCircle, XCircle, RotateCcw, AlertTriangle } from "lucide-react";
 import { NewAnalysisSheet } from "@/components/upload/NewAnalysisSheet";
@@ -16,17 +17,10 @@ import { RelativeDate } from "@/components/shared/RelativeDate";
 const PAGE_SIZE = 20;
 
 const statusConfig: Record<AnalysisResult["status"], { icon: typeof Clock; label: string; cls: string }> = {
-  pending: { icon: Clock, label: "Pending", cls: "text-muted-foreground" },
+  pending: { icon: Clock, label: "Queued", cls: "text-muted-foreground" },
   processing: { icon: Loader2, label: "Processing", cls: "text-accent-foreground" },
-  complete: { icon: CheckCircle, label: "Complete", cls: "text-foreground" },
+  complete: { icon: CheckCircle, label: "Ready", cls: "text-primary" },
   error: { icon: XCircle, label: "Failed", cls: "text-destructive" },
-};
-
-const limiterLabels: Record<SkiLimiter, string> = {
-  balance: "Balance",
-  pressure: "Pressure",
-  edging: "Edging",
-  steering: "Steering",
 };
 
 function ClipMeta({ r }: { r: AnalysisResult }) {
@@ -40,10 +34,42 @@ function ClipMeta({ r }: { r: AnalysisResult }) {
   );
 }
 
-function ResultCard({ r, onRetry }: { r: AnalysisResult; onRetry: (id: string) => void }) {
-  const { icon: Icon, cls } = statusConfig[r.status];
-  const navigate = useNavigate();
+function OutputChips({ r }: { r: AnalysisResult }) {
+  if (r.status !== "complete" || !r.replayOutputs) return null;
+  const available = r.replayOutputs.filter((o) => o.available);
+  return (
+    <div className="flex flex-wrap gap-1">
+      {available.length > 0 && (
+        <span className="rounded-full bg-accent/60 px-2 py-0.5 text-[10px] font-medium text-accent-foreground">
+          Replay
+        </span>
+      )}
+      {available.some((o) => o.type.includes("skeleton")) && (
+        <span className="rounded-full bg-accent/60 px-2 py-0.5 text-[10px] font-medium text-accent-foreground">
+          Skeleton
+        </span>
+      )}
+      {r.modelUrl && (
+        <span className="rounded-full bg-accent/60 px-2 py-0.5 text-[10px] font-medium text-accent-foreground">
+          3D
+        </span>
+      )}
+    </div>
+  );
+}
 
+function StatusBadge({ status }: { status: AnalysisResult["status"] }) {
+  const { label, cls } = statusConfig[status];
+  return (
+    <Badge variant="outline" className={cn("text-[10px] font-medium", cls)}>
+      {status === "processing" && <Loader2 className="mr-1 h-3 w-3 animate-spin" />}
+      {label}
+    </Badge>
+  );
+}
+
+function ResultCard({ r, onRetry }: { r: AnalysisResult; onRetry: (id: string) => void }) {
+  const navigate = useNavigate();
   const handleCardClick = (e: React.MouseEvent) => {
     if ((e.target as HTMLElement).closest("button, a")) return;
     navigate(`/results/${r.id}`);
@@ -52,22 +78,14 @@ function ResultCard({ r, onRetry }: { r: AnalysisResult; onRetry: (id: string) =
   return (
     <div className="cursor-pointer rounded-xl border border-border p-4 transition-shadow hover:shadow-md" onClick={handleCardClick}>
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Icon className={cn("h-5 w-5 shrink-0", cls, r.status === "processing" && "animate-spin")} />
-          <div>
-            {r.status === "complete" && r.skiRank != null ? (
-              <p className="text-sm font-bold text-foreground">SkiRank {r.skiRank}</p>
-            ) : (
-              <p className={cn("text-sm font-medium", cls)}>{statusConfig[r.status].label}</p>
-            )}
-            <ClipMeta r={r} />
-          </div>
+        <div>
+          <p className="text-sm font-medium text-foreground truncate">{r.filename ?? "Untitled clip"}</p>
+          <ClipMeta r={r} />
         </div>
-        {r.status === "complete" && r.biggestLimiter && (
-          <span className="text-xs text-muted-foreground">
-            Limiter: <span className="font-medium text-foreground">{limiterLabels[r.biggestLimiter]}</span>
-          </span>
-        )}
+        <StatusBadge status={r.status} />
+      </div>
+      <div className="mt-2">
+        <OutputChips r={r} />
       </div>
       {r.status === "error" && (
         <div className="mt-3 flex items-center gap-2 border-t border-border pt-3">
@@ -86,9 +104,7 @@ function ResultCard({ r, onRetry }: { r: AnalysisResult; onRetry: (id: string) =
 }
 
 function ResultTableRow({ r, onRetry }: { r: AnalysisResult; onRetry: (id: string) => void }) {
-  const { icon: Icon, label, cls } = statusConfig[r.status];
   const navigate = useNavigate();
-
   const handleRowClick = (e: React.MouseEvent) => {
     if ((e.target as HTMLElement).closest("button, a")) return;
     navigate(`/results/${r.id}`);
@@ -96,36 +112,29 @@ function ResultTableRow({ r, onRetry }: { r: AnalysisResult; onRetry: (id: strin
 
   return (
     <div
-      className="grid cursor-pointer grid-cols-[1fr_1fr_1.2fr_auto] items-center gap-4 border-b border-border px-4 py-3 text-sm transition-colors hover:bg-secondary/50 last:border-0"
+      className="grid cursor-pointer grid-cols-[1.5fr_0.8fr_1fr_auto] items-center gap-4 border-b border-border px-4 py-3 text-sm transition-colors hover:bg-secondary/50 last:border-0"
       onClick={handleRowClick}
     >
-      <div className="flex items-center gap-2">
-        <Icon className={cn("h-3.5 w-3.5 shrink-0", cls, r.status === "processing" && "animate-spin")} />
-        {r.status === "complete" && r.skiRank != null ? (
-          <span className="font-bold text-foreground">SkiRank {r.skiRank}</span>
+      <div>
+        <p className="font-medium text-foreground truncate">{r.filename ?? "Untitled clip"}</p>
+        <ClipMeta r={r} />
+      </div>
+      <div>
+        <StatusBadge status={r.status} />
+      </div>
+      <div>
+        {r.status === "complete" ? (
+          <OutputChips r={r} />
+        ) : r.status === "error" ? (
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => onRetry(r.id)}>
+              <RotateCcw className="mr-1 h-3 w-3" /> Retry
+            </Button>
+          </div>
         ) : (
-          <span className={cls}>{label}</span>
+          <span className="text-xs text-muted-foreground">—</span>
         )}
       </div>
-      <ClipMeta r={r} />
-      {r.status === "complete" && r.biggestLimiter ? (
-        <span className="text-muted-foreground">
-          Biggest limiter: <span className="font-medium text-foreground">{limiterLabels[r.biggestLimiter]}</span>
-        </span>
-      ) : r.status === "error" ? (
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => onRetry(r.id)}>
-            <RotateCcw className="mr-1 h-3 w-3" /> Retry
-          </Button>
-          <Button variant="ghost" size="sm" className="h-7 text-xs" asChild>
-            <Link to={`/results/${r.id}`}>
-              <AlertTriangle className="mr-1 h-3 w-3" /> View issue
-            </Link>
-          </Button>
-        </div>
-      ) : (
-        <span className="text-muted-foreground">—</span>
-      )}
       <span className="text-muted-foreground">→</span>
     </div>
   );
@@ -166,7 +175,6 @@ export default function DashboardPage() {
     });
   }, [loadingMore, hasMore, results.length]);
 
-  // Infinite scroll observer
   useEffect(() => {
     const el = sentinelRef.current;
     if (!el) return;
@@ -196,16 +204,19 @@ export default function DashboardPage() {
       <Section compact>
         <div className="mx-auto max-w-3xl">
           <div className="flex items-center justify-between">
-            <h1 className="text-3xl font-bold tracking-tight text-foreground">Dashboard</h1>
+            <div className="flex items-center gap-3">
+              <h1 className="text-3xl font-bold tracking-tight text-foreground">Your Replays</h1>
+              <Badge variant="secondary" className="text-[10px]">Motion Replay Beta</Badge>
+            </div>
             <Button size="sm" onClick={() => setNewAnalysisOpen(true)}>
               <Upload className="mr-1 h-4 w-4" /> Upload clip
             </Button>
           </div>
 
           {results.length === 0 ? (
-              <EmptyState
+            <EmptyState
               title="No clips yet"
-              description="Upload a clip to get your first feedback."
+              description="Upload a clip to generate your first replay."
               action={<Button onClick={() => setNewAnalysisOpen(true)}>Upload clip</Button>}
             />
           ) : (
@@ -217,10 +228,10 @@ export default function DashboardPage() {
 
               {/* Desktop table */}
               <div className="mt-6 hidden overflow-hidden rounded-xl border border-border md:block">
-                <div className="grid grid-cols-[1fr_1fr_1.2fr_auto] gap-4 border-b border-border bg-secondary/50 px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  <span>SkiRank</span>
-                  <span>Details</span>
-                  <span>Insight</span>
+                <div className="grid grid-cols-[1.5fr_0.8fr_1fr_auto] gap-4 border-b border-border bg-secondary/50 px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  <span>Clip</span>
+                  <span>Status</span>
+                  <span>Outputs</span>
                   <span />
                 </div>
                 {results.map((r) => <ResultTableRow key={r.id} r={r} onRetry={handleRetry} />)}
