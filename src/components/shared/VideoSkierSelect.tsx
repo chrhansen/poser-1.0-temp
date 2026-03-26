@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/utils";
 import { TrimStep } from "./TrimStep";
 import { SkierSelectStep } from "./SkierSelectStep";
 import type { SkierBbox } from "@/services/embed-api.service";
@@ -94,23 +95,32 @@ export function VideoSkierSelect({
 
   return (
     <div className="flex flex-col gap-4">
-      {/* Step indicator */}
-      {totalSteps > 1 && (
-        <p className="text-xs text-muted-foreground text-center">
-          Step {currentStepNum} of {totalSteps}
-        </p>
-      )}
+      {/* Step indicator + title */}
+      <div className="flex flex-col gap-2">
+        {totalSteps > 1 && (
+          <div className="flex items-center gap-2">
+            {Array.from({ length: totalSteps }).map((_, i) => (
+              <div
+                key={i}
+                className={cn(
+                  "h-1.5 flex-1 rounded-full transition-colors",
+                  i + 1 <= currentStepNum ? "bg-primary" : "bg-border"
+                )}
+              />
+            ))}
+          </div>
+        )}
 
-      {/* Title */}
-      <div className="text-center">
-        <h3 className="text-base font-semibold text-foreground">
-          {step === "trim" ? "Choose the best 20 seconds" : "Who should we analyze?"}
-        </h3>
-        <p className="text-sm text-muted-foreground mt-1">
-          {step === "trim"
-            ? "Drag the ends to keep the part where your skier stays in view."
-            : "Pick a frame where your skier is clear, then tap the skier."}
-        </p>
+        <div>
+          <h3 className="text-base font-semibold text-foreground">
+            {step === "trim" ? "Choose the best 20 seconds" : "Who should we analyze?"}
+          </h3>
+          <p className="text-sm text-muted-foreground mt-0.5">
+            {step === "trim"
+              ? "Drag the ends to keep the part where your skier stays in view."
+              : "Pick a frame where your skier is clear, then tap the skier."}
+          </p>
+        </div>
       </div>
 
       {/* Steps */}
