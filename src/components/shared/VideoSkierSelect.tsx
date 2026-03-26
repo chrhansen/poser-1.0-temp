@@ -14,12 +14,11 @@ export interface VideoSkierSelectResult {
   normalizedTime: number;
 }
 
-type Step = "trim" | "select";
+type Step = "loading" | "trim" | "select";
 
 interface VideoSkierSelectProps {
   file: File;
   maxTrimSeconds?: number;
-  /** Render-prop receives selection state and result getter */
   children: (props: { selected: boolean; getResult: () => VideoSkierSelectResult }) => React.ReactNode;
 }
 
@@ -32,12 +31,12 @@ export function VideoSkierSelect({
 }: VideoSkierSelectProps) {
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [duration, setDuration] = useState(0);
-  const [step, setStep] = useState<Step>("trim");
+  const [step, setStep] = useState<Step>("loading");
   const [trimStart, setTrimStart] = useState(0);
   const [trimEnd, setTrimEnd] = useState(0);
-  const [selection, setSelection] = useState<{ x: number; y: number; normalizedTime: number } | null>(null);
+  const [selection, setSelection] = useState<{ x: number; y: number } | null>(null);
 
-  // Create object URL
+  // Object URL
   useEffect(() => {
     const url = URL.createObjectURL(file);
     setVideoUrl(url);
@@ -50,10 +49,9 @@ export function VideoSkierSelect({
     const v = document.createElement("video");
     v.src = videoUrl;
     v.preload = "metadata";
-    v.addEventListener("loadedmetadata", () => {
+    const onMeta = () => {
       const dur = v.duration;
       setDuration(dur);
-      // If short enough, skip trim
       if (dur <= maxTrimSeconds) {
         setTrimStart(0);
         setTrimEnd(dur);
@@ -63,8 +61,9 @@ export function VideoSkierSelect({
         setTrimEnd(maxTrimSeconds);
         setStep("trim");
       }
-    }, { once: true });
-    return () => { v.src = ""; };
+    };
+    v.addEventListener("loadedmetadata", onMeta, { once: true });
+    return () => { v.removeEventListener("loadedmetadata", onMeta); v.src = ""; };
   }, [videoUrl, maxTrimSeconds]);
 
   const needsTrim = duration > maxTrimSeconds;
@@ -78,25 +77,14 @@ export function VideoSkierSelect({
     setStep("select");
   };
 
-  const handleSelectConfirm = (sel: { x: number; y: number; normalizedTime: number }) => {
-    setSelection(sel);
-  };
-
   const getResult = (): VideoSkierSelectResult => {
     const bbox: SkierBbox = selection
       ? { x1: selection.x - 0.05, y1: selection.y - 0.1, x2: selection.x + 0.05, y2: selection.y + 0.1 }
       : { x1: 0, y1: 0, x2: 1, y2: 1 };
-
-    return {
-      trimStart,
-      trimEnd,
-      bbox,
-      objectId: 1,
-      normalizedTime: selection?.normalizedTime ?? 0,
-    };
+    return { trimStart, trimEnd, bbox, objectId: 1, normalizedTime: 0 };
   };
 
-  if (!videoUrl || duration <= 0) {
+  if (step === "loading" || !videoUrl) {
     return (
       <div className="flex items-center justify-center py-12 text-sm text-muted-foreground animate-pulse">
         Loading video…
@@ -125,7 +113,7 @@ export function VideoSkierSelect({
         </p>
       </div>
 
-      {/* Step content */}
+      {/* Steps */}
       <AnimatePresence mode="wait">
         {step === "trim" && (
           <motion.div
@@ -133,7 +121,7 @@ export function VideoSkierSelect({
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.25 }}
+            transition={{ duration: 0.2 }}
           >
             <TrimStep
               videoUrl={videoUrl}
@@ -150,25 +138,22 @@ export function VideoSkierSelect({
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 20 }}
-            transition={{ duration: 0.25 }}
+            transition={{ duration: 0.2 }}
           >
             <SkierSelectStep
               videoUrl={videoUrl}
               duration={duration}
               trimStart={trimStart}
               trimEnd={trimEnd}
-              onConfirm={handleSelectConfirm}
+              selection={selection}
+              onSelectionChange={setSelection}
               onBack={needsTrim ? () => { setStep("trim"); setSelection(null); } : undefined}
-              submitLabel="dummy"
             />
-            {/* External action slot replaces the SkierSelectStep's own button — 
-                we let SkierSelectStep handle its own confirm internally and propagate via onConfirm.
-                The render-prop children here get the final selection state. */}
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Render prop action area — only shown in select step after selection */}
+      {/* Render-prop action area — only in select step */}
       {step === "select" && children({ selected: !!selection, getResult })}
     </div>
   );

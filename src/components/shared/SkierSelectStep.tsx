@@ -1,25 +1,20 @@
 import { useRef, useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Check, ZoomIn, ZoomOut, ChevronLeft, SlidersHorizontal } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 /* ─── Types ─── */
 
 interface SkierSelectStepProps {
   videoUrl: string;
-  /** Full video duration in seconds */
   duration: number;
-  /** Start of trimmed range in seconds */
   trimStart: number;
-  /** End of trimmed range in seconds */
   trimEnd: number;
-  /** Called with the click coordinates (normalised 0-1) relative to the video frame */
-  onConfirm: (selection: { x: number; y: number; normalizedTime: number }) => void;
-  /** Show a back button to go back to trim */
+  /** Called whenever the user clicks (or re-clicks) a skier. null means cleared. */
+  onSelectionChange: (sel: { x: number; y: number } | null) => void;
+  /** Current selection (controlled) */
+  selection: { x: number; y: number } | null;
   onBack?: () => void;
-  /** Label for the primary button */
-  submitLabel?: string;
 }
 
 const THUMBNAIL_COUNT = 8;
@@ -37,26 +32,24 @@ export function SkierSelectStep({
   duration,
   trimStart,
   trimEnd,
-  onConfirm,
+  onSelectionChange,
+  selection,
   onBack,
-  submitLabel = "Start analysis",
 }: SkierSelectStepProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const [selection, setSelection] = useState<{ x: number; y: number } | null>(null);
   const [currentTime, setCurrentTime] = useState((trimStart + trimEnd) / 2);
   const [activeThumb, setActiveThumb] = useState<number | null>(null);
   const [zoomed, setZoomed] = useState(false);
   const [showScrubber, setShowScrubber] = useState(false);
   const [thumbnails, setThumbnails] = useState<{ time: number; src: string }[]>([]);
 
-  // Seek video when currentTime changes
+  // Seek video
   useEffect(() => {
     if (videoRef.current) videoRef.current.currentTime = currentTime;
   }, [currentTime]);
 
-  // Generate thumbnails from trim range
+  // Generate thumbnails
   useEffect(() => {
     if (duration <= 0) return;
     let cancelled = false;
@@ -112,22 +105,20 @@ export function SkierSelectStep({
   const handleThumbClick = (index: number) => {
     setActiveThumb(index);
     setCurrentTime(thumbnails[index].time);
-    // Clear selection when frame changes
-    setSelection(null);
+    onSelectionChange(null); // clear when frame changes
   };
 
   const handleVideoClick = useCallback((e: React.MouseEvent<HTMLVideoElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const x = (e.clientX - rect.left) / rect.width;
     const y = (e.clientY - rect.top) / rect.height;
-    setSelection({ x, y });
-  }, []);
+    onSelectionChange({ x, y });
+  }, [onSelectionChange]);
 
   const handleScrubberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const t = parseFloat(e.target.value);
     setCurrentTime(t);
-    setSelection(null);
-    // Find closest thumbnail
+    onSelectionChange(null);
     let closest = 0;
     let minDist = Infinity;
     thumbnails.forEach((th, i) => {
@@ -137,20 +128,12 @@ export function SkierSelectStep({
     setActiveThumb(closest);
   };
 
-  const handleConfirm = () => {
-    if (!selection) return;
-    const normalizedTime = videoRef.current
-      ? videoRef.current.currentTime / Math.max(duration, 0.01)
-      : currentTime / Math.max(duration, 0.01);
-    onConfirm({ x: selection.x, y: selection.y, normalizedTime });
-  };
-
   return (
     <div className="flex flex-col gap-4">
-      {/* Video preview with click-to-select */}
+      {/* Video preview */}
       <div className={cn(
         "relative overflow-hidden rounded-2xl bg-secondary cursor-crosshair",
-        zoomed && "max-h-none"
+        zoomed && "overflow-auto"
       )}>
         <video
           ref={videoRef}
@@ -163,7 +146,6 @@ export function SkierSelectStep({
           playsInline
           onClick={handleVideoClick}
         />
-        <canvas ref={canvasRef} className="hidden" />
 
         {/* Selection marker */}
         <AnimatePresence>
@@ -176,14 +158,12 @@ export function SkierSelectStep({
               className="pointer-events-none absolute z-20"
               style={{ left: `${selection.x * 100}%`, top: `${selection.y * 100}%`, transform: "translate(-50%, -50%)" }}
             >
-              {/* Pulse ring */}
               <motion.div
                 animate={{ scale: [1, 2, 1], opacity: [0.6, 0, 0.6] }}
                 transition={{ duration: 1.5, repeat: Infinity, ease: "easeOut" }}
                 className="absolute inset-0 h-8 w-8 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-primary"
                 style={{ left: "50%", top: "50%" }}
               />
-              {/* Center dot */}
               <div className="h-4 w-4 rounded-full border-2 border-primary bg-primary/30 shadow-lg" />
             </motion.div>
           )}
@@ -198,7 +178,7 @@ export function SkierSelectStep({
           {zoomed ? <ZoomOut className="h-4 w-4" /> : <ZoomIn className="h-4 w-4" />}
         </button>
 
-        {/* Instruction overlay when no selection */}
+        {/* Instruction overlay */}
         {!selection && (
           <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 rounded-full bg-foreground/60 px-4 py-1.5 text-xs font-medium text-background backdrop-blur-sm">
             Tap the skier to select
@@ -233,7 +213,7 @@ export function SkierSelectStep({
         ))}
       </motion.div>
 
-      {/* Optional fine scrubber */}
+      {/* Optional scrubber */}
       <div>
         <button
           onClick={() => setShowScrubber(!showScrubber)}
@@ -271,35 +251,25 @@ export function SkierSelectStep({
         )}
       </div>
 
-      {/* Actions */}
-      <div className="flex flex-col gap-2">
-        <Button
-          className="w-full"
-          size="lg"
-          disabled={!selection}
-          onClick={handleConfirm}
-        >
-          {selection ? submitLabel : "Select a skier to continue"}
-        </Button>
-        <div className="flex items-center justify-center gap-4">
-          {onBack && (
-            <button
-              onClick={onBack}
-              className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              <ChevronLeft className="h-3.5 w-3.5" />
-              Back to trim
-            </button>
-          )}
-          {selection && (
-            <button
-              onClick={() => setSelection(null)}
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Choose another frame
-            </button>
-          )}
-        </div>
+      {/* Secondary actions */}
+      <div className="flex items-center justify-center gap-4">
+        {onBack && (
+          <button
+            onClick={onBack}
+            className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <ChevronLeft className="h-3.5 w-3.5" />
+            Back to trim
+          </button>
+        )}
+        {selection && (
+          <button
+            onClick={() => onSelectionChange(null)}
+            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
+            Choose another frame
+          </button>
+        )}
       </div>
     </div>
   );
