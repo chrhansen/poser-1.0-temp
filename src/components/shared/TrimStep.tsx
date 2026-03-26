@@ -199,6 +199,7 @@ export function TrimStep({ videoUrl, duration, maxTrimSeconds, onConfirm, onCanc
           ref={videoRef}
           src={videoUrl}
           className="w-full max-h-[50vh] object-contain"
+          preload="auto"
           muted
           playsInline
         />
