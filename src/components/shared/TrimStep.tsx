@@ -334,6 +334,5 @@ export function TrimStep({ videoUrl, duration, maxTrimSeconds, onConfirm, onCanc
         )}
       </div>
     </div>
-    </div>
   );
 }
