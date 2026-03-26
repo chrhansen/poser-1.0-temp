@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { Button } from "@/components/ui/button";
 import { VideoSkierSelect } from "@/components/shared/VideoSkierSelect";
 
 interface UploadSkierSelectProps {
