@@ -52,9 +52,9 @@ export const mockResults: AnalysisResult[] = [
     duration: 14,
     clipLength: 26,
     metrics: generateMockMetrics(14 * 30, 42),
-    skiRank: 80,
-    biggestLimiter: "edging",
     embedToken: "tok_abc123",
+    filename: "morning-run-grindelwald.mp4",
+    replayOutputs: defaultReplayOutputs,
   },
   {
     id: "res_2",
@@ -66,6 +66,7 @@ export const mockResults: AnalysisResult[] = [
     duration: 22,
     clipLength: 34,
     progress: 42,
+    filename: "powder-day-verbier.mp4",
   },
   {
     id: "res_3",
@@ -77,6 +78,7 @@ export const mockResults: AnalysisResult[] = [
     duration: 8,
     clipLength: 15,
     failedReason: "Video quality too low for reliable analysis. Please upload a higher resolution clip.",
+    filename: "foggy-clip.mp4",
   },
   {
     id: "res_4",
@@ -86,6 +88,7 @@ export const mockResults: AnalysisResult[] = [
     status: "pending",
     createdAt: "2026-03-02T08:00:00Z",
     clipLength: 20,
+    filename: "steep-section-zermatt.mp4",
   },
   {
     id: "res_5",
@@ -97,12 +100,13 @@ export const mockResults: AnalysisResult[] = [
     duration: 18,
     clipLength: 30,
     metrics: generateMockMetrics(18 * 30, 99),
-    skiRank: 65,
-    biggestLimiter: "balance",
     embedToken: "tok_def456",
+    filename: "carving-practice.mp4",
+    replayOutputs: [
+      ...defaultReplayOutputs,
+    ],
   },
 ];
-
 // ─── Pricing ────────────────────────────────────────────────────────────────
 export const mockPricingPlans: PricingPlan[] = [
   {
