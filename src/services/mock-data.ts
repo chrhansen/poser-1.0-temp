@@ -27,8 +27,6 @@ const defaultReplayOutputs: ReplayOutput[] = [
   { type: "original_skeleton", label: "Original + Skeleton", description: "The original camera view with pose overlay.", available: true },
 ];
 
-const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
-export { delay };
 
 // ─── Users ──────────────────────────────────────────────────────────────────
 export const mockUser: User = {
