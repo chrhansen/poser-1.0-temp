@@ -54,10 +54,13 @@ export function SkierSelectStep({
     if (duration <= 0) return;
     let cancelled = false;
     const tv = document.createElement("video");
-    tv.src = videoUrl;
     tv.muted = true;
-    tv.preload = "auto";
     tv.playsInline = true;
+    tv.preload = "auto";
+    tv.setAttribute("muted", "");
+    tv.setAttribute("playsinline", "");
+    tv.src = videoUrl;
+    tv.load();
 
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
@@ -68,6 +71,7 @@ export function SkierSelectStep({
 
     const results: { time: number; src: string }[] = [];
     const rangeLen = trimEnd - trimStart;
+    let captureStarted = false;
 
     const capture = async (i: number) => {
       if (cancelled || i >= THUMBNAIL_COUNT) {
@@ -89,8 +93,18 @@ export function SkierSelectStep({
       await capture(i + 1);
     };
 
-    tv.addEventListener("loadeddata", () => { if (!cancelled) capture(0); }, { once: true });
-    return () => { cancelled = true; tv.src = ""; };
+    const startCapture = () => {
+      if (!cancelled && !captureStarted) {
+        captureStarted = true;
+        capture(0);
+      }
+    };
+    tv.addEventListener("loadeddata", startCapture, { once: true });
+    tv.addEventListener("canplaythrough", startCapture, { once: true });
+    const fallbackTimer = setTimeout(() => {
+      if (!cancelled && tv.readyState >= 2) startCapture();
+    }, 2000);
+    return () => { cancelled = true; clearTimeout(fallbackTimer); tv.src = ""; };
   }, [videoUrl, duration, trimStart, trimEnd]);
 
   // Default active thumbnail to middle

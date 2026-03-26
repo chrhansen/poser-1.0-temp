@@ -61,10 +61,13 @@ export function TrimStep({ videoUrl, duration, maxTrimSeconds, onConfirm, onCanc
     if (duration <= 0) return;
     let cancelled = false;
     const tv = document.createElement("video");
-    tv.src = videoUrl;
     tv.muted = true;
-    tv.preload = "auto";
     tv.playsInline = true;
+    tv.preload = "auto";
+    tv.setAttribute("muted", "");
+    tv.setAttribute("playsinline", "");
+    tv.src = videoUrl;
+    tv.load();
 
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
@@ -93,8 +96,16 @@ export function TrimStep({ videoUrl, duration, maxTrimSeconds, onConfirm, onCanc
       await capture(i + 1);
     };
 
-    tv.addEventListener("loadeddata", () => { if (!cancelled) capture(0); }, { once: true });
-    return () => { cancelled = true; tv.src = ""; };
+    let captureStarted = false;
+    const startCapture = () => { if (!cancelled && !captureStarted) { captureStarted = true; capture(0); } };
+    // iOS Safari: loadeddata may not fire; listen to multiple events
+    tv.addEventListener("loadeddata", startCapture, { once: true });
+    tv.addEventListener("canplaythrough", startCapture, { once: true });
+    // Fallback: if neither fires within 2s, try to start anyway
+    const fallbackTimer = setTimeout(() => {
+      if (!cancelled && tv.readyState >= 2) startCapture();
+    }, 2000);
+    return () => { cancelled = true; clearTimeout(fallbackTimer); tv.src = ""; };
   }, [videoUrl, duration]);
 
   /* ─── Pointer logic ─── */
@@ -189,6 +200,7 @@ export function TrimStep({ videoUrl, duration, maxTrimSeconds, onConfirm, onCanc
           ref={videoRef}
           src={videoUrl}
           className="w-full max-h-[50vh] object-contain"
+          preload="auto"
           muted
           playsInline
         />
