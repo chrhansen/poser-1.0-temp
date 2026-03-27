@@ -1,13 +1,12 @@
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Video, Bone, Box, Play, Download } from "lucide-react";
+import { Video, Bone, Play, Download } from "lucide-react";
 import type { ReplayOutputType } from "@/lib/types";
 
 const outputIcons: Record<string, React.ElementType> = {
   follow_cam: Video,
   follow_cam_skeleton: Bone,
   original_skeleton: Video,
-  "3d_model": Box,
 };
 
 interface OutputCardProps {

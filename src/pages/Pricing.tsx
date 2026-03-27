@@ -25,6 +25,7 @@ export default function PricingPage() {
   const { hash } = useLocation();
 
   useEffect(() => {
+    document.title = "Poser Pricing — Motion Replay Beta";
     Promise.all([pricingService.getPlans(), pricingService.getFAQs()]).then(([p, f]) => {
       setPlans(p);
       setFaqs(f);
@@ -51,10 +52,10 @@ export default function PricingPage() {
       {/* Plan comparison */}
       <Section>
         <div className="text-center">
-          <h1 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">Simple, transparent pricing</h1>
-          <p className="mt-3 text-muted-foreground">Start free. Upgrade when you're ready.</p>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">Simple pricing for replay clips</h1>
+          <p className="mt-3 text-muted-foreground">Start free. Pay only when you want more clips.</p>
         </div>
-        <div className="mx-auto mt-12 grid max-w-4xl gap-6 md:grid-cols-3">
+        <div className="mx-auto mt-12 grid max-w-2xl gap-6 md:grid-cols-2">
           {plans.map((plan) => (
             <div
               key={plan.id}
@@ -71,9 +72,6 @@ export default function PricingPage() {
               <h3 className="text-lg font-semibold text-foreground">{plan.name}</h3>
               <div className="mt-2">
                 <span className="text-3xl font-bold text-foreground">{plan.price === 0 ? "Free" : `$${plan.price}`}</span>
-                {plan.interval !== "one-time" && (
-                  <span className="text-sm text-muted-foreground">/{plan.interval}</span>
-                )}
                 {plan.interval === "one-time" && plan.price > 0 && (
                   <span className="text-sm text-muted-foreground"> one-time</span>
                 )}
@@ -86,7 +84,6 @@ export default function PricingPage() {
                   </li>
                 ))}
               </ul>
-              {/* TODO_STRIPE_HOOKUP: Wire CTA to Stripe Checkout */}
               <Button variant={plan.highlighted ? "default" : "outline"} className="mt-6" asChild>
                 <Link to={getCtaHref(plan)}>
                   {plan.ctaLabel}
@@ -96,6 +93,9 @@ export default function PricingPage() {
             </div>
           ))}
         </div>
+        <p className="mx-auto mt-8 max-w-md text-center text-xs text-muted-foreground">
+          SkiRank and technique feedback are coming soon. Current plans are for Poser's motion replay outputs.
+        </p>
       </Section>
 
       {/* FAQ */}
