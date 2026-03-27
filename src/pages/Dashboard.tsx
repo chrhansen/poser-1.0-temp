@@ -47,6 +47,7 @@ function OutputChips({ r }: { r: AnalysisResult }) {
         </span>
       ))}
     </div>
+  );
 }
 
 function StatusBadge({ status }: { status: AnalysisResult["status"] }) {
