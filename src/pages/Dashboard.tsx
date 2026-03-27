@@ -37,17 +37,19 @@ function ClipMeta({ r }: { r: AnalysisResult }) {
 function OutputChips({ r }: { r: AnalysisResult }) {
   if (r.status !== "complete" || !r.replayOutputs) return null;
   const available = r.replayOutputs.filter((o) => o.available);
+  if (available.length === 0) return null;
   return (
     <div className="flex flex-wrap gap-1">
-      {available.length > 0 && (
-        <span className="rounded-full bg-accent/60 px-2 py-0.5 text-[10px] font-medium text-accent-foreground">
-          Replay
+      {available.map((o) => (
+        <span key={o.type} className="rounded-full bg-accent/60 px-2 py-0.5 text-[10px] font-medium text-accent-foreground">
+          <span className="hidden sm:inline">{o.label}</span>
+          <span className="sm:hidden">{o.type === "follow_cam" ? "Follow" : o.label}</span>
         </span>
+      ))}
+    </div>
+  );
       )}
-      {available.some((o) => o.type.includes("skeleton")) && (
-        <span className="rounded-full bg-accent/60 px-2 py-0.5 text-[10px] font-medium text-accent-foreground">
-          Skeleton
-        </span>
+}
       )}
     </div>
   );
@@ -189,7 +191,7 @@ export default function DashboardPage() {
     setNewAnalysisOpen(true);
   };
 
-  useEffect(() => { loadData(); }, []);
+  useEffect(() => { document.title = "Poser Clips — Motion Replay Beta"; loadData(); }, []);
 
   if (loading) return <AppLayout><PageLoader /></AppLayout>;
   if (error) return <AppLayout><PageError message="Failed to load clips." onRetry={loadData} /></AppLayout>;
