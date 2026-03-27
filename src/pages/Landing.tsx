@@ -196,7 +196,7 @@ export default function LandingPage() {
               })}
             </div>
             {/* Preview area */}
-            <div className="relative flex aspect-video items-center justify-center bg-secondary/20" style={{ maxHeight: "480px" }}>
+            <div className="relative flex aspect-video w-full items-center justify-center bg-secondary/20" style={{ maxHeight: "480px" }}>
               <div className="flex flex-col items-center gap-3 text-center">
                 <Bone className="h-16 w-16 text-primary/30" />
                 <p className="text-sm font-medium text-foreground">Follow Cam + Skeleton</p>
