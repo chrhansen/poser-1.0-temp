@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 const sidebarLinks = [
-  { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { label: "Clips", href: "/dashboard", icon: LayoutDashboard },
   { label: "Settings", href: "/settings", icon: Settings },
 ];
 

@@ -114,25 +114,17 @@ export const mockPricingPlans: PricingPlan[] = [
     name: "Free",
     price: 0,
     interval: "one-time",
-    features: ["3 free analyses", "Ski Rank score", "Edge Similarity", "Turn Cadence"],
-    ctaLabel: "Get started",
+    features: ["3 free clips", "Follow Cam replay", "Skeleton overlay views", "Download MP4 outputs"],
+    ctaLabel: "Try for free",
   },
   {
     id: "pro",
     name: "Trip Pack",
     price: 19,
     interval: "one-time",
-    features: ["5 analyses", "Ski Rank score", "Edge Similarity", "Turn Cadence"],
-    ctaLabel: "Get started",
-  },
-  {
-    id: "max",
-    name: "Season Pass",
-    price: 69,
-    interval: "one-time",
-    features: ["25 analyses", "Everything in Trip Pack"],
+    features: ["5 clips", "Follow Cam replay", "Skeleton overlay views", "Download MP4 outputs"],
     highlighted: true,
-    ctaLabel: "Get started",
+    ctaLabel: "Buy trip pack",
   },
 ];
 
@@ -143,7 +135,7 @@ export const mockPricingFAQs: PricingFAQ[] = [
     answer:
       "The skier should be as clear as possible with a steady camera. If you can see all parts of the skier clearly, so can Poser.",
   },
-  { id: "faq2", question: "How long does analysis take?", answer: "1–2 minutes." },
+  { id: "faq2", question: "How long does processing take?", answer: "1–2 minutes per clip." },
   { id: "faq3", question: "Do I need sensors or special hardware?", answer: "No, we just need a video clip." },
   { id: "faq4", question: "Can I upload from my phone?", answer: "Yes." },
   {
@@ -152,12 +144,6 @@ export const mockPricingFAQs: PricingFAQ[] = [
     answer: "No worries, just tap the right skier and Poser will track the correct skier through the clip.",
   },
   { id: "faq6", question: "Can I try a demo first?", answer: "YES_DEMO_LINK" },
-  {
-    id: "faq7",
-    question: "Can I upgrade from Trip Pack to Season Pass later?",
-    answer:
-      "Yes! You can upgrade at any time. When you upgrade, your remaining unused analyses from the Trip Pack will carry over to your Season Pass.",
-  },
 ];
 
 // ─── Releases ───────────────────────────────────────────────────────────────

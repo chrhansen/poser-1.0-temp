@@ -49,11 +49,6 @@ function OutputChips({ r }: { r: AnalysisResult }) {
           Skeleton
         </span>
       )}
-      {r.modelUrl && (
-        <span className="rounded-full bg-accent/60 px-2 py-0.5 text-[10px] font-medium text-accent-foreground">
-          3D
-        </span>
-      )}
     </div>
   );
 }
@@ -205,7 +200,7 @@ export default function DashboardPage() {
         <div className="mx-auto max-w-3xl">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <h1 className="text-3xl font-bold tracking-tight text-foreground">Your Replays</h1>
+              <h1 className="text-3xl font-bold tracking-tight text-foreground">Clips</h1>
               <Badge variant="secondary" className="text-[10px]">Motion Replay Beta</Badge>
             </div>
             <Button size="sm" onClick={() => setNewAnalysisOpen(true)}>
@@ -216,7 +211,7 @@ export default function DashboardPage() {
           {results.length === 0 ? (
             <EmptyState
               title="No clips yet"
-              description="Upload a clip to generate your first replay."
+              description="Upload a clip to generate your first motion replay."
               action={<Button onClick={() => setNewAnalysisOpen(true)}>Upload clip</Button>}
             />
           ) : (

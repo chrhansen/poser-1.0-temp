@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Upload, Target, TrendingUp, ArrowRight, Video, Bone, Box, Eye } from "lucide-react";
+import { Upload, Target, TrendingUp, ArrowRight, Video, Bone, Eye } from "lucide-react";
 import { DemoAnalysisModal } from "@/components/demo/DemoAnalysisModal";
 import { Button } from "@/components/ui/button";
 import { BetaBadge } from "@/components/shared/BetaBadge";
@@ -30,12 +30,12 @@ const steps = [
   {
     icon: Target,
     title: "Poser tracks the skier",
-    description: "Poser follows the skier, estimates body motion, and builds replay outputs.",
+    description: "Poser follows the skier and builds replay outputs from the movement.",
   },
   {
     icon: Eye,
     title: "Explore replay views",
-    description: "Watch your clip as a follow cam replay, with skeleton overlays, or as a 3D body model.",
+    description: "Watch your skiing as a follow-cam replay or with skeleton overlays.",
   },
 ];
 
@@ -43,7 +43,6 @@ const heroOutputs = [
   { icon: Video, label: "Follow Cam", active: false },
   { icon: Bone, label: "Follow Cam + Skeleton", active: true },
   { icon: Video, label: "Original + Skeleton", active: false },
-  { icon: Box, label: "3D Model", active: false },
 ];
 
 type UploadTab = "demo" | "clip";
@@ -55,10 +54,10 @@ function DemoContent({ onStartDemo }: { onStartDemo: () => void }) {
         <Target className="h-5 w-5 text-accent-foreground" />
       </div>
       <p className="text-sm font-medium text-foreground">
-        See a sample ski clip transformed into replay views and 3D motion outputs.
+        See a sample ski clip transformed into follow-cam and skeleton-overlay replay views.
       </p>
       <p className="text-xs text-muted-foreground max-w-xs">
-        Watch how Poser goes from uploaded clip to follow cam, skeleton overlay, and 3D body model.
+        Watch how Poser goes from uploaded clip to follow cam and skeleton overlay.
       </p>
       <Button size="lg" onClick={onStartDemo}>
         Start demo replay
@@ -140,7 +139,7 @@ export default function LandingPage() {
               custom={1}
               className="mx-auto mt-6 max-w-lg text-lg text-muted-foreground"
             >
-              Upload a short ski clip and Poser turns it into replay views, skeleton overlays, and a 3D body model in minutes. SkiRank and technique feedback are coming soon.
+              Upload a short ski clip and Poser turns it into follow-cam replays and skeleton overlays in minutes. SkiRank and technique feedback are coming soon.
             </motion.p>
             <motion.div
               variants={fadeUp}
@@ -176,7 +175,7 @@ export default function LandingPage() {
           className="container pb-8 md:pb-16"
         >
           <div className="overflow-hidden rounded-xl border border-border bg-card shadow-xl">
-            {/* Output pill tabs */}
+            {/* Output pill tabs — scrollable on mobile */}
             <div className="flex gap-1 overflow-x-auto border-b border-border bg-secondary/30 p-1.5">
               {heroOutputs.map((o) => {
                 const Icon = o.icon;
@@ -202,7 +201,7 @@ export default function LandingPage() {
                 <Bone className="h-16 w-16 text-primary/30" />
                 <p className="text-sm font-medium text-foreground">Follow Cam + Skeleton</p>
                 <p className="max-w-xs text-xs text-muted-foreground">
-                  A tracked replay with pose overlay to show movement timing and body alignment.
+                  A tracked replay with skeleton overlay to show movement timing and body alignment.
                 </p>
               </div>
             </div>
@@ -306,7 +305,7 @@ export default function LandingPage() {
           {[
             { icon: Video, title: "Follow Cam replay", description: "A head-tracked replay that keeps the skier centered for easier viewing." },
             { icon: Bone, title: "Skeleton overlay", description: "See pose and body alignment overlaid on the replay or original clip." },
-            { icon: Box, title: "3D body model", description: "An interactive 3D replay to inspect movement from any angle." },
+            { icon: Eye, title: "Compare views", description: "See your original footage alongside Poser's processed replay outputs." },
           ].map((item, i) => (
             <motion.div
               key={item.title}

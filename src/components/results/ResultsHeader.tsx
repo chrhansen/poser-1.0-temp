@@ -22,7 +22,7 @@ export function ResultsHeader({ result }: ResultsHeaderProps) {
           variant="ghost"
           size="icon"
           className="mt-0.5 h-8 w-8 shrink-0"
-          onClick={() => navigate("/dashboard")}
+          onClick={() => navigate(-1)}
           aria-label="Back"
         >
           <ArrowLeft className="h-4 w-4" />
