@@ -175,8 +175,8 @@ export default function LandingPage() {
           className="container pb-8 md:pb-16"
         >
           <div className="overflow-hidden rounded-xl border border-border bg-card shadow-xl">
-            {/* Output pill tabs — scrollable on mobile */}
-            <div className="flex gap-1 overflow-x-auto border-b border-border bg-secondary/30 p-1.5">
+            {/* Output pill tabs — scrollable on mobile, centered on desktop */}
+            <div className="flex gap-1 overflow-x-auto border-b border-border bg-secondary/30 p-1.5 md:justify-center">
               {heroOutputs.map((o) => {
                 const Icon = o.icon;
                 return (
