@@ -158,19 +158,6 @@ export default function ResultsPage() {
           {/* Main viewer — this IS the primary navigation */}
           <ReplayViewer outputs={outputs} />
 
-          {/* Output cards grid */}
-          {outputs.filter((o) => o.available).length > 0 && (
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {outputs.filter((o) => o.available).map((o) => (
-                <OutputCard
-                  key={o.type}
-                  type={o.type}
-                  label={o.label}
-                  description={o.description}
-                />
-              ))}
-            </div>
-          )}
 
           {/* What you're seeing */}
           <div className="rounded-xl border border-border bg-card p-5 space-y-3">
