@@ -40,11 +40,6 @@ const steps = [
   },
 ];
 
-const heroOutputs = [
-  { icon: Video, label: "Follow Cam", active: false },
-  { icon: Bone, label: "Follow Cam + Skeleton", active: true },
-  { icon: Video, label: "Original + Skeleton", active: false },
-];
 
 type UploadTab = "demo" | "clip";
 
