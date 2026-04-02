@@ -170,38 +170,7 @@ export default function LandingPage() {
           transition={{ duration: 0.8, delay: 0.3 }}
           className="container pb-8 md:pb-16"
         >
-          <div className="overflow-hidden rounded-xl border border-border bg-card shadow-xl">
-            {/* Output pill tabs — scrollable on mobile, centered on desktop */}
-            <div className="flex gap-1 overflow-x-auto border-b border-border bg-secondary/30 p-1.5 md:justify-center">
-              {heroOutputs.map((o) => {
-                const Icon = o.icon;
-                return (
-                  <div
-                    key={o.label}
-                    className={cn(
-                      "flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium",
-                      o.active
-                        ? "bg-background text-foreground shadow-sm"
-                        : "text-muted-foreground"
-                    )}
-                  >
-                    <Icon className="h-3.5 w-3.5" />
-                    {o.label}
-                  </div>
-                );
-              })}
-            </div>
-            {/* Preview area */}
-            <div className="relative flex aspect-video w-full items-center justify-center bg-secondary/20" style={{ maxHeight: "480px" }}>
-              <div className="flex flex-col items-center gap-3 text-center">
-                <Bone className="h-16 w-16 text-primary/30" />
-                <p className="text-sm font-medium text-foreground">Follow Cam + Skeleton</p>
-                <p className="max-w-xs text-xs text-muted-foreground">
-                  A tracked replay with skeleton overlay to show movement timing and body alignment.
-                </p>
-              </div>
-            </div>
-          </div>
+          <HeroDemoCard />
         </motion.div>
       </section>
 
