@@ -52,8 +52,7 @@ export function HeroDemoCard() {
   const [activeTab, setActiveTab] = useState<TabId>("follow-cam-skeleton");
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  // Placeholder: no video src yet. When you add the real clip, set this:
-  const videoSrc: string | null = null;
+  const videoSrc: string | null = "/demo/hero-clip.mov";
 
   useEffect(() => {
     if (videoRef.current && videoSrc) {
