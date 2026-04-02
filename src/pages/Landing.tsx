@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Upload, Target, TrendingUp, ArrowRight, Video, Bone, Eye } from "lucide-react";
+import { HeroDemoCard } from "@/components/landing/HeroDemoCard";
 import { DemoAnalysisModal } from "@/components/demo/DemoAnalysisModal";
 import { Button } from "@/components/ui/button";
 import { BetaBadge } from "@/components/shared/BetaBadge";
