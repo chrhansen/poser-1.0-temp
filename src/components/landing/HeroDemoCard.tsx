@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 /* ─── Tab config ─── */
 
 const tabs = [
+  { id: "preview", icon: Eye, label: "Preview" },
   { id: "follow-cam", icon: Video, label: "Follow Cam" },
   { id: "follow-cam-skeleton", icon: Bone, label: "Follow Cam + Skeleton" },
   { id: "original-skeleton", icon: Eye, label: "Original + Skeleton" },
