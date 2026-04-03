@@ -17,6 +17,7 @@ type TabId = (typeof tabs)[number]["id"];
 /* ─── Callout pills that appear over the video ─── */
 
 const calloutsByTab: Record<TabId, { label: string; position: string }[]> = {
+  "preview": [],
   "follow-cam": [
     { label: "Skier tracked", position: "bottom-3 left-3" },
   ],
