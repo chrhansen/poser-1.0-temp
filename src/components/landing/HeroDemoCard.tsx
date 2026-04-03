@@ -51,10 +51,17 @@ function VideoPlaceholder({ activeTab }: { activeTab: TabId }) {
 /* ─── Main component ─── */
 
 export function HeroDemoCard() {
-  const [activeTab, setActiveTab] = useState<TabId>("follow-cam-skeleton");
+  const [activeTab, setActiveTab] = useState<TabId>("preview");
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  const videoSrc: string | null = "/demo/hero-clip.mov";
+  const videoByTab: Record<TabId, string | null> = {
+    "preview": null,              // TODO: add preview video path
+    "follow-cam": null,           // TODO: add follow-cam video path
+    "follow-cam-skeleton": "/demo/hero-clip.mov",
+    "original-skeleton": null,    // TODO: add original+skeleton video path
+  };
+
+  const videoSrc = videoByTab[activeTab];
 
   useEffect(() => {
     if (videoRef.current && videoSrc) {
