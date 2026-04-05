@@ -8,10 +8,9 @@ interface DemoStep2Props {
 }
 
 const progressRows = [
-  { label: "Tracking location of skier", duration: 2700 },
-  { label: "Estimating body position in 3D", duration: 3000 },
-  { label: "Measuring signals and calculating metrics", duration: 3300 },
-  { label: "Generating feedback", duration: 2400 },
+  { label: "Tracking skier", duration: 2700 },
+  { label: "Estimating pose", duration: 3000 },
+  { label: "Rendering replay views", duration: 2800 },
 ];
 
 // Simple skeleton keypoints for the overlay (percentage-based)
@@ -28,39 +27,35 @@ const skeletonPoints = [
 ];
 
 const skeletonBones: [number, number][] = [
-  [0, 1], [0, 2],   // head to shoulders
-  [1, 2],            // shoulder span
-  [1, 3], [2, 4],    // torso
-  [3, 4],            // hip span
-  [3, 5], [4, 6],    // upper legs
-  [5, 7], [6, 8],    // lower legs
+  [0, 1], [0, 2],
+  [1, 2],
+  [1, 3], [2, 4],
+  [3, 4],
+  [3, 5], [4, 6],
+  [5, 7], [6, 8],
 ];
 
 export function DemoStep2Analyze({ onComplete }: DemoStep2Props) {
   const [completedRows, setCompletedRows] = useState(0);
   const [activeRow, setActiveRow] = useState(0);
   const [showSkeleton, setShowSkeleton] = useState(false);
-  const showMetrics = activeRow >= 2;
+  const [showTrackingBox, setShowTrackingBox] = useState(false);
 
   useEffect(() => {
-    // Show skeleton after first row starts
-    const skelTimer = setTimeout(() => setShowSkeleton(true), 600);
+    const skelTimer = setTimeout(() => setShowSkeleton(true), 3500);
+    const trackTimer = setTimeout(() => setShowTrackingBox(true), 400);
 
-    // Sequentially complete rows
     let elapsed = 0;
-    const timers: ReturnType<typeof setTimeout>[] = [skelTimer];
+    const timers: ReturnType<typeof setTimeout>[] = [skelTimer, trackTimer];
 
     progressRows.forEach((row, i) => {
-      // Start row
       const startTimer = setTimeout(() => setActiveRow(i), elapsed);
       timers.push(startTimer);
       elapsed += row.duration;
-      // Complete row
       const endTimer = setTimeout(() => setCompletedRows(i + 1), elapsed);
       timers.push(endTimer);
     });
 
-    // Move to step 3 after all done + small delay
     const finishTimer = setTimeout(() => onComplete(), elapsed + 600);
     timers.push(finishTimer);
 
@@ -69,19 +64,19 @@ export function DemoStep2Analyze({ onComplete }: DemoStep2Props) {
 
   return (
     <div className="flex flex-1 flex-col md:flex-row overflow-hidden">
-      {/* Media area — frame with skeleton overlay */}
+      {/* Media area */}
       <div className="relative flex items-center justify-center bg-accent/20 md:w-1/2 overflow-hidden">
         <div className="relative w-full h-48 md:h-full">
           <img
             src={demoFrame}
-            alt="Analysis in progress"
+            alt="Tracking in progress"
             className="h-full w-full object-cover"
           />
 
           {/* Scanning overlay */}
           <motion.div
             initial={{ opacity: 0 }}
-            animate={{ opacity: 0.15 }}
+            animate={{ opacity: 0.1 }}
             className="absolute inset-0 bg-primary"
           />
 
@@ -92,8 +87,31 @@ export function DemoStep2Analyze({ onComplete }: DemoStep2Props) {
             className="absolute left-0 right-0 h-px bg-primary/60"
           />
 
-          {/* Skeleton overlay */}
-          {showSkeleton && !showMetrics && (
+          {/* Tracking bounding box */}
+          {showTrackingBox && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="absolute border-2 border-primary rounded-md"
+              style={{
+                left: "26%",
+                top: "22%",
+                width: "22%",
+                height: "50%",
+              }}
+            >
+              <motion.div
+                animate={{ opacity: [0.3, 0.8, 0.3] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+                className="absolute -top-5 left-1/2 -translate-x-1/2 rounded-full bg-primary px-2 py-0.5 text-[9px] font-bold text-primary-foreground whitespace-nowrap"
+              >
+                Tracking
+              </motion.div>
+            </motion.div>
+          )}
+
+          {/* Skeleton overlay — appears during pose estimation */}
+          {showSkeleton && (
             <svg
               className="absolute inset-0 h-full w-full"
               viewBox="0 0 100 100"
@@ -128,139 +146,6 @@ export function DemoStep2Analyze({ onComplete }: DemoStep2Props) {
               ))}
             </svg>
           )}
-
-          {/* Metrics / math overlay */}
-          {showMetrics && (
-            <svg
-              className="absolute inset-0 h-full w-full"
-              viewBox="0 0 100 100"
-              preserveAspectRatio="none"
-            >
-              {/* Angle arc at knee */}
-              <motion.path
-                d="M 35 55 Q 37 50 39 46"
-                fill="none"
-                stroke="hsl(var(--primary))"
-                strokeWidth="0.4"
-                strokeDasharray="1 0.5"
-                initial={{ pathLength: 0, opacity: 0 }}
-                animate={{ pathLength: 1, opacity: 0.8 }}
-                transition={{ duration: 0.6 }}
-              />
-              <motion.path
-                d="M 33 58 A 4 4 0 0 1 37 53"
-                fill="none"
-                stroke="hsl(var(--primary))"
-                strokeWidth="0.5"
-                initial={{ pathLength: 0, opacity: 0 }}
-                animate={{ pathLength: 1, opacity: 0.9 }}
-                transition={{ delay: 0.2, duration: 0.5 }}
-              />
-              <motion.text
-                x="30"
-                y="52"
-                fontSize="2.8"
-                fill="hsl(var(--primary))"
-                fontFamily="monospace"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: [0, 1, 0.7] }}
-                transition={{ delay: 0.4, duration: 0.6 }}
-              >
-                68°
-              </motion.text>
-
-              {/* Angle arc at hip */}
-              <motion.path
-                d="M 40 45 A 5 5 0 0 1 36 39"
-                fill="none"
-                stroke="hsl(var(--primary))"
-                strokeWidth="0.5"
-                initial={{ pathLength: 0, opacity: 0 }}
-                animate={{ pathLength: 1, opacity: 0.9 }}
-                transition={{ delay: 0.5, duration: 0.5 }}
-              />
-              <motion.text
-                x="42"
-                y="41"
-                fontSize="2.8"
-                fill="hsl(var(--primary))"
-                fontFamily="monospace"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: [0, 1, 0.7] }}
-                transition={{ delay: 0.7, duration: 0.6 }}
-              >
-                43°
-              </motion.text>
-
-              {/* Vertical plumb line (COM) */}
-              <motion.line
-                x1="38" y1="28" x2="38" y2="68"
-                stroke="hsl(var(--primary))"
-                strokeWidth="0.35"
-                strokeDasharray="1.5 1"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 0.5 }}
-                transition={{ delay: 0.3, duration: 0.4 }}
-              />
-
-              {/* Horizontal reference line */}
-              <motion.line
-                x1="28" y1="63" x2="48" y2="63"
-                stroke="hsl(var(--primary))"
-                strokeWidth="0.3"
-                strokeDasharray="0.8 0.8"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 0.4 }}
-                transition={{ delay: 0.6, duration: 0.4 }}
-              />
-
-              {/* Shin angle measurement */}
-              <motion.line
-                x1="35" y1="55" x2="33" y2="63"
-                stroke="hsl(var(--primary))"
-                strokeWidth="0.5"
-                strokeLinecap="round"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 0.7 }}
-                transition={{ delay: 0.4, duration: 0.3 }}
-              />
-              <motion.text
-                x="28"
-                y="60"
-                fontSize="2.5"
-                fill="hsl(var(--primary))"
-                fontFamily="monospace"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: [0, 0.9, 0.6] }}
-                transition={{ delay: 0.8, duration: 0.6 }}
-              >
-                14°
-              </motion.text>
-
-              {/* Small ticks / measurement markers */}
-              {[30, 34, 38, 42, 46].map((x, i) => (
-                <motion.line
-                  key={`tick-${i}`}
-                  x1={x} y1="62.5" x2={x} y2="63.5"
-                  stroke="hsl(var(--primary))"
-                  strokeWidth="0.3"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 0.5 }}
-                  transition={{ delay: 0.7 + i * 0.05 }}
-                />
-              ))}
-
-              {/* Pulsing calculation dot */}
-              <motion.circle
-                cx="38" cy="46"
-                r="1"
-                fill="hsl(var(--primary))"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: [0, 0.8, 0.3, 0.8], scale: [0.8, 1.2, 0.8, 1.2] }}
-                transition={{ delay: 0.5, duration: 2, repeat: Infinity }}
-              />
-            </svg>
-          )}
         </div>
       </div>
 
@@ -272,13 +157,12 @@ export function DemoStep2Analyze({ onComplete }: DemoStep2Props) {
               Step 2
             </p>
             <h3 className="mt-1 text-xl font-bold text-foreground">
-              Poser is analyzing the clip
+              Poser tracks the skier and builds replay views
             </h3>
           </div>
 
           <p className="text-sm text-muted-foreground leading-relaxed">
-            We track the skier and estimate body position through the clip. Then
-            we derive metrics and generate an overall technique feedback.
+            We follow the selected skier through the clip, keep them centered, and render replay outputs you can inspect in seconds.
           </p>
 
           {/* Progress rows */}
@@ -311,9 +195,7 @@ export function DemoStep2Analyze({ onComplete }: DemoStep2Props) {
                   </div>
                   <span
                     className={
-                      done
-                        ? "text-sm font-medium text-foreground"
-                        : active
+                      done || active
                         ? "text-sm font-medium text-foreground"
                         : "text-sm text-muted-foreground"
                     }
@@ -327,7 +209,7 @@ export function DemoStep2Analyze({ onComplete }: DemoStep2Props) {
         </div>
 
         <p className="mt-6 text-xs text-muted-foreground/70">
-          Demo shortened. Your own clip usually takes about 1–2 minutes.
+          Demo shortened. Your own clip usually takes around a minute.
         </p>
       </div>
     </div>
