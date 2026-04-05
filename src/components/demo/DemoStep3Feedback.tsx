@@ -106,13 +106,9 @@ export function DemoStep3Feedback({ onReplay, onClose }: DemoStep3Props) {
               Step 3
             </p>
             <h3 className="mt-1 text-xl font-bold text-foreground">
-              Explore the replay outputs
+              Explore the outputs
             </h3>
           </div>
-
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            This is what Poser gives you today from a single ski clip.
-          </p>
 
           {/* Output descriptions */}
           <div className="flex flex-col gap-2 mt-1">
