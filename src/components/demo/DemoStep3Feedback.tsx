@@ -3,7 +3,6 @@ import { motion } from "framer-motion";
 import { ArrowRight, RotateCcw, Upload, Video, Bone, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { ComingSoonStrip } from "@/components/results/ComingSoonStrip";
 
 interface DemoStep3Props {
   onReplay: () => void;
@@ -81,7 +80,7 @@ export function DemoStep3Feedback({ onReplay, onClose }: DemoStep3Props) {
         </div>
 
         {/* Video / placeholder */}
-        <div className="relative flex-1 min-h-[200px] aspect-video">
+        <div className="relative flex-1 min-h-[200px]">
           {videoSrc ? (
             <video
               ref={videoRef}
@@ -99,8 +98,8 @@ export function DemoStep3Feedback({ onReplay, onClose }: DemoStep3Props) {
       </div>
 
       {/* Copy area */}
-      <div className="flex flex-1 flex-col justify-between p-6 md:w-2/5">
-        <div className="flex flex-col gap-4">
+      <div className="flex flex-1 flex-col justify-between p-4 md:p-6 md:w-2/5">
+        <div className="flex flex-col gap-3">
           <div>
             <p className="text-xs font-semibold uppercase tracking-wider text-primary">
               Step 3
@@ -135,8 +134,6 @@ export function DemoStep3Feedback({ onReplay, onClose }: DemoStep3Props) {
             ))}
           </div>
 
-          {/* Coming soon roadmap */}
-          <ComingSoonStrip className="mt-2" />
         </div>
 
         {/* Buttons */}
