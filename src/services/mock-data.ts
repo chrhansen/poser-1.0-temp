@@ -22,8 +22,8 @@ export { delay };
 
 // ─── Default replay outputs for complete results ────────────────────────────
 const defaultReplayOutputs: ReplayOutput[] = [
-  { type: "follow_cam", label: "Follow Cam", description: "A tracked replay that keeps the skier centered.", available: true },
-  { type: "follow_cam_skeleton", label: "Follow Cam + Skeleton", description: "A tracked replay with pose overlay to show movement timing and body alignment.", available: true },
+  { type: "follow_cam", label: "Head Tracked", description: "A tracked replay that keeps the skier centered.", available: true },
+  { type: "follow_cam_skeleton", label: "Head Tracked + Skeleton", description: "A tracked replay with pose overlay to show movement timing and body alignment.", available: true },
   { type: "original_skeleton", label: "Original + Skeleton", description: "The original camera view with pose overlay.", available: true },
 ];
 
@@ -114,7 +114,7 @@ export const mockPricingPlans: PricingPlan[] = [
     name: "Free",
     price: 0,
     interval: "one-time",
-    features: ["3 free clips", "Follow Cam replay", "Skeleton overlay views", "Download MP4 outputs"],
+    features: ["3 free clips", "Head Tracked replay", "Skeleton overlay views", "Download MP4 outputs"],
     ctaLabel: "Try for free",
   },
   {
@@ -122,7 +122,7 @@ export const mockPricingPlans: PricingPlan[] = [
     name: "Trip Pack",
     price: 19,
     interval: "one-time",
-    features: ["5 clips", "Follow Cam replay", "Skeleton overlay views", "Download MP4 outputs"],
+    features: ["5 clips", "Head Tracked replay", "Skeleton overlay views", "Download MP4 outputs"],
     highlighted: true,
     ctaLabel: "Buy trip pack",
   },

@@ -12,8 +12,8 @@ interface DemoStep3Props {
 /* ─── Output tabs ─── */
 
 const outputTabs = [
-  { id: "follow-cam", icon: Video, label: "Follow Cam", description: "Keeps the skier centered" },
-  { id: "follow-cam-skeleton", icon: Bone, label: "Follow Cam + Skeleton", description: "Shows movement timing and body alignment" },
+  { id: "follow-cam", icon: Video, label: "Head Tracked", description: "Keeps the skier centered" },
+  { id: "follow-cam-skeleton", icon: Bone, label: "Head Tracked + Skeleton", description: "Shows movement timing and body alignment" },
   { id: "original-skeleton", icon: Eye, label: "Original + Skeleton", description: "Compare the overlay in the original framing" },
 ] as const;
 
