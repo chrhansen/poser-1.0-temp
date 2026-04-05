@@ -56,28 +56,6 @@ export function DemoStep3Feedback({ onReplay, onClose }: DemoStep3Props) {
     <div className="flex flex-1 flex-col md:flex-row overflow-hidden">
       {/* Media viewer area */}
       <div className="relative flex flex-col bg-accent/20 md:w-3/5 overflow-hidden">
-        {/* Output tabs */}
-        <div className="flex gap-1 overflow-x-auto border-b border-border bg-background/60 p-1.5">
-          {outputTabs.map((tab) => {
-            const Icon = tab.icon;
-            const isActive = tab.id === activeTab;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={cn(
-                  "flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium transition-colors",
-                  isActive
-                    ? "bg-secondary text-foreground shadow-sm"
-                    : "text-muted-foreground hover:text-foreground"
-                )}
-              >
-                <Icon className="h-3.5 w-3.5" />
-                {tab.label}
-              </button>
-            );
-          })}
-        </div>
 
         {/* Video / placeholder */}
         <div className="relative flex-1 min-h-[200px]">
