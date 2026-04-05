@@ -134,7 +134,7 @@ export function DemoAnalysisModal({
       <Sheet open={open} onOpenChange={onOpenChange}>
         <SheetContent
           side="bottom"
-          className="flex h-[100dvh] flex-col p-0 rounded-none [&>button]:hidden"
+          className="flex h-[100dvh] flex-col gap-0 p-0 rounded-none [&>button]:hidden"
         >
           <ModalTopBar currentStep={currentStep} onClose={handleClose} />
           {stepContent}
