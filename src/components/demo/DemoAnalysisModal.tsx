@@ -17,8 +17,8 @@ import { DemoStep3Feedback } from "./DemoStep3Feedback";
 
 const steps = [
   { number: 1, label: "Select" },
-  { number: 2, label: "Analyze" },
-  { number: 3, label: "Feedback" },
+  { number: 2, label: "Track" },
+  { number: 3, label: "Outputs" },
 ] as const;
 
 interface DemoAnalysisModalProps {
@@ -84,7 +84,7 @@ function ModalTopBar({
             Demo analysis
           </h2>
           <p className="text-sm text-muted-foreground">
-            See how Poser goes from clip to feedback
+            See how Poser goes from clip to replay
           </p>
         </div>
         <StepIndicator currentStep={currentStep} />

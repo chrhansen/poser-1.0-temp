@@ -7,13 +7,13 @@ interface DemoStep1Props {
   onComplete: () => void;
 }
 
-// Two skiers in the new frame — positions as percentages
+// Two skiers in the frame — positions as percentages
 const skiers = [
   { id: "front", label: "Front skier", x: 35, y: 62, cropX: 22, cropY: 42, cropW: 26, cropH: 40 },
   { id: "back", label: "Back skier", x: 52, y: 42, cropX: 40, cropY: 22, cropW: 24, cropH: 40 },
 ] as const;
 
-const TARGET_ID = "front"; // correct skier
+const TARGET_ID = "front";
 
 export function DemoStep1Select({ onComplete }: DemoStep1Props) {
   const [selected, setSelected] = useState<string | null>(null);
@@ -44,7 +44,6 @@ export function DemoStep1Select({ onComplete }: DemoStep1Props) {
     <div className="flex flex-1 flex-col md:flex-row overflow-hidden">
       {/* Media area */}
       <div className="relative flex flex-col bg-accent/20 md:w-1/2 overflow-hidden">
-        {/* Frame */}
         <div className="relative w-full flex-1 min-h-0">
           <img
             src={demoFrame}
@@ -52,7 +51,7 @@ export function DemoStep1Select({ onComplete }: DemoStep1Props) {
             className="h-full w-full object-cover"
           />
 
-          {/* Clickable target zones for each skier */}
+          {/* Clickable target zones */}
           {skiers.map((skier) => (
             <button
               key={skier.id}
@@ -69,7 +68,7 @@ export function DemoStep1Select({ onComplete }: DemoStep1Props) {
             />
           ))}
 
-          {/* Pulsing rings around both skiers */}
+          {/* Pulsing rings */}
           <AnimatePresence>
             {!selected &&
               skiers.map((skier) => (
@@ -103,7 +102,7 @@ export function DemoStep1Select({ onComplete }: DemoStep1Props) {
               ))}
           </AnimatePresence>
 
-          {/* "Tap to select" label on target skier */}
+          {/* "Tap to select" label */}
           {!selected && (
             <motion.div
               initial={{ opacity: 0, y: 4 }}
@@ -172,7 +171,6 @@ export function DemoStep1Select({ onComplete }: DemoStep1Props) {
               }`}
               aria-label={`Select ${skier.label}`}
             >
-              {/* Cropped view of the skier from the frame */}
               <div
                 className="absolute inset-0"
                 style={{
@@ -202,16 +200,16 @@ export function DemoStep1Select({ onComplete }: DemoStep1Props) {
               Step 1
             </p>
             <h3 className="mt-1 text-xl font-bold text-foreground">
-              Select the skier to analyze
+              Select the skier
             </h3>
           </div>
 
           <p className="text-sm text-muted-foreground leading-relaxed">
-            Tap the skier you want Poser to track through the run.
+            Pick the skier you want Poser to follow through the clip.
           </p>
 
           <p className="rounded-lg bg-muted/40 px-3 py-2 text-xs text-muted-foreground">
-            This is the only step you do in the demo.
+            In the demo, we start from a clear frame so you can see the selection step quickly.
           </p>
         </div>
 
