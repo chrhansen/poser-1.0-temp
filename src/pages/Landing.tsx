@@ -53,7 +53,7 @@ function DemoContent({ onStartDemo }: { onStartDemo: () => void }) {
         See a sample ski clip transformed into follow-cam and skeleton-overlay replay views.
       </p>
       <p className="text-xs text-muted-foreground max-w-xs">
-        Watch how Poser goes from uploaded clip to follow cam and skeleton overlay.
+        Watch how Poser goes from uploaded clip to head tracked and skeleton overlay.
       </p>
       <Button size="lg" onClick={onStartDemo}>
         Start demo replay
@@ -268,7 +268,7 @@ export default function LandingPage() {
         </div>
         <div className="mt-12 grid gap-8 md:grid-cols-3">
           {[
-            { icon: Video, title: "Follow Cam replay", description: "A head-tracked replay that keeps the skier centered for easier viewing." },
+            { icon: Video, title: "Head Tracked replay", description: "A head-tracked replay that keeps the skier centered for easier viewing." },
             { icon: Bone, title: "Skeleton overlay", description: "See pose and body alignment overlaid on the replay or original clip." },
             { icon: Eye, title: "Compare views", description: "See your original footage alongside Poser's processed replay outputs." },
           ].map((item, i) => (

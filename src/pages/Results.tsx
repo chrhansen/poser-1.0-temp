@@ -163,7 +163,7 @@ export default function ResultsPage() {
           <div className="rounded-xl border border-border bg-card p-5 space-y-3">
             <h3 className="text-sm font-semibold text-foreground">What you're seeing</h3>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li>Follow Cam keeps the skier centered so motion is easier to read.</li>
+              <li>Head Tracked keeps the skier centered so motion is easier to read.</li>
               <li>Skeleton overlays help visualize body timing and alignment.</li>
             </ul>
           </div>

@@ -7,8 +7,8 @@ import { cn } from "@/lib/utils";
 
 const tabs = [
   { id: "preview", icon: Eye, label: "Preview" },
-  { id: "follow-cam", icon: Video, label: "Follow Cam" },
-  { id: "follow-cam-skeleton", icon: Bone, label: "Follow Cam + Skeleton" },
+  { id: "follow-cam", icon: Video, label: "Head Tracked" },
+  { id: "follow-cam-skeleton", icon: Bone, label: "Head Tracked + Skeleton" },
   { id: "original-skeleton", icon: Eye, label: "Original + Skeleton" },
 ] as const;
 

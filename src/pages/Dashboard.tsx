@@ -43,7 +43,7 @@ function OutputChips({ r }: { r: AnalysisResult }) {
       {available.map((o) => (
         <span key={o.type} className="rounded-full bg-accent/60 px-2 py-0.5 text-[10px] font-medium text-accent-foreground">
           <span className="hidden sm:inline">{o.label}</span>
-          <span className="sm:hidden">{o.type === "follow_cam" ? "Follow" : o.label}</span>
+          <span className="sm:hidden">{o.type === "follow_cam" ? "Tracked" : o.label}</span>
         </span>
       ))}
     </div>
