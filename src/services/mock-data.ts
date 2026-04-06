@@ -22,8 +22,8 @@ export { delay };
 
 // ─── Default replay outputs for complete results ────────────────────────────
 const defaultReplayOutputs: ReplayOutput[] = [
-  { type: "follow_cam", label: "Head Tracked", description: "A tracked replay that keeps the skier centered.", available: true },
-  { type: "follow_cam_skeleton", label: "Head Tracked + Skeleton", description: "A tracked replay with pose overlay to show movement timing and body alignment.", available: true },
+  { type: "head_tracked", label: "Head Tracked", description: "A tracked replay that keeps the skier centered.", available: true },
+  { type: "head_tracked_skeleton", label: "Head Tracked + Skeleton", description: "A tracked replay with pose overlay to show movement timing and body alignment.", available: true },
   { type: "original_skeleton", label: "Original + Skeleton", description: "The original camera view with pose overlay.", available: true },
 ];
 

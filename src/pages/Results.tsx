@@ -32,7 +32,7 @@ export default function ResultsPage() {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [supportOpen, setSupportOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
-  const [activeView, setActiveView] = useState<ReplayOutputType>("follow_cam_skeleton");
+  const [activeView, setActiveView] = useState<ReplayOutputType>("head_tracked_skeleton");
   const [newAnalysisOpen, setNewAnalysisOpen] = useState(false);
   const [rerunFile, setRerunFile] = useState<File | undefined>(undefined);
   const pollRef = useRef<ReturnType<typeof setInterval>>();

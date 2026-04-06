@@ -57,7 +57,7 @@ const App = () => (
 
             {/* Public embed (no auth, no shell) */}
             <Route path="/embed/results/:token" element={<EmbedResults />} />
-            <Route path="/share/:id" element={<ShareReplay />} />
+            <Route path="/s/:id" element={<ShareReplay />} />
             <Route path="/qr-upload" element={<QrUpload />} />
 
             {/* Protected routes — require sign-in */}
