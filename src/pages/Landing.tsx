@@ -36,7 +36,7 @@ const steps = [
   {
     icon: Eye,
     title: "Explore replay views",
-    description: "Watch your skiing as a follow-cam replay or with skeleton overlays.",
+    description: "Watch your skiing as a head-tracked replay or with skeleton overlays.",
   },
 ];
 
@@ -50,7 +50,7 @@ function DemoContent({ onStartDemo }: { onStartDemo: () => void }) {
         <Target className="h-5 w-5 text-accent-foreground" />
       </div>
       <p className="text-sm font-medium text-foreground">
-        See a sample ski clip transformed into follow-cam and skeleton-overlay replay views.
+        See a sample ski clip transformed into head-tracked and skeleton-overlay replay views.
       </p>
       <p className="text-xs text-muted-foreground max-w-xs">
         Watch how Poser goes from uploaded clip to head tracked and skeleton overlay.
@@ -135,7 +135,7 @@ export default function LandingPage() {
               custom={1}
               className="mx-auto mt-6 max-w-lg text-lg text-muted-foreground"
             >
-              Upload a short ski clip and Poser turns it into follow-cam replays and skeleton overlays in minutes. SkiRank and technique feedback are coming soon.
+              Upload a short ski clip and Poser turns it into head-tracked replays and skeleton overlays in minutes. SkiRank and technique feedback are coming soon.
             </motion.p>
             <motion.div
               variants={fadeUp}
