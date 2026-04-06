@@ -3,7 +3,7 @@ import { useParams, useSearchParams, Link } from "react-router-dom";
 import { PageLoader } from "@/components/shared/PageLoader";
 import { PageError } from "@/components/shared/PageError";
 import { analysisService } from "@/services/analysis.service";
-import type { AnalysisResult, ReplayOutput, ReplayOutputType } from "@/lib/types";
+import type { AnalysisResult, ReplayOutputType } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { Video, Bone } from "lucide-react";
 
@@ -13,10 +13,16 @@ const outputIcons: Record<ReplayOutputType, React.ElementType> = {
   original_skeleton: Video,
 };
 
-const viewDescriptions: Record<ReplayOutputType, string> = {
-  head_tracked: "Keeps the skier centered so motion is easier to read.",
-  head_tracked_skeleton: "Adds a skeleton overlay to help visualize timing and alignment.",
-  original_skeleton: "Shows the overlay in the original camera framing.",
+const viewCaptions: Record<ReplayOutputType, string> = {
+  head_tracked: "Head tracking keeps the skier centered so motion is easier to read.",
+  head_tracked_skeleton: "Skeleton overlay helps visualize timing and alignment.",
+  original_skeleton: "Skeleton overlay shown in the original camera framing.",
+};
+
+const viewLabels: Record<ReplayOutputType, string> = {
+  head_tracked: "Head Tracked",
+  head_tracked_skeleton: "Head Tracked + Skeleton",
+  original_skeleton: "Original + Skeleton",
 };
 
 export default function ShareReplayPage() {
@@ -30,7 +36,6 @@ export default function ShareReplayPage() {
   const [activeTab, setActiveTab] = useState<ReplayOutputType>(defaultView);
 
   useEffect(() => {
-    document.title = "Shared replay — Poser";
     analysisService
       .getResult(id ?? "")
       .then((r) => {
@@ -38,7 +43,6 @@ export default function ShareReplayPage() {
           setError(true);
         } else {
           setResult(r);
-          // Validate default view exists
           const outputs = (r.replayOutputs ?? []).filter((o) => o.available);
           const viewExists = outputs.some((o) => o.type === defaultView);
           if (!viewExists && outputs.length > 0) {
@@ -52,6 +56,12 @@ export default function ShareReplayPage() {
         setLoading(false);
       });
   }, [id, defaultView]);
+
+  // Dynamic page title
+  useEffect(() => {
+    const label = viewLabels[activeTab] ?? "Replay";
+    document.title = `${label} replay — Poser`;
+  }, [activeTab]);
 
   if (loading)
     return (
@@ -69,16 +79,11 @@ export default function ShareReplayPage() {
   const outputs = (result.replayOutputs ?? []).filter((o) => o.available);
   const current = outputs.find((o) => o.type === activeTab) ?? outputs[0];
 
-  const titleLabel =
-    current?.label
-      ? `${current.label} replay`
-      : "Shared ski replay";
-
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b border-border bg-card/60 backdrop-blur">
-        <div className="container flex h-12 items-center justify-between">
+        <div className="container flex h-12 items-center">
           <Link to="/" className="text-sm font-semibold text-foreground hover:text-primary transition-colors">
             Poser
           </Link>
@@ -86,15 +91,17 @@ export default function ShareReplayPage() {
       </header>
 
       <main className="container py-6 md:py-10">
-        <div className="mx-auto max-w-3xl space-y-5">
+        <div className="mx-auto max-w-3xl space-y-4">
           {/* Title */}
           <div>
             <h1 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
-              {titleLabel}
+              {viewLabels[activeTab]} replay
             </h1>
-            <p className="mt-1 text-xs text-muted-foreground">
-              Shared replay · {result.duration ? `${result.duration}s` : ""}
-            </p>
+            {result.duration && (
+              <p className="mt-0.5 text-xs text-muted-foreground">
+                {result.duration}s clip
+              </p>
+            )}
           </div>
 
           {/* Replay viewer */}
@@ -132,25 +139,21 @@ export default function ShareReplayPage() {
             </div>
           </div>
 
-          {/* What you're seeing */}
-          <div className="rounded-xl border border-border bg-card p-5 space-y-2">
-            <h3 className="text-sm font-semibold text-foreground">What you're seeing</h3>
-            <p className="text-sm text-muted-foreground">
-              {viewDescriptions[activeTab]}
-            </p>
-          </div>
+          {/* Compact caption */}
+          <p className="text-xs text-muted-foreground">
+            {viewCaptions[activeTab]}
+          </p>
 
-          {/* CTA */}
-          <div className="rounded-xl border border-border bg-card p-5 text-center space-y-2">
-            <p className="text-sm font-medium text-foreground">Made with Poser</p>
+          {/* Slim CTA footer */}
+          <div className="flex items-center justify-between rounded-lg border border-border bg-card px-4 py-3">
             <p className="text-xs text-muted-foreground">
-              Upload your own ski clip and get motion replay outputs in minutes.
+              Made with <span className="font-medium text-foreground">Poser</span>
             </p>
             <Link
               to="/"
-              className="inline-flex h-9 items-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
+              className="text-xs font-medium text-primary hover:underline"
             >
-              Try your own clip
+              Try your own clip →
             </Link>
           </div>
         </div>
