@@ -7,9 +7,10 @@ import { formatDate } from "@/lib/date-utils";
 
 interface ResultsHeaderProps {
   result: AnalysisResult;
+  onShare?: () => void;
 }
 
-export function ResultsHeader({ result }: ResultsHeaderProps) {
+export function ResultsHeader({ result, onShare }: ResultsHeaderProps) {
   const navigate = useNavigate();
   const date = formatDate(result.createdAt);
   const clip = result.duration ? `${result.duration}s clip` : null;
@@ -41,7 +42,7 @@ export function ResultsHeader({ result }: ResultsHeaderProps) {
         <Button variant="outline" size="sm" className="h-8" aria-label="Download">
           <Download className="h-3.5 w-3.5" />
         </Button>
-        <Button variant="outline" size="sm" className="h-8" aria-label="Share">
+        <Button variant="outline" size="sm" className="h-8" aria-label="Share" onClick={onShare}>
           <Share2 className="h-3.5 w-3.5" />
         </Button>
       </div>
