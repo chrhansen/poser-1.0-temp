@@ -14,6 +14,7 @@ import Results from "./pages/Results";
 import Settings from "./pages/Settings";
 import ConfirmEmail from "./pages/ConfirmEmail";
 import EmbedResults from "./pages/EmbedResults";
+import ShareReplay from "./pages/ShareReplay";
 import Releases from "./pages/Releases";
 import Integrations from "./pages/Integrations";
 import Billing from "./pages/Billing";
@@ -56,6 +57,7 @@ const App = () => (
 
             {/* Public embed (no auth, no shell) */}
             <Route path="/embed/results/:token" element={<EmbedResults />} />
+            <Route path="/share/:id" element={<ShareReplay />} />
             <Route path="/qr-upload" element={<QrUpload />} />
 
             {/* Protected routes — require sign-in */}
