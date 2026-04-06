@@ -12,16 +12,16 @@ interface DemoStep3Props {
 /* ─── Output tabs ─── */
 
 const outputTabs = [
-  { id: "follow-cam", icon: Video, label: "Head Tracked", description: "Keeps the skier centered" },
-  { id: "follow-cam-skeleton", icon: Bone, label: "Head Tracked + Skeleton", description: "Shows movement timing and body alignment" },
+  { id: "head-tracked", icon: Video, label: "Head Tracked", description: "Keeps the skier centered" },
+  { id: "head-tracked-skeleton", icon: Bone, label: "Head Tracked + Skeleton", description: "Shows movement timing and body alignment" },
   { id: "original-skeleton", icon: Eye, label: "Original + Skeleton", description: "Compare the overlay in the original framing" },
 ] as const;
 
 type OutputTabId = (typeof outputTabs)[number]["id"];
 
 const videoByTab: Record<OutputTabId, string | null> = {
-  "follow-cam": null,
-  "follow-cam-skeleton": "/demo/hero-clip.mov",
+  "head-tracked": null,
+  "head-tracked-skeleton": "/demo/hero-clip.mov",
   "original-skeleton": null,
 };
 
@@ -39,7 +39,7 @@ function VideoPlaceholder({ tab }: { tab: typeof outputTabs[number] }) {
 }
 
 export function DemoStep3Feedback({ onReplay, onClose }: DemoStep3Props) {
-  const [activeTab, setActiveTab] = useState<OutputTabId>("follow-cam-skeleton");
+  const [activeTab, setActiveTab] = useState<OutputTabId>("head-tracked-skeleton");
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const videoSrc = videoByTab[activeTab];

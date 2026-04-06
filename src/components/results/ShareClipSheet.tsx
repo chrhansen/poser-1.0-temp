@@ -11,8 +11,8 @@ import type { ReplayOutputType } from "@/lib/types";
 import { toast } from "sonner";
 
 const viewLabels: Record<ReplayOutputType, string> = {
-  follow_cam: "Head Tracked",
-  follow_cam_skeleton: "Head Tracked + Skeleton",
+  head_tracked: "Head Tracked",
+  head_tracked_skeleton: "Head Tracked + Skeleton",
   original_skeleton: "Original + Skeleton",
 };
 
@@ -31,7 +31,7 @@ export function ShareClipSheet({
 }: ShareClipSheetProps) {
   const [copied, setCopied] = useState(false);
 
-  const shareUrl = `${window.location.origin}/share/${clipId}?view=${activeView}`;
+  const shareUrl = `${window.location.origin}/s/${clipId}?view=${activeView}`;
 
   const handleCopy = async () => {
     try {

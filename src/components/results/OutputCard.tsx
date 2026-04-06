@@ -4,8 +4,8 @@ import { Video, Bone, Play, Download } from "lucide-react";
 import type { ReplayOutputType } from "@/lib/types";
 
 const outputIcons: Record<string, React.ElementType> = {
-  follow_cam: Video,
-  follow_cam_skeleton: Bone,
+  head_tracked: Video,
+  head_tracked_skeleton: Bone,
   original_skeleton: Video,
 };
 

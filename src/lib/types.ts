@@ -92,7 +92,7 @@ export type ThemeKey = "balance" | "pressure" | "edging" | "steering";
 
 // ─── Replay output types ────────────────────────────────────────────────────
 
-export type ReplayOutputType = "follow_cam" | "follow_cam_skeleton" | "original_skeleton";
+export type ReplayOutputType = "head_tracked" | "head_tracked_skeleton" | "original_skeleton";
 
 export interface ReplayOutput {
   type: ReplayOutputType;

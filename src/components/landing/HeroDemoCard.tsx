@@ -7,8 +7,8 @@ import { cn } from "@/lib/utils";
 
 const tabs = [
   { id: "preview", icon: Eye, label: "Preview" },
-  { id: "follow-cam", icon: Video, label: "Head Tracked" },
-  { id: "follow-cam-skeleton", icon: Bone, label: "Head Tracked + Skeleton" },
+  { id: "head-tracked", icon: Video, label: "Head Tracked" },
+  { id: "head-tracked-skeleton", icon: Bone, label: "Head Tracked + Skeleton" },
   { id: "original-skeleton", icon: Eye, label: "Original + Skeleton" },
 ] as const;
 
@@ -18,10 +18,10 @@ type TabId = (typeof tabs)[number]["id"];
 
 const calloutsByTab: Record<TabId, { label: string; position: string }[]> = {
   "preview": [],
-  "follow-cam": [
+  "head-tracked": [
     { label: "Skier tracked", position: "bottom-3 left-3" },
   ],
-  "follow-cam-skeleton": [
+  "head-tracked-skeleton": [
     { label: "Skier tracked", position: "bottom-3 left-3" },
     { label: "Skeleton overlay", position: "bottom-3 right-3" },
   ],
@@ -55,10 +55,10 @@ export function HeroDemoCard() {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const videoByTab: Record<TabId, string | null> = {
-    "preview": null,              // TODO: add preview video path
-    "follow-cam": null,           // TODO: add follow-cam video path
-    "follow-cam-skeleton": "/demo/hero-clip.mov",
-    "original-skeleton": null,    // TODO: add original+skeleton video path
+    "preview": null,
+    "head-tracked": null,
+    "head-tracked-skeleton": "/demo/hero-clip.mov",
+    "original-skeleton": null,
   };
 
   const videoSrc = videoByTab[activeTab];

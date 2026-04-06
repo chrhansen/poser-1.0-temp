@@ -8,21 +8,21 @@ import { cn } from "@/lib/utils";
 import { Video, Bone } from "lucide-react";
 
 const outputIcons: Record<ReplayOutputType, React.ElementType> = {
-  follow_cam: Video,
-  follow_cam_skeleton: Bone,
+  head_tracked: Video,
+  head_tracked_skeleton: Bone,
   original_skeleton: Video,
 };
 
 const viewDescriptions: Record<ReplayOutputType, string> = {
-  follow_cam: "Keeps the skier centered so motion is easier to read.",
-  follow_cam_skeleton: "Adds a skeleton overlay to help visualize timing and alignment.",
+  head_tracked: "Keeps the skier centered so motion is easier to read.",
+  head_tracked_skeleton: "Adds a skeleton overlay to help visualize timing and alignment.",
   original_skeleton: "Shows the overlay in the original camera framing.",
 };
 
 export default function ShareReplayPage() {
   const { id } = useParams<{ id: string }>();
   const [searchParams] = useSearchParams();
-  const defaultView = (searchParams.get("view") as ReplayOutputType) || "follow_cam";
+  const defaultView = (searchParams.get("view") as ReplayOutputType) || "head_tracked";
 
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [loading, setLoading] = useState(true);

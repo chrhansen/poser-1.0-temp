@@ -4,8 +4,8 @@ import { cn } from "@/lib/utils";
 import { Video, Bone } from "lucide-react";
 
 const outputIcons: Record<ReplayOutputType, React.ElementType> = {
-  follow_cam: Video,
-  follow_cam_skeleton: Bone,
+  head_tracked: Video,
+  head_tracked_skeleton: Bone,
   original_skeleton: Video,
 };
 
@@ -19,9 +19,9 @@ export function ReplayViewer({ outputs, activeTab: controlledTab, onTabChange }:
   const availableOutputs = outputs.filter((o) => o.available);
 
   const defaultTab =
-    availableOutputs.find((o) => o.type === "follow_cam_skeleton")?.type
+    availableOutputs.find((o) => o.type === "head_tracked_skeleton")?.type
     ?? availableOutputs[0]?.type
-    ?? "follow_cam";
+    ?? "head_tracked";
 
   const [internalTab, setInternalTab] = useState<ReplayOutputType>(controlledTab ?? defaultTab);
 
