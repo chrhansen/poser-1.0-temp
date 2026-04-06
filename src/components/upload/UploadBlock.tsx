@@ -67,7 +67,7 @@ export function UploadBlock() {
       const result = await analysisService.uploadClip(file, "center", (pct) => setProgress(pct));
       setState("success");
       toast.success("Clip uploaded! Analyzing…");
-      setTimeout(() => navigate(`/results/${result.id}`), 1200);
+      setTimeout(() => navigate(`/clips/${result.id}`), 1200);
     } catch (err: any) {
       setErrorMsg(err?.message ?? "Upload failed. Please try again.");
       setState("error");

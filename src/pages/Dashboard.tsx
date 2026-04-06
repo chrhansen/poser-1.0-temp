@@ -64,7 +64,7 @@ function ResultCard({ r, onRetry }: { r: AnalysisResult; onRetry: (id: string) =
   const navigate = useNavigate();
   const handleCardClick = (e: React.MouseEvent) => {
     if ((e.target as HTMLElement).closest("button, a")) return;
-    navigate(`/results/${r.id}`);
+    navigate(`/clips/${r.id}`);
   };
 
   return (
@@ -85,7 +85,7 @@ function ResultCard({ r, onRetry }: { r: AnalysisResult; onRetry: (id: string) =
             <RotateCcw className="mr-1 h-3 w-3" /> Retry
           </Button>
           <Button variant="ghost" size="sm" className="h-7 text-xs" asChild>
-            <Link to={`/results/${r.id}`}>
+            <Link to={`/clips/${r.id}`}>
               <AlertTriangle className="mr-1 h-3 w-3" /> View issue
             </Link>
           </Button>
@@ -99,7 +99,7 @@ function ResultTableRow({ r, onRetry }: { r: AnalysisResult; onRetry: (id: strin
   const navigate = useNavigate();
   const handleRowClick = (e: React.MouseEvent) => {
     if ((e.target as HTMLElement).closest("button, a")) return;
-    navigate(`/results/${r.id}`);
+    navigate(`/clips/${r.id}`);
   };
 
   return (

@@ -62,8 +62,11 @@ const App = () => (
 
             {/* Protected routes — require sign-in */}
             {/* TODO_BACKEND_HOOKUP: Re-wrap with <ProtectedRoute> once auth is connected */}
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/results/:id" element={<Results />} />
+            <Route path="/clips" element={<Dashboard />} />
+            <Route path="/clips/:id" element={<Results />} />
+            {/* Legacy redirects */}
+            <Route path="/dashboard" element={<Navigate to="/clips" replace />} />
+            <Route path="/results/:id" element={<Navigate to="/clips/:id" replace />} />
             <Route path="/settings" element={<Settings />} />
             {/* Billing redirect → Settings billing tab */}
             <Route path="/billing" element={<Navigate to="/settings?tab=billing" replace />} />

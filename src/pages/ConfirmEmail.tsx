@@ -27,7 +27,7 @@ export default function ConfirmEmailPage() {
               <CheckCircle className="h-12 w-12 text-foreground" />
               <h1 className="mt-4 text-2xl font-bold text-foreground">Email confirmed</h1>
               <p className="mt-2 text-muted-foreground">You're all set. Start uploading clips.</p>
-              <Button className="mt-6" asChild><Link to="/dashboard">Go to dashboard</Link></Button>
+              <Button className="mt-6" asChild><Link to="/clips">Go to clips</Link></Button>
             </>
           ) : (
             <>

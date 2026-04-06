@@ -73,7 +73,7 @@ export default function ResultsPage() {
     if (!result) return;
     await analysisService.deleteResult(result.id);
     toast.success("Clip deleted.");
-    navigate("/dashboard");
+    navigate("/clips");
   };
 
   const handleRerun = () => {

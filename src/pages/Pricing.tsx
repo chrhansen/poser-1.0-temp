@@ -43,7 +43,7 @@ export default function PricingPage() {
   if (loading) return <Layout><PageLoader /></Layout>;
 
   const getCtaHref = (plan: PricingPlan) => {
-    if (plan.id === "free") return user ? "/dashboard" : "/#upload";
+    if (plan.id === "free") return user ? "/clips" : "/#upload";
     return user ? "/billing" : "/#upload";
   };
 
