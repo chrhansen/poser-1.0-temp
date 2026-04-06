@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation, useParams } from "react-router-dom";
 import { useEffect } from "react";
 import { AuthProvider } from "@/hooks/useAuth";
 import { ProtectedRoute } from "@/components/guards/ProtectedRoute";
@@ -36,6 +36,11 @@ function ScrollToTop() {
   return null;
 }
 
+function RedirectResultToClip() {
+  const { id } = useParams();
+  return <Navigate to={`/clips/${id}`} replace />;
+}
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
@@ -66,7 +71,7 @@ const App = () => (
             <Route path="/clips/:id" element={<Results />} />
             {/* Legacy redirects */}
             <Route path="/dashboard" element={<Navigate to="/clips" replace />} />
-            <Route path="/results/:id" element={<Navigate to="/clips/:id" replace />} />
+            <Route path="/results/:id" element={<RedirectResultToClip />} />
             <Route path="/settings" element={<Settings />} />
             {/* Billing redirect → Settings billing tab */}
             <Route path="/billing" element={<Navigate to="/settings?tab=billing" replace />} />
