@@ -4,7 +4,7 @@ import { Menu, X } from "lucide-react";
 import poserLogo from "@/assets/poser-logo.svg";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { BetaBadge } from "@/components/shared/BetaBadge";
+
 import { useAuth } from "@/hooks/useAuth";
 import { AuthDialog, type AuthContext } from "@/components/dialogs/AuthDialog";
 
@@ -58,7 +58,6 @@ export function Header() {
           <Link to="/" className="flex items-center gap-2 text-xl font-bold tracking-tight text-foreground">
             <img src={poserLogo} alt="" className="h-6 w-auto" />
             poser
-            <BetaBadge className="ml-1" />
           </Link>
 
           {/* Desktop nav — absolutely centered on the full width */}

@@ -4,7 +4,7 @@ import { Upload, Target, TrendingUp, ArrowRight, Video, Bone, Eye } from "lucide
 import { HeroDemoCard } from "@/components/landing/HeroDemoCard";
 import { DemoAnalysisModal } from "@/components/demo/DemoAnalysisModal";
 import { Button } from "@/components/ui/button";
-import { BetaBadge } from "@/components/shared/BetaBadge";
+
 import { Layout } from "@/components/layout/Layout";
 import { Section } from "@/components/shared/Section";
 import { UploadPickContent } from "@/components/upload/UploadPickContent";
@@ -182,7 +182,7 @@ export default function LandingPage() {
               <h2 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">
                 Try Poser Motion Replay in under a minute
               </h2>
-              <BetaBadge />
+              
             </div>
             <p className="mt-3 text-muted-foreground">
               Start with a demo clip, or upload your own.
