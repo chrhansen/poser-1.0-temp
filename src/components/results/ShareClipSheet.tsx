@@ -5,10 +5,17 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Copy, Share2, Check, Film } from "lucide-react";
 import type { ReplayOutputType } from "@/lib/types";
 import { toast } from "sonner";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const viewLabels: Record<ReplayOutputType, string> = {
   head_tracked: "Head Tracked",
@@ -31,6 +38,8 @@ export function ShareClipSheet({
 }: ShareClipSheetProps) {
   const [copied, setCopied] = useState(false);
   const [showMore, setShowMore] = useState(false);
+  const isMobile = useIsMobile();
+  const supportsShare = typeof navigator !== "undefined" && !!navigator.share;
 
   const shareUrl = `${window.location.origin}/s/${clipId}?view=${activeView}`;
 
@@ -76,57 +85,82 @@ export function ShareClipSheet({
     }
   };
 
-  return (
-    <Sheet open={open} onOpenChange={(v) => { onOpenChange(v); if (!v) setShowMore(false); }}>
-      <SheetContent side="bottom" className="rounded-t-2xl px-5 pb-5 pt-4">
-        <SheetHeader className="pb-0">
-          <SheetTitle className="text-base">Share replay</SheetTitle>
-        </SheetHeader>
+  const handleClose = (v: boolean) => {
+    onOpenChange(v);
+    if (!v) setShowMore(false);
+  };
 
-        {/* Preview header */}
-        <p className="mt-2 text-xs text-muted-foreground">
-          Sharing: <span className="font-medium text-foreground">{viewLabels[activeView]}</span>
-        </p>
+  const content = (
+    <>
+      {/* Preview header */}
+      <p className="text-xs text-muted-foreground">
+        Sharing: <span className="font-medium text-foreground">{viewLabels[activeView]}</span>
+      </p>
 
-        {/* Actions */}
-        <div className="mt-3 flex gap-2">
-          <Button size="sm" className="flex-1" onClick={handleCopy}>
-            {copied ? <Check className="mr-1.5 h-3.5 w-3.5" /> : <Copy className="mr-1.5 h-3.5 w-3.5" />}
-            {copied ? "Copied!" : "Copy link"}
-          </Button>
+      {/* Actions */}
+      <div className="mt-3 flex gap-2">
+        <Button size="sm" className="flex-1" onClick={handleCopy}>
+          {copied ? <Check className="mr-1.5 h-3.5 w-3.5" /> : <Copy className="mr-1.5 h-3.5 w-3.5" />}
+          {copied ? "Copied!" : "Copy link"}
+        </Button>
+        {supportsShare && (
           <Button size="sm" variant="outline" className="flex-1" onClick={handleNativeShare}>
             <Share2 className="mr-1.5 h-3.5 w-3.5" />
             Share link…
           </Button>
-        </div>
-
-        {/* Helper */}
-        <p className="mt-2.5 text-[11px] text-muted-foreground">
-          Opens on this view. Viewers can switch tabs.
-        </p>
-
-        {/* More options */}
-        {!showMore ? (
-          <button
-            onClick={() => setShowMore(true)}
-            className="mt-2 text-xs font-medium text-primary hover:underline"
-          >
-            More options
-          </button>
-        ) : (
-          <div className="mt-2">
-            <Button size="sm" variant="outline" className="w-full" onClick={handleShareVideo}>
-              <Film className="mr-1.5 h-3.5 w-3.5" />
-              Share selected MP4
-            </Button>
-          </div>
         )}
+      </div>
 
-        {/* Privacy */}
-        <p className="mt-3 text-center text-[11px] text-muted-foreground">
-          Anyone with the link can watch.
-        </p>
-      </SheetContent>
-    </Sheet>
+      {/* Helper */}
+      <p className="mt-2.5 text-[11px] text-muted-foreground">
+        Opens on this view. Viewers can switch tabs.
+      </p>
+
+      {/* More options */}
+      {!showMore ? (
+        <button
+          onClick={() => setShowMore(true)}
+          className="mt-2 text-xs font-medium text-primary hover:underline"
+        >
+          More options
+        </button>
+      ) : (
+        <div className="mt-2">
+          <Button size="sm" variant="outline" className="w-full" onClick={handleShareVideo}>
+            <Film className="mr-1.5 h-3.5 w-3.5" />
+            Share selected MP4
+          </Button>
+        </div>
+      )}
+
+      {/* Privacy */}
+      <p className="mt-3 text-center text-[11px] text-muted-foreground">
+        Anyone with the link can watch.
+      </p>
+    </>
+  );
+
+  if (isMobile) {
+    return (
+      <Sheet open={open} onOpenChange={handleClose}>
+        <SheetContent side="bottom" className="rounded-t-2xl px-5 pb-5 pt-4">
+          <SheetHeader className="pb-0">
+            <SheetTitle className="text-base">Share replay</SheetTitle>
+          </SheetHeader>
+          <div className="mt-2">{content}</div>
+        </SheetContent>
+      </Sheet>
+    );
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={handleClose}>
+      <DialogContent className="max-w-[520px] gap-3 p-5">
+        <DialogHeader className="pb-0">
+          <DialogTitle className="text-base">Share replay</DialogTitle>
+        </DialogHeader>
+        {content}
+      </DialogContent>
+    </Dialog>
   );
 }

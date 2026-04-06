@@ -57,10 +57,22 @@ export default function ShareReplayPage() {
       });
   }, [id, defaultView]);
 
-  // Dynamic page title
+  // Dynamic page title & OG
   useEffect(() => {
     const label = viewLabels[activeTab] ?? "Replay";
     document.title = `${label} replay — Poser`;
+
+    // Update OG meta dynamically
+    const setMeta = (prop: string, content: string) => {
+      let el = document.querySelector(`meta[property="${prop}"]`) || document.querySelector(`meta[name="${prop}"]`);
+      if (el) {
+        el.setAttribute("content", content);
+      }
+    };
+    setMeta("og:title", `${label} replay — Poser`);
+    setMeta("twitter:title", `${label} replay — Poser`);
+    setMeta("og:description", `Watch this ${label} ski replay on Poser.`);
+    setMeta("twitter:description", `Watch this ${label} ski replay on Poser.`);
   }, [activeTab]);
 
   if (loading)
@@ -79,6 +91,11 @@ export default function ShareReplayPage() {
   const outputs = (result.replayOutputs ?? []).filter((o) => o.available);
   const current = outputs.find((o) => o.type === activeTab) ?? outputs[0];
 
+  // Attribution — use filename as a fallback display name
+  const profile = result.filename
+    ? { name: result.filename.replace(/\.[^.]+$/, ""), date: result.createdAt }
+    : null;
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -92,12 +109,26 @@ export default function ShareReplayPage() {
 
       <main className="container py-6 md:py-10">
         <div className="mx-auto max-w-3xl space-y-4">
-          {/* Title */}
+          {/* Title + attribution */}
           <div>
             <h1 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
               {viewLabels[activeTab]} replay
             </h1>
-            {result.duration && (
+            {profile && (
+              <div className="mt-1.5 flex items-center gap-2 text-xs text-muted-foreground">
+                <div className="flex h-5 w-5 items-center justify-center rounded-full bg-primary/10 text-[10px] font-semibold text-primary">
+                  {profile.name.charAt(0).toUpperCase()}
+                </div>
+                <span className="font-medium text-foreground/80">{profile.name}</span>
+                {profile.date && (
+                  <>
+                    <span className="text-border">·</span>
+                    <span>Shared {new Date(profile.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>
+                  </>
+                )}
+              </div>
+            )}
+            {!profile && result.duration && (
               <p className="mt-0.5 text-xs text-muted-foreground">
                 {result.duration}s clip
               </p>
@@ -144,14 +175,14 @@ export default function ShareReplayPage() {
             {viewCaptions[activeTab]}
           </p>
 
-          {/* Slim CTA footer */}
-          <div className="flex items-center justify-between rounded-lg border border-border bg-card px-4 py-3">
-            <p className="text-xs text-muted-foreground">
+          {/* Inline footer CTA */}
+          <div className="flex items-center justify-between pt-2 text-xs text-muted-foreground">
+            <span>
               Made with <span className="font-medium text-foreground">Poser</span>
-            </p>
+            </span>
             <Link
               to="/"
-              className="text-xs font-medium text-primary hover:underline"
+              className="font-medium text-primary hover:underline"
             >
               Try your own clip →
             </Link>
