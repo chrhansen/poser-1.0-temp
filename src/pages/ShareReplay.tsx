@@ -82,9 +82,6 @@ export default function ShareReplayPage() {
           <Link to="/" className="text-sm font-semibold text-foreground hover:text-primary transition-colors">
             Poser
           </Link>
-          <span className="rounded-full bg-secondary px-2.5 py-0.5 text-[10px] font-medium text-muted-foreground">
-            Motion Replay Beta
-          </span>
         </div>
       </header>
 

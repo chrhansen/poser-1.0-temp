@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+
 import { ArrowLeft, Download, Share2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import type { AnalysisResult } from "@/lib/types";
@@ -33,7 +33,7 @@ export function ResultsHeader({ result, onShare }: ResultsHeaderProps) {
             <h1 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
               {result.filename ?? "Clip replay"}
             </h1>
-            <Badge variant="secondary" className="text-[10px]">Motion Replay Beta</Badge>
+            
           </div>
           <p className="text-xs text-muted-foreground">{meta}</p>
         </div>

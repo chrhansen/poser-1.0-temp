@@ -9,8 +9,8 @@ import { RecentAnalysesList } from "./RecentAnalysesList";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
-import { Badge } from "@/components/ui/badge";
-import { BetaBadge } from "@/components/shared/BetaBadge";
+
+
 import poserLogo from "@/assets/poser-logo.svg";
 import {
   DropdownMenu,
@@ -116,7 +116,6 @@ function SidebarInner({ extraContent, collapsed, setCollapsed, onNavigate, hideH
               <>
                 <Link to="/" onClick={handleNav} className="flex items-center gap-1.5">
                   <img src={poserLogo} alt="poser" className="h-6 w-auto" />
-                  <BetaBadge />
                 </Link>
                 <button
                   onClick={() => setCollapsed(true)}
@@ -334,7 +333,6 @@ export function AppSidebar({ extraContent, mobileOpen: controlledMobileOpen, onM
           <div className="flex items-center justify-between border-b border-border px-3 py-3">
             <Link to="/" onClick={() => setMobileOpen(false)} className="flex items-center gap-1.5">
               <img src={poserLogo} alt="poser" className="h-6 w-auto" />
-              <BetaBadge />
             </Link>
             <button
               onClick={() => setMobileOpen(false)}
@@ -366,7 +364,6 @@ export function MobileTopBar({ onMenuClick }: { onMenuClick: () => void }) {
       </button>
       <Link to="/" className="ml-2 flex items-center gap-1.5">
         <img src={poserLogo} alt="poser" className="h-5 w-auto" />
-        <BetaBadge />
       </Link>
     </div>
   );
