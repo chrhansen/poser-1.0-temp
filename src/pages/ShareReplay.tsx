@@ -91,9 +91,9 @@ export default function ShareReplayPage() {
   const outputs = (result.replayOutputs ?? []).filter((o) => o.available);
   const current = outputs.find((o) => o.type === activeTab) ?? outputs[0];
 
-  // Mock profile data — replace with real data when available
-  const profile = result.skierName
-    ? { name: result.skierName, date: result.createdAt }
+  // Attribution — use filename as a fallback display name
+  const profile = result.filename
+    ? { name: result.filename.replace(/\.[^.]+$/, ""), date: result.createdAt }
     : null;
 
   return (
