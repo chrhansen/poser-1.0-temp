@@ -90,7 +90,7 @@ export type SkiLimiter = "balance" | "pressure" | "edging" | "steering";
 
 export type ThemeKey = "balance" | "pressure" | "edging" | "steering";
 
-// ─── Replay output types (Motion Replay Beta) ──────────────────────────────
+// ─── Replay output types ────────────────────────────────────────────────────
 
 export type ReplayOutputType = "follow_cam" | "follow_cam_skeleton" | "original_skeleton";
 

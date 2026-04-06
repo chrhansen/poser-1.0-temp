@@ -33,7 +33,7 @@ export function ResultsHeader({ result, onShare }: ResultsHeaderProps) {
             <h1 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
               {result.filename ?? "Clip replay"}
             </h1>
-            <Badge variant="secondary" className="text-[10px]">Motion Replay Beta</Badge>
+            
           </div>
           <p className="text-xs text-muted-foreground">{meta}</p>
         </div>

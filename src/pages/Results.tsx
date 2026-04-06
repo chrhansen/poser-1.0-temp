@@ -38,7 +38,7 @@ export default function ResultsPage() {
   const pollRef = useRef<ReturnType<typeof setInterval>>();
 
   useEffect(() => {
-    document.title = "Poser Clip Details — Motion Replay Beta";
+    document.title = "Poser — Clip Details";
   }, []);
 
   const loadData = useCallback(async () => {

@@ -25,7 +25,7 @@ export default function PricingPage() {
   const { hash } = useLocation();
 
   useEffect(() => {
-    document.title = "Poser Pricing — Motion Replay Beta";
+    document.title = "Poser — Pricing";
     Promise.all([pricingService.getPlans(), pricingService.getFAQs()]).then(([p, f]) => {
       setPlans(p);
       setFaqs(f);

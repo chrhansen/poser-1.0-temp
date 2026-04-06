@@ -186,7 +186,7 @@ export default function DashboardPage() {
     setNewAnalysisOpen(true);
   };
 
-  useEffect(() => { document.title = "Poser Clips — Motion Replay Beta"; loadData(); }, []);
+  useEffect(() => { document.title = "Poser — Clips"; loadData(); }, []);
 
   if (loading) return <AppLayout><PageLoader /></AppLayout>;
   if (error) return <AppLayout><PageError message="Failed to load clips." onRetry={loadData} /></AppLayout>;
@@ -198,7 +198,7 @@ export default function DashboardPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <h1 className="text-3xl font-bold tracking-tight text-foreground">Clips</h1>
-              <Badge variant="secondary" className="text-[10px]">Motion Replay Beta</Badge>
+              
             </div>
             <Button size="sm" onClick={() => setNewAnalysisOpen(true)}>
               <Upload className="mr-1 h-4 w-4" /> Upload clip
