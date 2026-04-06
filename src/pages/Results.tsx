@@ -152,7 +152,7 @@ export default function ResultsPage() {
     <AppLayout>
       <Section compact>
         <div className="mx-auto max-w-4xl space-y-5">
-          <ResultsHeader result={result} />
+          <ResultsHeader result={result} onShare={() => setShareOpen(true)} />
 
           {/* Info banner */}
           <div className="rounded-lg border border-border bg-accent/20 px-4 py-3 text-xs text-muted-foreground">
@@ -160,7 +160,7 @@ export default function ResultsPage() {
           </div>
 
           {/* Main viewer — this IS the primary navigation */}
-          <ReplayViewer outputs={outputs} />
+          <ReplayViewer outputs={outputs} activeTab={activeView} onTabChange={setActiveView} />
 
 
           {/* What you're seeing */}
@@ -195,6 +195,7 @@ export default function ResultsPage() {
 
       <ConfirmActionDialog open={deleteOpen} onOpenChange={setDeleteOpen} title="Delete clip?" description="This will permanently remove this clip and all associated data." confirmLabel="Delete" destructive onConfirm={handleDelete} />
       <ContactSupportDialog open={supportOpen} onOpenChange={setSupportOpen} />
+      <ShareClipSheet open={shareOpen} onOpenChange={setShareOpen} clipId={result.id} activeView={activeView} />
       <NewAnalysisSheet open={newAnalysisOpen} onOpenChange={(open) => { setNewAnalysisOpen(open); if (!open) setRerunFile(undefined); }} rerunFile={rerunFile} />
     </AppLayout>
   );

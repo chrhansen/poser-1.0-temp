@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { ReplayOutput, ReplayOutputType } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { Video, Bone } from "lucide-react";
@@ -11,20 +11,35 @@ const outputIcons: Record<ReplayOutputType, React.ElementType> = {
 
 interface ReplayViewerProps {
   outputs: ReplayOutput[];
+  activeTab?: ReplayOutputType;
+  onTabChange?: (tab: ReplayOutputType) => void;
 }
 
-export function ReplayViewer({ outputs }: ReplayViewerProps) {
+export function ReplayViewer({ outputs, activeTab: controlledTab, onTabChange }: ReplayViewerProps) {
   const availableOutputs = outputs.filter((o) => o.available);
 
-  const [activeTab, setActiveTab] = useState(
+  const defaultTab =
     availableOutputs.find((o) => o.type === "follow_cam_skeleton")?.type
     ?? availableOutputs[0]?.type
-    ?? "follow_cam"
-  );
+    ?? "follow_cam";
+
+  const [internalTab, setInternalTab] = useState<ReplayOutputType>(controlledTab ?? defaultTab);
+
+  // Sync with controlled prop
+  useEffect(() => {
+    if (controlledTab) setInternalTab(controlledTab);
+  }, [controlledTab]);
+
+  const activeType = controlledTab ?? internalTab;
+
+  const handleTabChange = (tab: ReplayOutputType) => {
+    setInternalTab(tab);
+    onTabChange?.(tab);
+  };
 
   if (availableOutputs.length === 0) return null;
 
-  const current = availableOutputs.find((t) => t.type === activeTab) ?? availableOutputs[0];
+  const current = availableOutputs.find((t) => t.type === activeType) ?? availableOutputs[0];
 
   return (
     <div className="overflow-hidden rounded-xl border border-border bg-card">
@@ -32,11 +47,11 @@ export function ReplayViewer({ outputs }: ReplayViewerProps) {
       <div className="flex gap-1 overflow-x-auto border-b border-border bg-secondary/30 p-1.5">
         {availableOutputs.map((tab) => {
           const Icon = outputIcons[tab.type] ?? Video;
-          const isActive = tab.type === activeTab;
+          const isActive = tab.type === activeType;
           return (
             <button
               key={tab.type}
-              onClick={() => setActiveTab(tab.type)}
+              onClick={() => handleTabChange(tab.type)}
               className={cn(
                 "flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium transition-all",
                 isActive
