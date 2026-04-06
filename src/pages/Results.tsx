@@ -31,6 +31,8 @@ export default function ResultsPage() {
   const [error, setError] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [supportOpen, setSupportOpen] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
+  const [activeView, setActiveView] = useState<ReplayOutputType>("follow_cam_skeleton");
   const [newAnalysisOpen, setNewAnalysisOpen] = useState(false);
   const [rerunFile, setRerunFile] = useState<File | undefined>(undefined);
   const pollRef = useRef<ReturnType<typeof setInterval>>();
