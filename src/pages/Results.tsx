@@ -15,10 +15,12 @@ import { analysisService } from "@/services/analysis.service";
 import type { AnalysisResult } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { NewAnalysisSheet } from "@/components/upload/NewAnalysisSheet";
+import { ShareClipSheet } from "@/components/results/ShareClipSheet";
 import {
   Loader2, RefreshCw, Trash2, MessageSquare, AlertTriangle, Clock, Bell,
 } from "lucide-react";
 import { toast } from "sonner";
+import type { ReplayOutputType } from "@/lib/types";
 
 // ─── Main Results Page ──────────────────────────────────────────────────────
 export default function ResultsPage() {
