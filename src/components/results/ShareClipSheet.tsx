@@ -97,8 +97,13 @@ export function ShareClipSheet({
         Sharing: <span className="font-medium text-foreground">{viewLabels[activeView]}</span>
       </p>
 
+      {/* Link preview */}
+      <div className="mt-2.5 flex items-center gap-2 rounded-lg border border-border bg-secondary/30 px-3 py-2">
+        <p className="flex-1 truncate text-xs text-muted-foreground select-all">{shareUrl}</p>
+      </div>
+
       {/* Actions */}
-      <div className="mt-3 flex gap-2">
+      <div className="mt-2.5 flex gap-2">
         <Button size="sm" className="flex-1" onClick={handleCopy}>
           {copied ? <Check className="mr-1.5 h-3.5 w-3.5" /> : <Copy className="mr-1.5 h-3.5 w-3.5" />}
           {copied ? "Copied!" : "Copy link"}
