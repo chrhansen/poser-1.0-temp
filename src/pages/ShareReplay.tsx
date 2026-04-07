@@ -154,16 +154,14 @@ export default function ShareReplayPage() {
             </div>
           </div>
 
-          {/* Compact caption */}
-          <p className="text-xs text-muted-foreground">
-            {viewCaptions[activeTab]}
-          </p>
-
-          {/* Inline footer CTA */}
-          <div className="flex justify-end pt-2 text-xs">
+          {/* Caption + CTA */}
+          <div className="flex items-baseline justify-between gap-4 text-xs">
+            <p className="text-muted-foreground">
+              {viewCaptions[activeTab]}
+            </p>
             <Link
               to="/"
-              className="font-medium text-primary hover:underline"
+              className="shrink-0 font-medium text-primary hover:underline"
             >
               Try your own clip →
             </Link>
