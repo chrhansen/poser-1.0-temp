@@ -7,6 +7,7 @@ import type { AnalysisResult, ReplayOutputType } from "@/lib/types";
 import { shortToView } from "@/lib/view-codes";
 import { cn } from "@/lib/utils";
 import { Video, Bone } from "lucide-react";
+import poserLogo from "@/assets/poser-logo.svg";
 
 const outputIcons: Record<ReplayOutputType, React.ElementType> = {
   head_tracked: Video,
