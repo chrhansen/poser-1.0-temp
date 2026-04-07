@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 
-import { ArrowLeft, Download, Share2 } from "lucide-react";
+import { ArrowLeft, Share2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import type { AnalysisResult } from "@/lib/types";
 import { formatDate } from "@/lib/date-utils";
@@ -39,9 +39,6 @@ export function ResultsHeader({ result, onShare }: ResultsHeaderProps) {
         </div>
       </div>
       <div className="flex items-center gap-1.5">
-        <Button variant="outline" size="sm" className="h-8" aria-label="Download">
-          <Download className="h-3.5 w-3.5" />
-        </Button>
         <Button variant="outline" size="sm" className="h-8" aria-label="Share" onClick={onShare}>
           <Share2 className="h-3.5 w-3.5" />
         </Button>
