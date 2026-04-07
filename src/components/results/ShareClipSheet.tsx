@@ -14,6 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Copy, Share2, Check, Film } from "lucide-react";
 import type { ReplayOutputType } from "@/lib/types";
+import { viewToShort } from "@/lib/view-codes";
 import { toast } from "sonner";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -41,7 +42,7 @@ export function ShareClipSheet({
   const isMobile = useIsMobile();
   const supportsShare = typeof navigator !== "undefined" && !!navigator.share;
 
-  const shareUrl = `${window.location.origin}/s/${clipId}?view=${activeView}`;
+  const shareUrl = `${window.location.origin}/s/${clipId}?view=${viewToShort(activeView)}`;
 
   const handleCopy = async () => {
     try {

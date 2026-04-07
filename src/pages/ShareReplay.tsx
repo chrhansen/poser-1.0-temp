@@ -4,6 +4,7 @@ import { PageLoader } from "@/components/shared/PageLoader";
 import { PageError } from "@/components/shared/PageError";
 import { analysisService } from "@/services/analysis.service";
 import type { AnalysisResult, ReplayOutputType } from "@/lib/types";
+import { shortToView } from "@/lib/view-codes";
 import { cn } from "@/lib/utils";
 import { Video, Bone } from "lucide-react";
 
@@ -28,7 +29,7 @@ const viewLabels: Record<ReplayOutputType, string> = {
 export default function ShareReplayPage() {
   const { id } = useParams<{ id: string }>();
   const [searchParams] = useSearchParams();
-  const defaultView = (searchParams.get("view") as ReplayOutputType) || "head_tracked";
+  const defaultView = shortToView(searchParams.get("view") ?? "ht");
 
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [loading, setLoading] = useState(true);
