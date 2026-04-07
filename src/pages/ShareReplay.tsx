@@ -92,10 +92,7 @@ export default function ShareReplayPage() {
   const outputs = (result.replayOutputs ?? []).filter((o) => o.available);
   const current = outputs.find((o) => o.type === activeTab) ?? outputs[0];
 
-  // Attribution — use filename as a fallback display name
-  const profile = result.filename
-    ? { name: result.filename.replace(/\.[^.]+$/, ""), date: result.createdAt }
-    : null;
+  const sharedDate = result.createdAt;
 
   return (
     <div className="min-h-screen bg-background">
@@ -115,23 +112,9 @@ export default function ShareReplayPage() {
             <h1 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
               {viewLabels[activeTab]} replay
             </h1>
-            {profile && (
-              <div className="mt-1.5 flex items-center gap-2 text-xs text-muted-foreground">
-                <div className="flex h-5 w-5 items-center justify-center rounded-full bg-primary/10 text-[10px] font-semibold text-primary">
-                  {profile.name.charAt(0).toUpperCase()}
-                </div>
-                <span className="font-medium text-foreground/80">{profile.name}</span>
-                {profile.date && (
-                  <>
-                    <span className="text-border">·</span>
-                    <span>Shared {new Date(profile.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>
-                  </>
-                )}
-              </div>
-            )}
-            {!profile && result.duration && (
-              <p className="mt-0.5 text-xs text-muted-foreground">
-                {result.duration}s clip
+            {sharedDate && (
+              <p className="mt-1 text-xs text-muted-foreground">
+                Shared {new Date(sharedDate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
               </p>
             )}
           </div>
@@ -177,10 +160,7 @@ export default function ShareReplayPage() {
           </p>
 
           {/* Inline footer CTA */}
-          <div className="flex items-center justify-between pt-2 text-xs text-muted-foreground">
-            <span>
-              Made with <span className="font-medium text-foreground">Poser</span>
-            </span>
+          <div className="flex justify-end pt-2 text-xs">
             <Link
               to="/"
               className="font-medium text-primary hover:underline"
