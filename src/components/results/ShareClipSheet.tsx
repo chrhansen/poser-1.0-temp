@@ -14,6 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Copy, Share2, Check, Film } from "lucide-react";
 import type { ReplayOutputType } from "@/lib/types";
+import { viewToShort } from "@/lib/view-codes";
 import { toast } from "sonner";
 import { useIsMobile } from "@/hooks/use-mobile";
 
