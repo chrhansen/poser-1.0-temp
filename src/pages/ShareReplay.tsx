@@ -100,7 +100,8 @@ export default function ShareReplayPage() {
       {/* Header */}
       <header className="border-b border-border bg-card/60 backdrop-blur">
         <div className="container flex h-12 items-center">
-          <Link to="/" className="text-sm font-semibold text-foreground hover:text-primary transition-colors">
+          <Link to="/" className="flex items-center gap-2 text-sm font-semibold text-foreground hover:text-primary transition-colors">
+            <img src={poserLogo} alt="Poser" className="h-5 w-5" />
             Poser
           </Link>
         </div>
