@@ -4,6 +4,7 @@ import { PageLoader } from "@/components/shared/PageLoader";
 import { PageError } from "@/components/shared/PageError";
 import { analysisService } from "@/services/analysis.service";
 import type { AnalysisResult, ReplayOutputType } from "@/lib/types";
+import { shortToView } from "@/lib/view-codes";
 import { cn } from "@/lib/utils";
 import { Video, Bone } from "lucide-react";
 

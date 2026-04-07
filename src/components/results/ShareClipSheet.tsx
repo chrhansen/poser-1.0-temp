@@ -42,7 +42,7 @@ export function ShareClipSheet({
   const isMobile = useIsMobile();
   const supportsShare = typeof navigator !== "undefined" && !!navigator.share;
 
-  const shareUrl = `${window.location.origin}/s/${clipId}?view=${activeView}`;
+  const shareUrl = `${window.location.origin}/s/${clipId}?view=${viewToShort(activeView)}`;
 
   const handleCopy = async () => {
     try {
