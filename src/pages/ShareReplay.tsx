@@ -29,7 +29,7 @@ const viewLabels: Record<ReplayOutputType, string> = {
 export default function ShareReplayPage() {
   const { id } = useParams<{ id: string }>();
   const [searchParams] = useSearchParams();
-  const defaultView = (searchParams.get("view") as ReplayOutputType) || "head_tracked";
+  const defaultView = shortToView(searchParams.get("view") ?? "ht");
 
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [loading, setLoading] = useState(true);
