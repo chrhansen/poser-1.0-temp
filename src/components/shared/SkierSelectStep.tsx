@@ -253,21 +253,9 @@ export function SkierSelectStep({
         )}
       </div>
 
-      {/* Status */}
-      <div className="flex items-center justify-center gap-2 text-sm">
-        {selection ? (
-          <span className="flex items-center gap-1.5 text-primary font-medium">
-            <Check className="h-4 w-4" />
-            Skier selected
-          </span>
-        ) : (
-          <span className="text-muted-foreground">No skier selected yet</span>
-        )}
-      </div>
-
       {/* Secondary actions */}
-      <div className="flex items-center justify-center gap-4">
-        {onBack && (
+      {onBack && (
+        <div className="flex items-center justify-center">
           <button
             onClick={onBack}
             className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
@@ -275,16 +263,8 @@ export function SkierSelectStep({
             <ChevronLeft className="h-3.5 w-3.5" />
             Back to trim
           </button>
-        )}
-        {selection && (
-          <button
-            onClick={() => onSelectionChange(null)}
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-          >
-            Choose another frame
-          </button>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
