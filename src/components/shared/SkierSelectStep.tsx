@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check, ZoomIn, ZoomOut, ChevronLeft, SlidersHorizontal } from "lucide-react";
+import { ZoomIn, ZoomOut, ChevronLeft, SlidersHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /* ─── Types ─── */
