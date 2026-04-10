@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Info, ChevronLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TrimStep } from "./TrimStep";
 import { SkierSelectStep } from "./SkierSelectStep";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import type { SkierBbox } from "@/services/embed-api.service";
 
 /* ─── Types ─── */
@@ -93,10 +95,15 @@ export function VideoSkierSelect({
     );
   }
 
+  const stepTitle = step === "trim" ? "Choose the best 20 seconds" : "Who should we analyze?";
+  const stepHint = step === "trim"
+    ? "Drag the ends to keep the part where your skier stays in view."
+    : "Pick a frame where your skier is clear, then tap the skier.";
+
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-3">
       {/* Step indicator + title */}
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-1">
         {totalSteps > 1 && (
           <div className="flex items-center gap-2">
             {Array.from({ length: totalSteps }).map((_, i) => {
@@ -119,15 +126,20 @@ export function VideoSkierSelect({
           </div>
         )}
 
-        <div>
-          <h3 className="text-base font-semibold text-foreground">
-            {step === "trim" ? "Choose the best 20 seconds" : "Who should we analyze?"}
-          </h3>
-          <p className="text-sm text-muted-foreground mt-0.5">
-            {step === "trim"
-              ? "Drag the ends to keep the part where your skier stays in view."
-              : "Pick a frame where your skier is clear, then tap the skier."}
-          </p>
+        <div className="flex items-center gap-1.5">
+          <h3 className="text-base font-semibold text-foreground">{stepTitle}</h3>
+          <TooltipProvider delayDuration={200}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button className="text-muted-foreground hover:text-foreground transition-colors" aria-label="More info">
+                  <Info className="h-4 w-4" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom" className="max-w-[240px] text-xs">
+                {stepHint}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
       </div>
 
@@ -165,14 +177,28 @@ export function VideoSkierSelect({
               trimEnd={trimEnd}
               selection={selection}
               onSelectionChange={setSelection}
-              onBack={needsTrim ? () => { setStep("trim"); setSelection(null); } : undefined}
             />
           </motion.div>
         )}
       </AnimatePresence>
 
       {/* Render-prop action area — only in select step */}
-      {step === "select" && children({ selected: !!selection, getResult })}
+      {step === "select" && (
+        <div className="flex flex-col gap-2">
+          {children({ selected: !!selection, getResult })}
+          {needsTrim && (
+            <div className="flex items-center justify-center">
+              <button
+                onClick={() => { setStep("trim"); setSelection(null); }}
+                className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <ChevronLeft className="h-3.5 w-3.5" />
+                Back to trim
+              </button>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
