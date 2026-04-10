@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ZoomIn, ZoomOut, ChevronLeft, SlidersHorizontal } from "lucide-react";
+import { ZoomIn, ZoomOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /* ─── Types ─── */
@@ -10,11 +10,8 @@ interface SkierSelectStepProps {
   duration: number;
   trimStart: number;
   trimEnd: number;
-  /** Called whenever the user clicks (or re-clicks) a skier. null means cleared. */
   onSelectionChange: (sel: { x: number; y: number } | null) => void;
-  /** Current selection (controlled) */
   selection: { x: number; y: number } | null;
-  onBack?: () => void;
 }
 
 const THUMBNAIL_COUNT = 8;
@@ -34,14 +31,12 @@ export function SkierSelectStep({
   trimEnd,
   onSelectionChange,
   selection,
-  onBack,
 }: SkierSelectStepProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const [currentTime, setCurrentTime] = useState((trimStart + trimEnd) / 2);
   const [activeThumb, setActiveThumb] = useState<number | null>(null);
   const [zoomed, setZoomed] = useState(false);
-  const [showScrubber, setShowScrubber] = useState(false);
   const [thumbnails, setThumbnails] = useState<{ time: number; src: string }[]>([]);
 
   // Seek video
@@ -119,7 +114,7 @@ export function SkierSelectStep({
   const handleThumbClick = (index: number) => {
     setActiveThumb(index);
     setCurrentTime(thumbnails[index].time);
-    onSelectionChange(null); // clear when frame changes
+    onSelectionChange(null);
   };
 
   const handleVideoClick = useCallback((e: React.MouseEvent<HTMLVideoElement>) => {
@@ -129,21 +124,8 @@ export function SkierSelectStep({
     onSelectionChange({ x, y });
   }, [onSelectionChange]);
 
-  const handleScrubberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const t = parseFloat(e.target.value);
-    setCurrentTime(t);
-    onSelectionChange(null);
-    let closest = 0;
-    let minDist = Infinity;
-    thumbnails.forEach((th, i) => {
-      const d = Math.abs(th.time - t);
-      if (d < minDist) { minDist = d; closest = i; }
-    });
-    setActiveThumb(closest);
-  };
-
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-3">
       {/* Video preview */}
       <div className={cn(
         "relative overflow-hidden rounded-2xl bg-secondary cursor-crosshair",
@@ -226,45 +208,6 @@ export function SkierSelectStep({
           </button>
         ))}
       </motion.div>
-
-      {/* Optional scrubber */}
-      <div>
-        <button
-          onClick={() => setShowScrubber(!showScrubber)}
-          className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
-        >
-          <SlidersHorizontal className="h-3.5 w-3.5" />
-          {showScrubber ? "Hide scrubber" : "Show scrubber"}
-        </button>
-        {showScrubber && (
-          <div className="mt-2 flex items-center gap-3">
-            <span className="text-xs text-muted-foreground w-10">{formatTime(currentTime)}</span>
-            <input
-              type="range"
-              min={trimStart}
-              max={trimEnd}
-              step={0.05}
-              value={currentTime}
-              onChange={handleScrubberChange}
-              className="flex-1 accent-primary h-1.5"
-            />
-            <span className="text-xs text-muted-foreground w-10 text-right">{formatTime(trimEnd)}</span>
-          </div>
-        )}
-      </div>
-
-      {/* Secondary actions */}
-      {onBack && (
-        <div className="flex items-center justify-center">
-          <button
-            onClick={onBack}
-            className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <ChevronLeft className="h-3.5 w-3.5" />
-            Back to trim
-          </button>
-        </div>
-      )}
     </div>
   );
 }
