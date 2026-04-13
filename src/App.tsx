@@ -21,6 +21,7 @@ import Billing from "./pages/Billing";
 import Dashboard from "./pages/Dashboard";
 import MetricsDebug from "./pages/MetricsDebug";
 import EmbedWidgetPreview from "./pages/EmbedWidgetPreview";
+import EmailTemplatePreview from "./pages/EmailTemplatePreview";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import QrUpload from "./pages/QrUpload";
@@ -79,6 +80,7 @@ const App = () => (
             {/* TODO_BACKEND_HOOKUP: Re-wrap with <ProtectedRoute requireInternal> once auth is connected */}
             <Route path="/internal/metrics-debug" element={<MetricsDebug />} />
             <Route path="/dev/embed-widget" element={<EmbedWidgetPreview />} />
+            <Route path="/dev/email-previews" element={<EmailTemplatePreview />} />
 
             {/* Explicit 404 page */}
             <Route path="/404" element={<NotFound />} />
