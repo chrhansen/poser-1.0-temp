@@ -1,90 +1,106 @@
-# Motion Replay Beta — UI Content Swap Plan
 
-## Summary
 
-Reframe Poser from a scoring/coaching app to a "Motion Replay Beta" product. This is a content/copy swap across 3 existing pages (Landing, Dashboard, Results) plus updates to mock data, types, and shared components. No new routes or layouts needed.
+## Email Template Design Plan
 
-## Technical approach
+### Overview
+Design a unified HTML/CSS email template system for all 14 Poser emails. Since these will be used in a Ruby on Rails backend (not React), the output will be plain HTML with inline CSS, compatible with all major email clients.
 
-### 1. Update types and mock data
+### Template Architecture
 
-`**src/lib/types.ts**` — Add replay output types:
+**One base layout, four content variations:**
 
-```ts
-export type ReplayOutputType = "follow_cam" | "follow_cam_skeleton" | "original_skeleton";
+1. **Verification Code** — large centered code display (email #1)
+2. **Action Email** — heading + message + green CTA button (emails #3, #5, #6, #10, #11)
+3. **Notification** — heading + message + optional metadata table + optional button (emails #4, #7, #8, #9, #12, #13, #14)
+4. **Simple Notice** — heading + message, no button (emails #2, #12-failed)
 
-export interface ReplayOutput {
-  type: ReplayOutputType;
-  label: string;
-  description: string;
-  url?: string;       // video or model URL
-  available: boolean;
-}
+Ops emails use the exact same template as their user-facing counterpart — distinguished only by subject line prefix `[Ops]` and an optional metadata block (user email, clip ID) inserted into the body.
+
+### Brand Styling (matching the Poser app theme)
+
+| Token | Value |
+|---|---|
+| Primary (buttons, accents) | `#039e6a` (HSL 161 93% 30%) |
+| Primary hover | `#028055` |
+| Text color | `#171717` (foreground) |
+| Muted text | `#666666` |
+| Background | `#ffffff` (email body always white) |
+| Card/container bg | `#fafafa` |
+| Border | `#d4d4d4` |
+| Font | `'Work Sans', Arial, Helvetica, sans-serif` |
+| Border radius | `8px` (buttons), `12px` (cards) |
+| Max width | `520px` |
+
+### Shared Base Structure (all emails)
+
+```text
++------------------------------------------+
+|  [Poser Logo]  poser                     |  <- header, left-aligned
++------------------------------------------+
+|                                          |
+|  [Content area — varies by type]         |
+|                                          |
++------------------------------------------+
+|  © 2026 Poser · poser.pro               |  <- footer, centered, muted
++------------------------------------------+
 ```
 
-Add `replayOutputs?: ReplayOutput[]` and `filename?: string` to `AnalysisResult`.
+- Clean, minimal layout — no heavy borders or colored header bars
+- Logo rendered as a small inline image (hosted URL) + "poser" wordmark
+- Generous vertical padding (40px top/bottom in content area)
+- Footer: copyright + link to poser.pro, small muted text
 
-`**src/services/mock-data.ts**` — Add mock replay outputs to each complete result. Add filenames. Remove `skiRank` and `biggestLimiter` from mock data (set to undefined) so no fake scores appear.
+### Content Variations
 
-### 2. Landing page (`src/pages/Landing.tsx`)
+**1. Verification Code (#1)**
+- Heading: "Your verification code"
+- Large mono-spaced code in a light gray rounded box: `{code}`
+- Subtext: "This code expires in 10 minutes."
+- Dismissal: "If you didn't request this, ignore this email."
 
-- **Hero**: Change headline to "See your skiing from new angles." Update subheadline and helper text per spec. Replace CTA labels to "Try demo replay" / "Upload my clip".
-- **Hero media**: Replace stock photo with a card showing 4 output pills (Follow Cam, Follow Cam + Skeleton, Original + Skeleton, 3D Model) and a mock preview area using the existing `ModelViewer` compact mode and placeholder video thumbnails.
-- **Upload section**: Update heading to "Try Poser Motion Replay in under a minute", tab labels to "Try demo replay" / "Use my clip", demo card copy updated.
-- **How it works**: Rewrite 3 steps per spec. Add a "Coming soon" strip below with muted chips for SkiRank, Per-turn analysis, Balance, Pressure, Edging, Steering.
-- **Feedback section**: Replace coaching-oriented cards with replay-oriented ones (Follow Cam replay, Skeleton overlay, 3D body model).
-- **Use cases section**: Keep structure, update copy to replay-oriented messaging.
-- **Bottom CTA**: Update to replay language.
+**2. Action Email (#3, #5, #6, #10, #11)**
+- Heading (e.g., "Your clip is ready" / "Confirm your new email")
+- Brief message paragraph
+- Full-width primary green CTA button
+- Dismissal line
 
-### 3. Dashboard (`src/pages/Dashboard.tsx`)
+**3. Notification with metadata (#4, #7, #8, #9, #13, #14)**
+- Same as action email but adds a small metadata table before the button:
+  - Key-value pairs like "User Email: {email}", "Clip ID: {clip_id}"
+  - Styled as `font-family: monospace` in a light gray box
+- Button is optional (present when there's a link to view)
 
-- **Title area**: Change "Dashboard" to "Your Replays" with a "Motion Replay Beta" badge.
-- **Table columns**: Replace SkiRank/Insight columns with Clip (filename), Status (badge: Processing/Ready/Failed), Outputs (chips: Replay, Skeleton, 3D).
-- **Mobile cards**: Same content swap — show filename, status badge, output chips.
-- **Empty state**: "Upload a clip to generate your first replay."
-- **Remove**: All `skiRank`, `biggestLimiter`, limiter labels references.
+**4. Simple Notice (#2, #12)**
+- Heading + message only, no button, no metadata box
 
-### 4. Recent clips sidebar (`src/components/layout/RecentAnalysesList.tsx`)
+### Implementation Plan
 
-- Show filename instead of score. Add small output indicator chips. Remove `edgeSimilarity` display.
+I will create a single HTML page at `src/email-templates/poser-emails.html` containing all template variants as clearly labeled sections. Each section is a standalone, copy-pasteable HTML email template with fully inlined CSS. This gives your coding agent a single reference file to extract from.
 
-### 5. Results page (`src/pages/Results.tsx`)
+**Files to create:**
+- `src/email-templates/poser-emails.html` — all 14 email templates in one file, each in a clearly commented section with template variable placeholders in `{braces}`
 
-- **Header** (`ResultsHeader.tsx`): Show filename, add "Motion Replay Beta" badge. Add slim info banner: "You're viewing Poser's visual replay outputs. SkiRank, per-turn scoring, and technique feedback are coming soon."
-- **Complete state**: Replace entire score-based layout with:
-  - **Large media viewer card** with segmented tab control (Follow Cam / Follow Cam + Skeleton / Original + Skeleton / 3D Model). Only show tabs for available outputs. Default to most compelling. Use video element for video outputs, `ModelViewer` for 3D.
-  - **Output cards grid** below viewer (reuse card grid pattern from theme cards). Each card: title, description, thumbnail/icon, "Open" button, "Download" if applicable. Selected card highlighted.
-- **Side nav** (`ThemeNav.tsx`): Replace Balance/Pressure/Edging/Steering with Overview, Outputs, 3D Model, Coming Soon.
-- **Mobile pills** (`ThemePills.tsx`): Same replacement.
-- **"What you're seeing" section**: Replaces "What stood out" — explains the replay outputs.
-- **"Coming soon" section**: Compact muted chips for SkiRank, Per-turn breakdown, Balance, Pressure, Edging, Steering.
-- **Bottom actions**: Keep Delete, rename Support to "Give feedback". Add "Notify me when SkiRank beta launches" CTA.
-- **Remove**: `OverviewSection`, `ThemeDetail`, `SubmetricDetail` imports (no longer rendered). Remove all score/theme navigation logic.
+**What will NOT be included:**
+- No React/TypeScript code
+- No build tooling
+- No email sending logic
 
-### 6. Processing states (`src/pages/Results.tsx`)
+### Template List (grouped by content type)
 
-- Replace generic "Analyzing clip..." with a stepper showing: Uploading clip → Tracking skier → Estimating pose → Rendering replay → Preparing 3D model. Use a small vertical stepper or progress card.
+| # | Template Key | Type | Has Button | Has Metadata |
+|---|---|---|---|---|
+| 1 | auth_verification_code | Code | No | No |
+| 2 | ops_new_user_signup | Notice | No | Yes |
+| 3 | account_email_change_confirmation | Action | Yes | No |
+| 4 | ops_clip_started | Notification | No (link) | Yes |
+| 5 | direct_clip_finished_user | Action | Yes | No |
+| 6 | direct_clip_failed_user | Action | Yes | No |
+| 7 | ops_direct_clip_finished | Notification | Yes | Yes |
+| 8 | ops_direct_clip_failed | Notification | Yes | Yes |
+| 9 | contact_form_ops | Notification | No | Yes |
+| 10 | embed_clip_confirmation | Action | Yes | No |
+| 11 | embed_results_ready_user | Action | Yes | No |
+| 12 | embed_analysis_failed_user | Notice | No | No |
+| 13 | ops_embed_results_ready | Notification | Yes | Yes |
+| 14 | ops_embed_analysis_failed | Notification | No | Yes |
 
-### 7. Files to create
-
-- `src/components/results/ReplayViewer.tsx` — Main tabbed media viewer for replay outputs
-- `src/components/results/OutputCard.tsx` — Individual output card (title, description, icon, actions)
-- `src/components/results/ComingSoonStrip.tsx` — Reusable compact "coming soon" chip strip
-- `src/components/results/ProcessingStepper.tsx` — Pipeline step visualization
-
-### 8. Files to modify
-
-- `src/lib/types.ts` — Add replay types
-- `src/services/mock-data.ts` — Add replay outputs, filenames, remove scores
-- `src/pages/Landing.tsx` — Full copy rewrite
-- `src/pages/Dashboard.tsx` — Column/card swap
-- `src/pages/Results.tsx` — Complete state rewrite
-- `src/components/results/ResultsHeader.tsx` — Add badge, banner, filename
-- `src/components/results/ThemeNav.tsx` — Replace nav items
-- `src/components/results/ThemePills.tsx` — Replace pills
-- `src/components/layout/RecentAnalysesList.tsx` — Remove scores, add outputs
-
-### 9. Files NOT modified
-
-- Layout system, sidebar, footer, header, auth, upload flow, settings, pricing — all stay as-is.
-- `OverviewSection.tsx`, `ThemeDetail.tsx`, `SubmetricDetail.tsx` — kept in codebase but no longer imported on Results page.
