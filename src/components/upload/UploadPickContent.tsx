@@ -15,11 +15,13 @@ interface UploadPickContentProps {
   initialFile?: File;
   /** Override the submit button label */
   submitLabel?: string;
+  /** Called when user wants to cancel/clear the selected clip (step 1 trim) */
+  onCancel?: () => void;
 }
 
 type ViewState = "pick" | "skier-select";
 
-export function UploadPickContent({ onContinue, footer, initialFile, submitLabel }: UploadPickContentProps) {
+export function UploadPickContent({ onContinue, footer, initialFile, submitLabel, onCancel }: UploadPickContentProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [view, setView] = useState<ViewState>(initialFile ? "skier-select" : "pick");
   const [file, setFile] = useState<File | null>(initialFile ?? null);
@@ -61,7 +63,7 @@ export function UploadPickContent({ onContinue, footer, initialFile, submitLabel
     return (
       <UploadSkierSelect
         file={file}
-        onCancel={initialFile ? () => {} : reset}
+        onCancel={initialFile ? (onCancel ?? (() => {})) : reset}
         onContinue={onContinue}
         submitLabel={submitLabel}
       />

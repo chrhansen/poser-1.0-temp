@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { VideoSkierSelect } from "@/components/shared/VideoSkierSelect";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface UploadSkierSelectProps {
   file: File;
@@ -13,18 +14,31 @@ export function UploadSkierSelect({ file, onCancel, onContinue, submitLabel }: U
   return (
     <div className="flex flex-col gap-3">
 
-      <VideoSkierSelect file={file} maxTrimSeconds={20}>
+      <VideoSkierSelect file={file} maxTrimSeconds={20} onCancel={onCancel}>
         {({ selected, getResult }) => (
-          <Button
-            className="w-full"
-            disabled={!selected}
-            onClick={() => {
-              const result = getResult();
-              onContinue(result.objectId);
-            }}
-          >
-            {selected ? (submitLabel ?? "Analyze skier") : "Select a skier to continue"}
-          </Button>
+          <TooltipProvider delayDuration={0}>
+            <Tooltip open={selected ? false : undefined}>
+              <TooltipTrigger asChild>
+                <span className="w-full">
+                  <Button
+                    className="w-full pointer-events-auto"
+                    disabled={!selected}
+                    onClick={() => {
+                      const result = getResult();
+                      onContinue(result.objectId);
+                    }}
+                  >
+                    {selected ? (submitLabel ?? "Analyze skier") : "Select a skier to continue"}
+                  </Button>
+                </span>
+              </TooltipTrigger>
+              {!selected && (
+                <TooltipContent side="bottom" className="text-xs">
+                  Tap the skier in the frame above to select them
+                </TooltipContent>
+              )}
+            </Tooltip>
+          </TooltipProvider>
         )}
       </VideoSkierSelect>
     </div>

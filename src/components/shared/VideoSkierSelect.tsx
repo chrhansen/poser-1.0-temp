@@ -22,6 +22,8 @@ type Step = "loading" | "trim" | "select";
 interface VideoSkierSelectProps {
   file: File;
   maxTrimSeconds?: number;
+  /** Called when user wants to cancel/clear the clip entirely */
+  onCancel?: () => void;
   children: (props: { selected: boolean; getResult: () => VideoSkierSelectResult }) => React.ReactNode;
 }
 
@@ -30,6 +32,7 @@ interface VideoSkierSelectProps {
 export function VideoSkierSelect({
   file,
   maxTrimSeconds = 20,
+  onCancel,
   children,
 }: VideoSkierSelectProps) {
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
@@ -158,6 +161,7 @@ export function VideoSkierSelect({
               duration={duration}
               maxTrimSeconds={maxTrimSeconds}
               onConfirm={handleTrimConfirm}
+              onCancel={onCancel}
             />
           </motion.div>
         )}
@@ -194,6 +198,16 @@ export function VideoSkierSelect({
               >
                 <ChevronLeft className="h-3.5 w-3.5" />
                 Back to trim
+              </button>
+            </div>
+          )}
+          {!needsTrim && onCancel && (
+            <div className="flex items-center justify-center">
+              <button
+                onClick={onCancel}
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Cancel
               </button>
             </div>
           )}
