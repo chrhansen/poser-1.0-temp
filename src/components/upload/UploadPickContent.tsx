@@ -72,12 +72,6 @@ export function UploadPickContent({ onContinue, footer, initialFile, submitLabel
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="text-center mb-2">
-        <p className="text-sm font-medium text-foreground">Upload a short ski clip</p>
-        <p className="text-xs text-muted-foreground mt-1">
-          Drag and drop a clip from this device, or send one from your phone.
-        </p>
-      </div>
 
       {/* Drop zone */}
       <div
