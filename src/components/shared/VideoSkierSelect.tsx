@@ -201,6 +201,16 @@ export function VideoSkierSelect({
               </button>
             </div>
           )}
+          {!needsTrim && onCancel && (
+            <div className="flex items-center justify-center">
+              <button
+                onClick={onCancel}
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>
