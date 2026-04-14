@@ -52,9 +52,6 @@ function DemoContent({ onStartDemo }: { onStartDemo: () => void }) {
       <p className="text-sm font-medium text-foreground">
         See a sample ski clip transformed into head-tracked and skeleton-overlay replay views.
       </p>
-      <p className="text-xs text-muted-foreground max-w-xs">
-        Watch how Poser goes from uploaded clip to head tracked and skeleton overlay.
-      </p>
       <Button size="lg" onClick={onStartDemo}>
         Start demo replay
         <ArrowRight className="ml-2 h-4 w-4" />
