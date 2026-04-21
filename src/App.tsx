@@ -25,6 +25,8 @@ import EmailTemplatePreview from "./pages/EmailTemplatePreview";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import QrUpload from "./pages/QrUpload";
+import EmbedClipsList from "./pages/EmbedClipsList";
+import EmbedClipDetail from "./pages/EmbedClipDetail";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({
@@ -70,6 +72,10 @@ const App = () => (
             {/* TODO_BACKEND_HOOKUP: Re-wrap with <ProtectedRoute> once auth is connected */}
             <Route path="/clips" element={<Dashboard />} />
             <Route path="/clips/:id" element={<Results />} />
+            {/* Embed clips admin views */}
+            {/* TODO_BACKEND_HOOKUP: Re-wrap with <ProtectedRoute> once auth is connected */}
+            <Route path="/embeds-clips" element={<EmbedClipsList />} />
+            <Route path="/embeds-clips/:id" element={<EmbedClipDetail />} />
             {/* Legacy redirects */}
             <Route path="/dashboard" element={<Navigate to="/clips" replace />} />
             <Route path="/results/:id" element={<RedirectResultToClip />} />

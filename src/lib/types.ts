@@ -164,6 +164,27 @@ export interface AnalysisResult {
   replayOutputs?: ReplayOutput[];
 }
 
+// ─── Embed Clips (admin monitoring) ─────────────────────────────────────────
+
+export interface EmbedClip {
+  id: string;
+  partnerSlug: string;
+  partnerName: string;
+  partnerDomain: string;
+  submitterEmail: string;
+  filename: string;
+  submittedAt: string;
+  status: AnalysisResult["status"];
+  clipLength?: number;   // seconds, original
+  trimStart?: number;    // seconds
+  trimEnd?: number;      // seconds
+  fileSize?: number;     // bytes
+  fileType?: string;
+  failedReason?: string;
+  progress?: number;     // 0–100 when processing
+  result?: AnalysisResult; // populated when complete
+}
+
 export interface PricingPlan {
   id: string;
   name: string;

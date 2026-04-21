@@ -9,6 +9,7 @@ import type {
   BillingInfo,
   SettingsProfile,
   ReplayOutput,
+  EmbedClip,
 } from "@/lib/types";
 import { generateMockMetrics } from "./mock-metrics";
 
@@ -217,6 +218,20 @@ export const mockPartners: Partner[] = [
       next: `import { PoserEmbed } from '@poser/react';\n\nexport default function ResultsPage() {\n  return (\n    <main>\n      <PoserEmbed token="TOKEN" />\n    </main>\n  );\n}`,
     },
   },
+  {
+    id: "p2",
+    name: "FIL ALPIN",
+    logoUrl: "",
+    description: "French ski school network.",
+    url: "https://filalpin.example.com",
+    slug: "fil-alpin",
+    domain: "filalpin.example.com",
+    integrationSnippets: {
+      html: `<iframe src="https://poser.app/embed/results/TOKEN" width="400" height="600" frameborder="0"></iframe>`,
+      react: `import { PoserEmbed } from '@poser/react';\n\nexport default function Results() {\n  return <PoserEmbed token="TOKEN" />;\n}`,
+      next: `import { PoserEmbed } from '@poser/react';\n\nexport default function ResultsPage() {\n  return (\n    <main>\n      <PoserEmbed token="TOKEN" />\n    </main>\n  );\n}`,
+    },
+  },
 ];
 
 // ─── Metrics ────────────────────────────────────────────────────────────────
@@ -250,3 +265,92 @@ export const mockProfile: SettingsProfile = {
     weeklyTips: false,
   },
 };
+
+// ─── Embed Clips (admin monitoring) ─────────────────────────────────────────
+
+const embedSubmitterEmails = [
+  "lara.weber@guest.example",
+  "marc.dupont@guest.example",
+  "sofia.rossi@guest.example",
+  "tom.muller@guest.example",
+  "ines.garcia@guest.example",
+  "jakob.lindgren@guest.example",
+  "amelie.fontaine@guest.example",
+  "noah.kim@guest.example",
+  "clara.hofer@guest.example",
+  "leo.bianchi@guest.example",
+];
+
+const embedFilenames = [
+  "lesson-clip.mp4",
+  "morning-warmup.mov",
+  "blue-run.mp4",
+  "carving-attempt.mp4",
+  "moguls-take2.mov",
+  "first-day.mp4",
+  "afternoon-session.mp4",
+  "video-export.mp4",
+  "ski-clip.mp4",
+  "powder-day.mov",
+];
+
+function makeEmbedClip(
+  i: number,
+  partner: Partner,
+  status: EmbedClip["status"]
+): EmbedClip {
+  const submittedAt = new Date(Date.now() - i * 1000 * 60 * 60 * 6).toISOString();
+  const clipLength = 18 + (i % 12);
+  const trimStart = i % 5;
+  const trimEnd = trimStart + Math.min(20, clipLength - trimStart);
+  const result: AnalysisResult | undefined =
+    status === "complete"
+      ? {
+          id: `embed_res_${i}`,
+          userId: "embed",
+          videoUrl: "",
+          thumbnailUrl: "",
+          status: "complete",
+          createdAt: submittedAt,
+          duration: trimEnd - trimStart,
+          clipLength,
+          metrics: generateMockMetrics((trimEnd - trimStart) * 30, 30 + i),
+          embedToken: `tok_embed_${i}`,
+          filename: embedFilenames[i % embedFilenames.length],
+          replayOutputs: defaultReplayOutputs,
+        }
+      : undefined;
+  return {
+    id: `ec_${i}`,
+    partnerSlug: partner.slug ?? "unknown",
+    partnerName: partner.name,
+    partnerDomain: partner.domain ?? "",
+    submitterEmail: embedSubmitterEmails[i % embedSubmitterEmails.length],
+    filename: embedFilenames[i % embedFilenames.length],
+    submittedAt,
+    status,
+    clipLength,
+    trimStart,
+    trimEnd,
+    fileSize: (8 + (i % 25)) * 1024 * 1024,
+    fileType: "video/mp4",
+    failedReason:
+      status === "error"
+        ? "Skier could not be tracked through the full clip. Try a steadier camera and clearer view."
+        : undefined,
+    progress: status === "processing" ? 25 + ((i * 7) % 60) : undefined,
+    result,
+  };
+}
+
+const _statusCycle: EmbedClip["status"][] = [
+  "complete", "complete", "complete", "complete",
+  "processing", "pending", "complete", "error",
+  "complete", "complete", "processing", "complete",
+];
+
+export const mockEmbedClips: EmbedClip[] = Array.from({ length: 26 }, (_, i) => {
+  const partner = mockPartners[i % mockPartners.length];
+  const status = _statusCycle[i % _statusCycle.length];
+  return makeEmbedClip(i, partner, status);
+});

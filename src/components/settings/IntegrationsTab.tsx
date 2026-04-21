@@ -6,7 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
-import { Loader2, Globe, Pencil, Plus, Trash2 } from "lucide-react";
+import { Loader2, Globe, Pencil, Plus, Trash2, FileVideo } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export function IntegrationsTab() {
   const [partners, setPartners] = useState<Partner[]>([]);
@@ -64,12 +65,20 @@ export function IntegrationsTab() {
             Manage domains authorized to load your embed widget.
           </p>
         </div>
-        {!showAddForm && (
-          <Button variant="outline" size="sm" onClick={() => setShowAddForm(true)}>
-            <Plus className="mr-1.5 h-3.5 w-3.5" />
-            Add widget
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" asChild>
+            <Link to="/embeds-clips">
+              <FileVideo className="mr-1.5 h-3.5 w-3.5" />
+              View all embed clips
+            </Link>
           </Button>
-        )}
+          {!showAddForm && (
+            <Button variant="outline" size="sm" onClick={() => setShowAddForm(true)}>
+              <Plus className="mr-1.5 h-3.5 w-3.5" />
+              Add widget
+            </Button>
+          )}
+        </div>
       </div>
 
       {showAddForm && (
@@ -103,6 +112,13 @@ export function IntegrationsTab() {
                     onCheckedChange={() => toggleEmailNotif(p.id)}
                   />
                 </div>
+                <Link
+                  to={`/embeds-clips?embed=${encodeURIComponent(p.slug ?? "")}`}
+                  className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
+                >
+                  <FileVideo className="h-3.5 w-3.5" />
+                  View clips
+                </Link>
                 <button
                   onClick={() => setEditingId(editingId === p.id ? null : p.id)}
                   className="text-muted-foreground hover:text-foreground"
