@@ -9,6 +9,7 @@ import type {
   BillingInfo,
   SettingsProfile,
   ReplayOutput,
+  EmbedClip,
 } from "@/lib/types";
 import { generateMockMetrics } from "./mock-metrics";
 
@@ -211,6 +212,20 @@ export const mockPartners: Partner[] = [
     url: "https://alpineacademy.example.com",
     slug: "alpine-academy",
     domain: "alpineacademy.example.com",
+    integrationSnippets: {
+      html: `<iframe src="https://poser.app/embed/results/TOKEN" width="400" height="600" frameborder="0"></iframe>`,
+      react: `import { PoserEmbed } from '@poser/react';\n\nexport default function Results() {\n  return <PoserEmbed token="TOKEN" />;\n}`,
+      next: `import { PoserEmbed } from '@poser/react';\n\nexport default function ResultsPage() {\n  return (\n    <main>\n      <PoserEmbed token="TOKEN" />\n    </main>\n  );\n}`,
+    },
+  },
+  {
+    id: "p2",
+    name: "FIL ALPIN",
+    logoUrl: "",
+    description: "French ski school network.",
+    url: "https://filalpin.example.com",
+    slug: "fil-alpin",
+    domain: "filalpin.example.com",
     integrationSnippets: {
       html: `<iframe src="https://poser.app/embed/results/TOKEN" width="400" height="600" frameborder="0"></iframe>`,
       react: `import { PoserEmbed } from '@poser/react';\n\nexport default function Results() {\n  return <PoserEmbed token="TOKEN" />;\n}`,
