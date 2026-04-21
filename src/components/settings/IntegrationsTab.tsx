@@ -112,6 +112,13 @@ export function IntegrationsTab() {
                     onCheckedChange={() => toggleEmailNotif(p.id)}
                   />
                 </div>
+                <Link
+                  to={`/embeds-clips?embed=${encodeURIComponent(p.slug ?? "")}`}
+                  className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
+                >
+                  <FileVideo className="h-3.5 w-3.5" />
+                  View clips
+                </Link>
                 <button
                   onClick={() => setEditingId(editingId === p.id ? null : p.id)}
                   className="text-muted-foreground hover:text-foreground"
