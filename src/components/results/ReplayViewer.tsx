@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import type { ReplayOutput, ReplayOutputType } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { Video, Bone } from "lucide-react";
+import { ReplayPlayer } from "./ReplayPlayer";
 
 const outputIcons: Record<ReplayOutputType, React.ElementType> = {
   head_tracked: Video,
@@ -67,13 +68,11 @@ export function ReplayViewer({ outputs, activeTab: controlledTab, onTabChange }:
       </div>
 
       {/* Viewer area */}
-      <div className="relative flex aspect-video items-center justify-center bg-secondary/20">
-        <div className="flex flex-col items-center gap-3 text-center">
-          <Video className="h-12 w-12 text-muted-foreground/50" />
-          <p className="text-sm font-medium text-foreground">{current.label}</p>
-          <p className="max-w-xs text-xs text-muted-foreground">{current.description}</p>
-        </div>
-      </div>
+      <ReplayPlayer
+        src={current.url}
+        placeholderLabel={current.label}
+        placeholderDescription={current.description}
+      />
     </div>
   );
 }
