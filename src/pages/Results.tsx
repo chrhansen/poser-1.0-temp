@@ -154,11 +154,6 @@ export default function ResultsPage() {
         <div className="mx-auto max-w-4xl space-y-5">
           <ResultsHeader result={result} onShare={() => setShareOpen(true)} />
 
-          {/* Info banner */}
-          <div className="rounded-lg border border-border bg-accent/20 px-4 py-3 text-xs text-muted-foreground">
-            You're viewing Poser's motion replay outputs. SkiRank, per-turn scoring, and technique feedback are coming soon.
-          </div>
-
           {/* Main viewer — this IS the primary navigation */}
           <ReplayViewer outputs={outputs} activeTab={activeView} onTabChange={setActiveView} />
 
