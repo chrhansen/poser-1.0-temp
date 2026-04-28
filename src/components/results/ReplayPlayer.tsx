@@ -11,7 +11,7 @@ interface ReplayPlayerProps {
   className?: string;
 }
 
-const SPEEDS = [0.5, 1, 2] as const;
+const SPEEDS = [0.5, 1] as const;
 type Speed = (typeof SPEEDS)[number];
 
 function formatTime(s: number) {
