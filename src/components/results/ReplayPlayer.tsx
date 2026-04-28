@@ -42,6 +42,19 @@ export function ReplayPlayer({
   const [duration, setDuration] = useState(0);
   const [showControls, setShowControls] = useState(true);
   const hideTimer = useRef<ReturnType<typeof setTimeout>>();
+  // Transient center icon flashed on each play/pause toggle.
+  const [flash, setFlash] = useState<{ kind: "play" | "pause"; key: number } | null>(null);
+  const flashTimer = useRef<ReturnType<typeof setTimeout>>();
+
+  const triggerFlash = useCallback((kind: "play" | "pause") => {
+    setFlash({ kind, key: Date.now() });
+    if (flashTimer.current) clearTimeout(flashTimer.current);
+    flashTimer.current = setTimeout(() => setFlash(null), 600);
+  }, []);
+
+  useEffect(() => () => {
+    if (flashTimer.current) clearTimeout(flashTimer.current);
+  }, []);
 
   // Keep playbackRate in sync.
   useEffect(() => {
@@ -148,8 +161,8 @@ export function ReplayPlayer({
           preload="metadata"
           className="absolute inset-0 h-full w-full object-contain bg-black"
           onClick={togglePlay}
-          onPlay={() => setIsPlaying(true)}
-          onPause={() => setIsPlaying(false)}
+          onPlay={() => { setIsPlaying(true); triggerFlash("play"); }}
+          onPause={() => { setIsPlaying(false); triggerFlash("pause"); }}
           onEnded={() => setIsPlaying(false)}
           onTimeUpdate={onTimeUpdate}
           onLoadedMetadata={onLoadedMetadata}
@@ -166,18 +179,20 @@ export function ReplayPlayer({
         </div>
       )}
 
-      {/* Center tap-to-play affordance when paused */}
-      {hasSrc && !isPlaying && (
-        <button
-          type="button"
-          onClick={togglePlay}
-          aria-label="Play"
-          className="absolute inset-0 z-10 flex items-center justify-center"
+      {/* Transient center indicator — flashes on each play/pause toggle */}
+      {hasSrc && flash && (
+        <div
+          key={flash.key}
+          className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center"
         >
-          <span className="flex h-16 w-16 items-center justify-center rounded-full bg-black/45 text-white backdrop-blur-sm transition-transform hover:scale-105">
-            <Play className="h-7 w-7 translate-x-0.5" fill="currentColor" />
+          <span className="flex h-16 w-16 items-center justify-center rounded-full bg-black/55 text-white backdrop-blur-sm animate-player-flash">
+            {flash.kind === "play" ? (
+              <Play className="h-7 w-7 translate-x-0.5" fill="currentColor" />
+            ) : (
+              <Pause className="h-7 w-7" fill="currentColor" />
+            )}
           </span>
-        </button>
+        </div>
       )}
 
       {/* Top-right: expand / close */}
