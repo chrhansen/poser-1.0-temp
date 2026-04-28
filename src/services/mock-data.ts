@@ -22,10 +22,12 @@ const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
 export { delay };
 
 // ─── Default replay outputs for complete results ────────────────────────────
+// TODO_BACKEND_HOOKUP: replace sample URL with real per-output URLs from the API.
+const SAMPLE_REPLAY_URL = "/sample/basic-short-ch2.mp4";
 const defaultReplayOutputs: ReplayOutput[] = [
-  { type: "head_tracked", label: "Head Tracked", description: "A tracked replay that keeps the skier centered.", available: true },
-  { type: "head_tracked_skeleton", label: "Head Tracked + Skeleton", description: "A tracked replay with pose overlay to show movement timing and body alignment.", available: true },
-  { type: "original_skeleton", label: "Original + Skeleton", description: "The original camera view with pose overlay.", available: true },
+  { type: "head_tracked", label: "Head Tracked", description: "A tracked replay that keeps the skier centered.", available: true, url: SAMPLE_REPLAY_URL },
+  { type: "head_tracked_skeleton", label: "Head Tracked + Skeleton", description: "A tracked replay with pose overlay to show movement timing and body alignment.", available: true, url: SAMPLE_REPLAY_URL },
+  { type: "original_skeleton", label: "Original + Skeleton", description: "The original camera view with pose overlay.", available: true, url: SAMPLE_REPLAY_URL },
 ];
 
 
