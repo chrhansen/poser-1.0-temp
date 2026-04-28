@@ -42,6 +42,19 @@ export function ReplayPlayer({
   const [duration, setDuration] = useState(0);
   const [showControls, setShowControls] = useState(true);
   const hideTimer = useRef<ReturnType<typeof setTimeout>>();
+  // Transient center icon flashed on each play/pause toggle.
+  const [flash, setFlash] = useState<{ kind: "play" | "pause"; key: number } | null>(null);
+  const flashTimer = useRef<ReturnType<typeof setTimeout>>();
+
+  const triggerFlash = useCallback((kind: "play" | "pause") => {
+    setFlash({ kind, key: Date.now() });
+    if (flashTimer.current) clearTimeout(flashTimer.current);
+    flashTimer.current = setTimeout(() => setFlash(null), 600);
+  }, []);
+
+  useEffect(() => () => {
+    if (flashTimer.current) clearTimeout(flashTimer.current);
+  }, []);
 
   // Keep playbackRate in sync.
   useEffect(() => {
