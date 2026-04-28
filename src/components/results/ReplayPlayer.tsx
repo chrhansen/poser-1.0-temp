@@ -127,7 +127,7 @@ export function ReplayPlayer({
   const containerClass = expanded
     ? "fixed inset-0 z-50 bg-black"
     : cn(
-        "relative w-full overflow-hidden rounded-xl border border-border bg-black",
+        "relative w-full overflow-hidden bg-black",
         "h-[min(70vh,calc(100vw*16/9))] md:h-auto md:aspect-video",
         className,
       );
