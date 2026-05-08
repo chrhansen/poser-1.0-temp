@@ -1,29 +1,27 @@
 import { useState, useCallback, useRef } from "react";
 import { Upload, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { UploadSkierSelect } from "@/components/upload/UploadSkierSelect";
+import { UploadTrimContent } from "@/components/upload/UploadTrimContent";
 import { analysisService } from "@/services/analysis.service";
 import { QrUploadSection } from "@/components/upload/QrUploadSection";
 import { cn } from "@/lib/utils";
 
 interface UploadPickContentProps {
-  /** Called when user selects a skier and clicks continue */
-  onContinue: (skierId: number) => void;
+  /** Called once the clip is ready to upload (after optional trim) */
+  onContinue: () => void;
   /** Optional extra content rendered below (e.g. sign-in helper) */
   footer?: React.ReactNode;
   /** When provided, skip file upload and go directly to skier select */
   initialFile?: File;
-  /** Override the submit button label */
-  submitLabel?: string;
-  /** Called when user wants to cancel/clear the selected clip (step 1 trim) */
+  /** Called when user wants to cancel/clear the selected clip */
   onCancel?: () => void;
 }
 
-type ViewState = "pick" | "skier-select";
+type ViewState = "pick" | "trim";
 
-export function UploadPickContent({ onContinue, footer, initialFile, submitLabel, onCancel }: UploadPickContentProps) {
+export function UploadPickContent({ onContinue, footer, initialFile, onCancel }: UploadPickContentProps) {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [view, setView] = useState<ViewState>(initialFile ? "skier-select" : "pick");
+  const [view, setView] = useState<ViewState>(initialFile ? "trim" : "pick");
   const [file, setFile] = useState<File | null>(initialFile ?? null);
   const [dragOver, setDragOver] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
@@ -44,7 +42,7 @@ export function UploadPickContent({ onContinue, footer, initialFile, submitLabel
     }
     setErrorMsg("");
     setFile(f);
-    setView("skier-select");
+    setView("trim");
   }, []);
 
   const handleDrop = useCallback((e: React.DragEvent) => {
@@ -59,13 +57,12 @@ export function UploadPickContent({ onContinue, footer, initialFile, submitLabel
     if (f) handleFileSelect(f);
   };
 
-  if (view === "skier-select" && file) {
+  if (view === "trim" && file) {
     return (
-      <UploadSkierSelect
+      <UploadTrimContent
         file={file}
         onCancel={initialFile ? (onCancel ?? (() => {})) : reset}
-        onContinue={onContinue}
-        submitLabel={submitLabel}
+        onContinue={() => onContinue()}
       />
     );
   }
