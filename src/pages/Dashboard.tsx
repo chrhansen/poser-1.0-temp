@@ -21,6 +21,7 @@ const statusConfig: Record<AnalysisResult["status"], { icon: typeof Clock; label
   processing: { icon: Loader2, label: "Processing", cls: "text-accent-foreground" },
   complete: { icon: CheckCircle, label: "Ready", cls: "text-primary" },
   error: { icon: XCircle, label: "Failed", cls: "text-destructive" },
+  not_ski: { icon: XCircle, label: "Not a ski clip", cls: "text-destructive" },
 };
 
 function ClipMeta({ r }: { r: AnalysisResult }) {
