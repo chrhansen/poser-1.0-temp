@@ -11,6 +11,7 @@ const statusIcons: Record<AnalysisResult["status"], { icon: typeof Clock; cls: s
   processing: { icon: Loader2, cls: "text-accent-foreground" },
   complete: { icon: CheckCircle, cls: "text-foreground" },
   error: { icon: XCircle, cls: "text-destructive" },
+  not_ski: { icon: XCircle, cls: "text-destructive" },
 };
 
 function StatusBadge({ status }: { status: AnalysisResult["status"] }) {
