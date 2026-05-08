@@ -109,6 +109,16 @@ export const mockResults: AnalysisResult[] = [
       ...defaultReplayOutputs,
     ],
   },
+  {
+    id: "res_not_ski",
+    userId: "usr_1",
+    videoUrl: "",
+    thumbnailUrl: "",
+    status: "not_ski",
+    createdAt: "2026-03-18T12:00:00Z",
+    clipLength: 12,
+    filename: "kids-birthday.mp4",
+  },
 ];
 // ─── Pricing ────────────────────────────────────────────────────────────────
 export const mockPricingPlans: PricingPlan[] = [
