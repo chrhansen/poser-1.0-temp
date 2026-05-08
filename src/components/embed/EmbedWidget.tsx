@@ -165,7 +165,7 @@ export function EmbedWidget({ partnerSlug = "demo" }: EmbedWidgetProps) {
         setSubmitting(false);
       }
     },
-    [file, skierPayload]
+    [file, trimPayload]
   );
 
   // Full reset
