@@ -34,6 +34,7 @@ const statusConfig: Record<EmbedClip["status"], { label: string; cls: string }> 
   processing: { label: "Processing", cls: "text-accent-foreground" },
   complete: { label: "Ready", cls: "text-primary" },
   error: { label: "Failed", cls: "text-destructive" },
+  not_ski: { label: "Not a ski clip", cls: "text-destructive" },
 };
 
 function StatusBadge({ status }: { status: EmbedClip["status"] }) {
