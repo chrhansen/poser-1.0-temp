@@ -148,7 +148,7 @@ export interface AnalysisResult {
   userId: string;
   videoUrl: string;
   thumbnailUrl: string;
-  status: "pending" | "processing" | "complete" | "error";
+  status: "pending" | "processing" | "complete" | "error" | "not_ski";
   createdAt: string;
   duration?: number; // seconds
   clipLength?: number; // seconds — length of original clip
