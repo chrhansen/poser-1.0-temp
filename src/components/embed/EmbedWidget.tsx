@@ -3,7 +3,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import {
   embedApiService,
   type EmbedPartnerConfig,
-  type SkierBbox,
   type FeedbackResponse,
   type AnalysisStatus,
 } from "@/services/embed-api.service";
@@ -48,12 +47,9 @@ export function EmbedWidget({ partnerSlug = "demo" }: EmbedWidgetProps) {
   const [step, setStep] = useState<EmbedStep>("upload");
   const [file, setFile] = useState<File | null>(null);
   const [uploadError, setUploadError] = useState("");
-  const [skierPayload, setSkierPayload] = useState<{
+  const [trimPayload, setTrimPayload] = useState<{
     trimStart: number;
     trimEnd: number;
-    bbox: SkierBbox;
-    objectId: number;
-    normalizedTime: number;
   } | null>(null);
   const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -121,10 +117,10 @@ export function EmbedWidget({ partnerSlug = "demo" }: EmbedWidgetProps) {
     [config.max_upload_size_mb]
   );
 
-  // Skier + trim selection done
+  // Trim selection done (or auto-skipped for short clips)
   const handlePreviewContinue = useCallback(
-    (payload: typeof skierPayload) => {
-      setSkierPayload(payload);
+    (payload: { trimStart: number; trimEnd: number }) => {
+      setTrimPayload(payload);
       setStep("email");
     },
     []
@@ -133,7 +129,7 @@ export function EmbedWidget({ partnerSlug = "demo" }: EmbedWidgetProps) {
   // Email submit → POST /submit → upload → POST /upload-complete
   const handleEmailSubmit = useCallback(
     async (emailValue: string) => {
-      if (!file || !skierPayload) return;
+      if (!file || !trimPayload) return;
       setEmail(emailValue);
       setSubmitting(true);
       setSubmitError("");
@@ -143,14 +139,15 @@ export function EmbedWidget({ partnerSlug = "demo" }: EmbedWidgetProps) {
           email: emailValue,
           filename: file.name,
           content_type: file.type,
-          trim_start_seconds: skierPayload.trimStart,
-          trim_end_seconds: skierPayload.trimEnd,
-          bbox_x1: skierPayload.bbox.x1,
-          bbox_y1: skierPayload.bbox.y1,
-          bbox_x2: skierPayload.bbox.x2,
-          bbox_y2: skierPayload.bbox.y2,
-          click_normalized_time: skierPayload.normalizedTime,
-          click_object_id: skierPayload.objectId,
+          trim_start_seconds: trimPayload.trimStart,
+          trim_end_seconds: trimPayload.trimEnd,
+          // Backend now auto-detects the primary skier; send full-frame defaults.
+          bbox_x1: 0,
+          bbox_y1: 0,
+          bbox_x2: 1,
+          bbox_y2: 1,
+          click_normalized_time: 0,
+          click_object_id: 0,
         });
 
         setAnalysisId(res.analysis_id);
@@ -177,7 +174,7 @@ export function EmbedWidget({ partnerSlug = "demo" }: EmbedWidgetProps) {
     setStep("upload");
     setFile(null);
     setUploadError("");
-    setSkierPayload(null);
+    setTrimPayload(null);
     setEmail("");
     setSubmitting(false);
     setSubmitError("");
