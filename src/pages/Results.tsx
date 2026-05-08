@@ -18,7 +18,7 @@ import { NewAnalysisSheet } from "@/components/upload/NewAnalysisSheet";
 import { ShareClipSheet } from "@/components/results/ShareClipSheet";
 import { CorrectSkierSheet } from "@/components/results/CorrectSkierSheet";
 import {
-  Loader2, RefreshCw, Trash2, MessageSquare, AlertTriangle, Clock, Bell, UserX,
+  Loader2, RefreshCw, Trash2, MessageSquare, AlertTriangle, Clock, Bell, UserX, Snowflake,
 } from "lucide-react";
 import { toast } from "sonner";
 import type { ReplayOutputType } from "@/lib/types";
@@ -137,6 +137,45 @@ export default function ResultsPage() {
             </div>
             <Button variant="ghost" size="sm" className="text-destructive" onClick={() => setDeleteOpen(true)}>
               <Trash2 className="mr-2 h-4 w-4" />Delete clip
+            </Button>
+          </div>
+        </Section>
+        <ConfirmActionDialog open={deleteOpen} onOpenChange={setDeleteOpen} title="Delete clip?" description="This action cannot be undone." confirmLabel="Delete" destructive onConfirm={handleDelete} />
+        <ContactSupportDialog open={supportOpen} onOpenChange={setSupportOpen} />
+        <NewAnalysisSheet open={newAnalysisOpen} onOpenChange={(open) => { setNewAnalysisOpen(open); if (!open) setRerunFile(undefined); }} rerunFile={rerunFile} />
+      </AppLayout>
+    );
+  }
+
+  // Not-a-ski-clip state — backend determined the upload isn't a trackable ski clip.
+  if (result.status === "not_ski") {
+    return (
+      <AppLayout>
+        <Section compact>
+          <div className="mx-auto flex max-w-md flex-col items-center gap-5 text-center">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted">
+              <Snowflake className="h-8 w-8 text-muted-foreground" />
+            </div>
+            <div className="space-y-2">
+              <h1 className="text-2xl font-bold text-foreground">This doesn't look like a ski clip</h1>
+              <p className="text-sm text-muted-foreground">
+                We couldn't find a skier to track in this video. Poser is built for alpine skiing — snowboarding,
+                other sports, or non-skiing footage aren't supported yet.
+              </p>
+              {result.filename && (
+                <p className="text-xs text-muted-foreground/80">File: {result.filename}</p>
+              )}
+            </div>
+            <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+              <Button onClick={() => setNewAnalysisOpen(true)}>
+                <RefreshCw className="mr-2 h-4 w-4" /> Upload a different clip
+              </Button>
+              <Button variant="outline" onClick={() => setSupportOpen(true)}>
+                <MessageSquare className="mr-2 h-4 w-4" /> Report a mistake
+              </Button>
+            </div>
+            <Button variant="ghost" size="sm" className="text-destructive" onClick={() => setDeleteOpen(true)}>
+              <Trash2 className="mr-2 h-4 w-4" /> Delete clip
             </Button>
           </div>
         </Section>
