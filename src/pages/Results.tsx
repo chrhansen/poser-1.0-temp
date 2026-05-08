@@ -18,7 +18,7 @@ import { NewAnalysisSheet } from "@/components/upload/NewAnalysisSheet";
 import { ShareClipSheet } from "@/components/results/ShareClipSheet";
 import { CorrectSkierSheet } from "@/components/results/CorrectSkierSheet";
 import {
-  Loader2, RefreshCw, Trash2, MessageSquare, AlertTriangle, Clock, Bell, UserX,
+  Loader2, RefreshCw, Trash2, MessageSquare, AlertTriangle, Clock, Bell, UserX, Snowflake,
 } from "lucide-react";
 import { toast } from "sonner";
 import type { ReplayOutputType } from "@/lib/types";
