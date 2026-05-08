@@ -6,11 +6,11 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { analysisService } from "@/services/analysis.service";
 import { AuthDialog } from "@/components/dialogs/AuthDialog";
-import { UploadSkierSelect } from "@/components/upload/UploadSkierSelect";
+import { UploadTrimContent } from "@/components/upload/UploadTrimContent";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
-type UploadState = "idle" | "skier-select" | "uploading" | "success" | "error";
+type UploadState = "idle" | "trim" | "uploading" | "success" | "error";
 
 export function UploadBlock() {
   const navigate = useNavigate();
@@ -19,7 +19,6 @@ export function UploadBlock() {
 
   const [state, setState] = useState<UploadState>("idle");
   const [file, setFile] = useState<File | null>(null);
-  const [selectedSkierId, setSelectedSkierId] = useState<number | null>(null);
   const [progress, setProgress] = useState(0);
   const [errorMsg, setErrorMsg] = useState("");
   const [authOpen, setAuthOpen] = useState(false);
@@ -35,7 +34,7 @@ export function UploadBlock() {
     }
     setFile(f);
     setErrorMsg("");
-    setState("skier-select");
+    setState("trim");
   }, []);
 
   const handleDrop = useCallback((e: React.DragEvent) => {
@@ -130,19 +129,18 @@ export function UploadBlock() {
             </motion.div>
           )}
 
-          {/* Skier selection — video preview + overlay */}
-          {state === "skier-select" && file && (
+          {/* Trim step (only shown for clips > 20s; short clips auto-continue) */}
+          {state === "trim" && file && (
             <motion.div
-              key="skier-select"
+              key="trim"
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -12 }}
             >
-              <UploadSkierSelect
+              <UploadTrimContent
                 file={file}
                 onCancel={reset}
-                onContinue={(skierId) => {
-                  setSelectedSkierId(skierId);
+                onContinue={() => {
                   if (!user) {
                     setAuthContext("upload");
                     setAuthOpen(true);

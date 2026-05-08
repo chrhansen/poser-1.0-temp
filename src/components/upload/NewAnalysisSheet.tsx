@@ -16,7 +16,7 @@ export function NewAnalysisSheet({ open, onOpenChange, rerunFile }: NewAnalysisS
   const isRerun = !!rerunFile;
   const title = isRerun ? "Re-run analysis" : "Upload clip";
 
-  const handleContinue = (_skierId: number) => {
+  const handleContinue = () => {
     toast.success(isRerun ? "Re-running analysis… (UI-only demo)" : "Clip uploaded! (UI-only demo)");
     onOpenChange(false);
   };
@@ -26,7 +26,6 @@ export function NewAnalysisSheet({ open, onOpenChange, rerunFile }: NewAnalysisS
       <UploadPickContent
         onContinue={handleContinue}
         initialFile={rerunFile}
-        submitLabel={isRerun ? "Re-run analysis" : undefined}
       />
     </div>
   );

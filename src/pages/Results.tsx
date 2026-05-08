@@ -16,8 +16,9 @@ import type { AnalysisResult } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { NewAnalysisSheet } from "@/components/upload/NewAnalysisSheet";
 import { ShareClipSheet } from "@/components/results/ShareClipSheet";
+import { CorrectSkierSheet } from "@/components/results/CorrectSkierSheet";
 import {
-  Loader2, RefreshCw, Trash2, MessageSquare, AlertTriangle, Clock, Bell,
+  Loader2, RefreshCw, Trash2, MessageSquare, AlertTriangle, Clock, Bell, UserX,
 } from "lucide-react";
 import { toast } from "sonner";
 import type { ReplayOutputType } from "@/lib/types";
@@ -32,6 +33,7 @@ export default function ResultsPage() {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [supportOpen, setSupportOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
+  const [correctOpen, setCorrectOpen] = useState(false);
   const [activeView, setActiveView] = useState<ReplayOutputType>("head_tracked_skeleton");
   const [newAnalysisOpen, setNewAnalysisOpen] = useState(false);
   const [rerunFile, setRerunFile] = useState<File | undefined>(undefined);
@@ -158,13 +160,21 @@ export default function ResultsPage() {
           <ReplayViewer outputs={outputs} activeTab={activeView} onTabChange={setActiveView} />
 
 
-          {/* What you're seeing */}
-          <div className="rounded-xl border border-border bg-card p-5 space-y-3">
-            <h3 className="text-sm font-semibold text-foreground">What you're seeing</h3>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li>Head Tracked keeps the skier centered so motion is easier to read.</li>
-              <li>Skeleton overlays help visualize body timing and alignment.</li>
-            </ul>
+          {/* Wrong-skier correction */}
+          <div className="flex flex-col items-center gap-2 rounded-xl border border-border bg-card p-4 text-center sm:flex-row sm:justify-between sm:text-left">
+            <div>
+              <p className="text-sm font-medium text-foreground">Tracking the wrong person?</p>
+              <p className="text-xs text-muted-foreground">
+                Pick the right skier and we'll re-run the analysis.
+              </p>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCorrectOpen(true)}
+            >
+              <UserX className="mr-2 h-4 w-4" /> Pick the right person
+            </Button>
           </div>
 
           {/* Coming soon */}
@@ -192,6 +202,11 @@ export default function ResultsPage() {
       <ContactSupportDialog open={supportOpen} onOpenChange={setSupportOpen} />
       <ShareClipSheet open={shareOpen} onOpenChange={setShareOpen} clipId={result.id} activeView={activeView} />
       <NewAnalysisSheet open={newAnalysisOpen} onOpenChange={(open) => { setNewAnalysisOpen(open); if (!open) setRerunFile(undefined); }} rerunFile={rerunFile} />
+      <CorrectSkierSheet
+        open={correctOpen}
+        onOpenChange={setCorrectOpen}
+        videoUrl={outputs.find((o) => o.available)?.url ?? ""}
+      />
     </AppLayout>
   );
 }
