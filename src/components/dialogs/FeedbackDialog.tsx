@@ -210,8 +210,10 @@ export function FeedbackDialog({
 
               {clipId && (
                 <p className="text-xs text-muted-foreground">
-                  Sent with clip reference{" "}
-                  <span className="font-mono text-foreground/80">{clipId}</span>
+                  Sent from{" "}
+                  <span className="break-all font-mono text-foreground/80">
+                    {typeof window !== "undefined" ? window.location.href : ""}
+                  </span>
                 </p>
               )}
 
