@@ -5,7 +5,7 @@ import { Section } from "@/components/shared/Section";
 import { PageLoader } from "@/components/shared/PageLoader";
 import { PageError } from "@/components/shared/PageError";
 import { ConfirmActionDialog } from "@/components/dialogs/ConfirmActionDialog";
-import { ContactSupportDialog } from "@/components/dialogs/ContactSupportDialog";
+import { FeedbackDialog } from "@/components/dialogs/FeedbackDialog";
 import { ResultsHeader } from "@/components/results/ResultsHeader";
 import { ReplayViewer } from "@/components/results/ReplayViewer";
 import { OutputCard } from "@/components/results/OutputCard";
@@ -19,6 +19,7 @@ import { ShareClipSheet } from "@/components/results/ShareClipSheet";
 import { CorrectSkierSheet } from "@/components/results/CorrectSkierSheet";
 import {
   Loader2, RefreshCw, Trash2, MessageSquare, AlertTriangle, Clock, Bell, UserX, Snowflake,
+  ThumbsUp, ThumbsDown,
 } from "lucide-react";
 import { toast } from "sonner";
 import type { ReplayOutputType } from "@/lib/types";
@@ -31,7 +32,8 @@ export default function ResultsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
-  const [supportOpen, setSupportOpen] = useState(false);
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
+  const [feedbackSentiment, setFeedbackSentiment] = useState<"up" | "down" | null>(null);
   const [shareOpen, setShareOpen] = useState(false);
   const [correctOpen, setCorrectOpen] = useState(false);
   const [activeView, setActiveView] = useState<ReplayOutputType>("head_tracked_skeleton");
@@ -85,6 +87,19 @@ export default function ResultsPage() {
     setNewAnalysisOpen(true);
   };
 
+  const openFeedback = (sentiment: "up" | "down" | null = null) => {
+    setFeedbackSentiment(sentiment);
+    setFeedbackOpen(true);
+  };
+
+  // Pick the right feedback variant based on the current clip status.
+  const feedbackVariant: "replay" | "failed" | "not_ski" =
+    result?.status === "error"
+      ? "failed"
+      : result?.status === "not_ski"
+      ? "not_ski"
+      : "replay";
+
   // Loading / error states
   if (loading) return <AppLayout><PageLoader /></AppLayout>;
   if (error || !result) return <AppLayout><PageError message="Result not found." onRetry={loadData} /></AppLayout>;
@@ -133,7 +148,9 @@ export default function ResultsPage() {
             <p className="text-sm text-muted-foreground">{result.failedReason ?? "An unexpected error occurred."}</p>
             <div className="flex gap-3">
               <Button onClick={handleRerun}><RefreshCw className="mr-2 h-4 w-4" />Re-run clip</Button>
-              <Button variant="outline" onClick={() => setSupportOpen(true)}><MessageSquare className="mr-2 h-4 w-4" />Give feedback</Button>
+              <Button variant="outline" onClick={() => openFeedback()}>
+                <MessageSquare className="mr-2 h-4 w-4" />Help us debug
+              </Button>
             </div>
             <Button variant="ghost" size="sm" className="text-destructive" onClick={() => setDeleteOpen(true)}>
               <Trash2 className="mr-2 h-4 w-4" />Delete clip
@@ -141,7 +158,7 @@ export default function ResultsPage() {
           </div>
         </Section>
         <ConfirmActionDialog open={deleteOpen} onOpenChange={setDeleteOpen} title="Delete clip?" description="This action cannot be undone." confirmLabel="Delete" destructive onConfirm={handleDelete} />
-        <ContactSupportDialog open={supportOpen} onOpenChange={setSupportOpen} />
+        <FeedbackDialog open={feedbackOpen} onOpenChange={setFeedbackOpen} variant="failed" clipId={result.id} />
         <NewAnalysisSheet open={newAnalysisOpen} onOpenChange={(open) => { setNewAnalysisOpen(open); if (!open) setRerunFile(undefined); }} rerunFile={rerunFile} />
       </AppLayout>
     );
@@ -170,7 +187,7 @@ export default function ResultsPage() {
               <Button onClick={() => setNewAnalysisOpen(true)}>
                 <RefreshCw className="mr-2 h-4 w-4" /> Upload a different clip
               </Button>
-              <Button variant="outline" onClick={() => setSupportOpen(true)}>
+              <Button variant="outline" onClick={() => openFeedback()}>
                 <MessageSquare className="mr-2 h-4 w-4" /> Report a mistake
               </Button>
             </div>
@@ -180,7 +197,7 @@ export default function ResultsPage() {
           </div>
         </Section>
         <ConfirmActionDialog open={deleteOpen} onOpenChange={setDeleteOpen} title="Delete clip?" description="This action cannot be undone." confirmLabel="Delete" destructive onConfirm={handleDelete} />
-        <ContactSupportDialog open={supportOpen} onOpenChange={setSupportOpen} />
+        <FeedbackDialog open={feedbackOpen} onOpenChange={setFeedbackOpen} variant="not_ski" clipId={result.id} />
         <NewAnalysisSheet open={newAnalysisOpen} onOpenChange={(open) => { setNewAnalysisOpen(open); if (!open) setRerunFile(undefined); }} rerunFile={rerunFile} />
       </AppLayout>
     );
@@ -222,12 +239,45 @@ export default function ResultsPage() {
           </div>
 
           {/* Bottom actions */}
-          <div className="!mt-16 flex flex-wrap items-center gap-3 border-t border-border pt-5">
+          {/* Replay feedback — context-aware, low-distraction prompt */}
+          <div className="!mt-10 flex flex-col items-center gap-3 rounded-xl border border-border bg-card px-5 py-4 text-center sm:flex-row sm:justify-between sm:text-left">
+            <div>
+              <p className="text-sm font-medium text-foreground">Was this replay useful?</p>
+              <p className="text-xs text-muted-foreground">
+                A quick reaction helps us tune tracking and playback.
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                aria-label="This replay was useful"
+                onClick={() => openFeedback("up")}
+              >
+                <ThumbsUp className="mr-1.5 h-4 w-4" /> Useful
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                aria-label="This replay felt off"
+                onClick={() => openFeedback("down")}
+              >
+                <ThumbsDown className="mr-1.5 h-4 w-4" /> Off
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => openFeedback(null)}
+              >
+                Share details
+              </Button>
+            </div>
+          </div>
+
+          {/* Bottom actions */}
+          <div className="!mt-6 flex flex-wrap items-center gap-3 border-t border-border pt-5">
             <Button variant="outline" size="sm" className="text-destructive" onClick={() => setDeleteOpen(true)}>
               <Trash2 className="mr-2 h-4 w-4" /> Delete
-            </Button>
-            <Button variant="outline" size="sm" onClick={() => setSupportOpen(true)}>
-              <MessageSquare className="mr-2 h-4 w-4" /> Give feedback
             </Button>
             <div className="flex-1" />
             <Button variant="ghost" size="sm" className="text-xs text-muted-foreground" onClick={() => toast.success("We'll notify you when SkiRank beta launches!")}>
@@ -238,7 +288,13 @@ export default function ResultsPage() {
       </Section>
 
       <ConfirmActionDialog open={deleteOpen} onOpenChange={setDeleteOpen} title="Delete clip?" description="This will permanently remove this clip and all associated data." confirmLabel="Delete" destructive onConfirm={handleDelete} />
-      <ContactSupportDialog open={supportOpen} onOpenChange={setSupportOpen} />
+      <FeedbackDialog
+        open={feedbackOpen}
+        onOpenChange={setFeedbackOpen}
+        variant={feedbackVariant}
+        initialSentiment={feedbackSentiment}
+        clipId={result.id}
+      />
       <ShareClipSheet open={shareOpen} onOpenChange={setShareOpen} clipId={result.id} activeView={activeView} />
       <NewAnalysisSheet open={newAnalysisOpen} onOpenChange={(open) => { setNewAnalysisOpen(open); if (!open) setRerunFile(undefined); }} rerunFile={rerunFile} />
       <CorrectSkierSheet
