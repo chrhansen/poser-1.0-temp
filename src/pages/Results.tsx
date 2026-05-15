@@ -215,41 +215,21 @@ export default function ResultsPage() {
           {/* Main viewer — this IS the primary navigation */}
           <ReplayViewer outputs={outputs} activeTab={activeView} onTabChange={setActiveView} />
 
-
-          {/* Wrong-skier correction */}
-          <div className="flex flex-col items-center gap-2 rounded-xl border border-border bg-card p-4 text-center sm:flex-row sm:justify-between sm:text-left">
-            <div>
-              <p className="text-sm font-medium text-foreground">Tracking the wrong person?</p>
-              <p className="text-xs text-muted-foreground">
-                Pick the right skier and we'll re-run the analysis.
-              </p>
-            </div>
-            <Button
-              variant="outline"
-              size="sm"
+          {/* Quiet inline row: wrong-skier correction + replay feedback */}
+          <div className="flex flex-col gap-4 pt-1 sm:flex-row sm:items-center sm:justify-between">
+            <button
+              type="button"
               onClick={() => setCorrectOpen(true)}
+              className="inline-flex items-center gap-1.5 self-start text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
             >
-              <UserX className="mr-2 h-4 w-4" /> Pick the right person
-            </Button>
-          </div>
+              <UserX className="h-4 w-4" />
+              Tracking the wrong person?
+            </button>
 
-          {/* Coming soon */}
-          <div className="rounded-xl border border-border bg-card p-5">
-            <ComingSoonStrip />
-          </div>
-
-          {/* Bottom actions */}
-          {/* Replay feedback — context-aware, low-distraction prompt */}
-          <div className="!mt-10 flex flex-col items-center gap-3 rounded-xl border border-border bg-card px-5 py-4 text-center sm:flex-row sm:justify-between sm:text-left">
-            <div>
-              <p className="text-sm font-medium text-foreground">Was this replay useful?</p>
-              <p className="text-xs text-muted-foreground">
-                A quick reaction helps us tune tracking and playback.
-              </p>
-            </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5">
+              <span className="mr-1 text-sm text-muted-foreground">Was this useful?</span>
               <Button
-                variant="outline"
+                variant="ghost"
                 size="sm"
                 aria-label="This replay was useful"
                 onClick={() => openFeedback("up")}
@@ -257,31 +237,29 @@ export default function ResultsPage() {
                 <ThumbsUp className="mr-1.5 h-4 w-4" /> Useful
               </Button>
               <Button
-                variant="outline"
+                variant="ghost"
                 size="sm"
                 aria-label="This replay felt off"
                 onClick={() => openFeedback("down")}
               >
                 <ThumbsDown className="mr-1.5 h-4 w-4" /> Off
               </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => openFeedback(null)}
-              >
-                Share details
-              </Button>
             </div>
           </div>
 
+          {/* Coming soon — quiet inline strip, no card */}
+          <div className="!mt-8 border-t border-border pt-5">
+            <ComingSoonStrip />
+          </div>
+
           {/* Bottom actions */}
-          <div className="!mt-6 flex flex-wrap items-center gap-3 border-t border-border pt-5">
+          <div className="!mt-6 flex flex-wrap items-center gap-3 pt-2">
             <Button variant="outline" size="sm" className="text-destructive" onClick={() => setDeleteOpen(true)}>
               <Trash2 className="mr-2 h-4 w-4" /> Delete
             </Button>
             <div className="flex-1" />
-            <Button variant="ghost" size="sm" className="text-xs text-muted-foreground" onClick={() => toast.success("We'll notify you when SkiRank beta launches!")}>
-              <Bell className="mr-1.5 h-3.5 w-3.5" /> Notify me when SkiRank launches
+            <Button variant="ghost" size="sm" onClick={() => openFeedback(null)}>
+              <MessageSquare className="mr-1.5 h-3.5 w-3.5" /> Share details
             </Button>
           </div>
         </div>
