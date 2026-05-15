@@ -258,8 +258,8 @@ export default function ResultsPage() {
               <Trash2 className="mr-2 h-4 w-4" /> Delete
             </Button>
             <div className="flex-1" />
-            <Button variant="ghost" size="sm" onClick={() => openFeedback(null)}>
-              <MessageSquare className="mr-1.5 h-3.5 w-3.5" /> Share details
+            <Button variant="ghost" size="sm" className="text-xs text-muted-foreground" onClick={() => toast.success("We'll notify you when SkiRank beta launches!")}>
+              <Bell className="mr-1.5 h-3.5 w-3.5" /> Notify me when SkiRank launches
             </Button>
           </div>
         </div>
