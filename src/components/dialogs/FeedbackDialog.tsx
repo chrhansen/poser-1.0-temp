@@ -49,10 +49,10 @@ const COPY: Record<FeedbackVariant, Copy> = {
     description: "Tell us what worked or what felt off — it shapes what we ship next.",
     categoryLabel: "What's this about?",
     categories: [
-      { value: "tracking", label: "Skier tracking accuracy" },
-      { value: "skeleton", label: "Skeleton / motion quality" },
-      { value: "playback", label: "Playback or controls" },
-      { value: "idea", label: "Feature idea" },
+      { value: "tracking", label: "Tracking / Skeleton quality" },
+      { value: "ui", label: "User interface / Using Poser's web app" },
+      { value: "metrics", label: "Metrics / Data / Feedback" },
+      { value: "idea", label: "Your feature idea" },
       { value: "other", label: "Something else" },
     ],
     placeholder: "What stood out — good or bad?",
@@ -129,7 +129,8 @@ export function FeedbackDialog({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    // TODO_BACKEND_HOOKUP: POST { variant, sentiment, category, message, clipId }
+    const url = typeof window !== "undefined" ? window.location.href : "";
+    // TODO_BACKEND_HOOKUP: POST { variant, sentiment, category, message, clipId, url }
     await new Promise((r) => setTimeout(r, 700));
     setLoading(false);
     setSent(true);
@@ -209,8 +210,10 @@ export function FeedbackDialog({
 
               {clipId && (
                 <p className="text-xs text-muted-foreground">
-                  Sent with clip reference{" "}
-                  <span className="font-mono text-foreground/80">{clipId}</span>
+                  Sent from{" "}
+                  <span className="break-all font-mono text-foreground/80">
+                    {typeof window !== "undefined" ? window.location.href : ""}
+                  </span>
                 </p>
               )}
 
