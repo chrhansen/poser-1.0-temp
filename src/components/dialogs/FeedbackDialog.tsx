@@ -129,7 +129,8 @@ export function FeedbackDialog({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    // TODO_BACKEND_HOOKUP: POST { variant, sentiment, category, message, clipId }
+    const url = typeof window !== "undefined" ? window.location.href : "";
+    // TODO_BACKEND_HOOKUP: POST { variant, sentiment, category, message, clipId, url }
     await new Promise((r) => setTimeout(r, 700));
     setLoading(false);
     setSent(true);
